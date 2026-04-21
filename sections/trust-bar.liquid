@@ -1,0 +1,355 @@
+{%- liquid
+  assign high_contrast = section.settings.high_contrast
+  assign section_mod = ''
+  if high_contrast
+    assign section_mod = ' trust-bar--high-contrast'
+  endif
+-%}
+
+<style>
+  /* ================================================
+     Trust Bar B2B — inline section styles
+     ================================================ */
+
+  .trust-bar {
+    background-color: #ffffff;
+    border-bottom: 1px solid #e7e5e4;
+    padding: 4rem 0;
+  }
+
+  .trust-bar--high-contrast {
+    border-bottom: 4px solid #000000;
+  }
+
+  .trust-bar__container {
+    max-width: var(--page-width, 80rem);
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  /* Eyebrow label */
+  .trust-bar__eyebrow {
+    text-align: center;
+    font-family: var(--font-body-family);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.875rem;
+    margin: 0 0 3rem;
+    color: #a8a29e;
+  }
+
+  .trust-bar--high-contrast .trust-bar__eyebrow {
+    color: #000000;
+  }
+
+  /* Grid */
+  .trust-bar__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  @media screen and (min-width: 750px) {
+    .trust-bar__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  /* ── Dividers ──────────────────────────────── */
+
+  /* Mobile: horizontal rule between items */
+  .trust-bar__item:not(:first-child) {
+    border-top: 1px solid #e7e5e4;
+  }
+
+  .trust-bar--high-contrast .trust-bar__item:not(:first-child) {
+    border-top-color: #000000;
+  }
+
+  /* Desktop: vertical rule, remove horizontal */
+  @media screen and (min-width: 750px) {
+    .trust-bar__item:not(:first-child) {
+      border-top: none;
+    }
+
+    .trust-bar__item:not(:last-child) {
+      border-right: 1px solid #e7e5e4;
+    }
+
+    .trust-bar--high-contrast .trust-bar__item:not(:last-child) {
+      border-right-color: #000000;
+    }
+  }
+
+  /* ── Item ──────────────────────────────────── */
+
+  .trust-bar__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 2.5rem 2rem;
+  }
+
+  .trust-bar__item:first-child {
+    padding-top: 1.5rem;
+  }
+
+  @media screen and (min-width: 750px) {
+    .trust-bar__item {
+      padding: 0 2rem;
+    }
+
+    .trust-bar__item:first-child {
+      padding-top: 0;
+    }
+  }
+
+  /* ── Icon circle ───────────────────────────── */
+
+  .trust-bar__icon-wrap {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-bottom: 1.5rem;
+    background-color: #fffbeb;
+  }
+
+  .trust-bar--high-contrast .trust-bar__icon-wrap {
+    background-color: transparent;
+    border: 4px solid #000000;
+  }
+
+  .trust-bar__icon {
+    width: 2rem;
+    height: 2rem;
+    color: #b45309;
+    display: block;
+  }
+
+  .trust-bar--high-contrast .trust-bar__icon {
+    color: #000000;
+  }
+
+  /* ── Typography ────────────────────────────── */
+
+  .trust-bar__heading {
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight);
+    font-style: var(--font-heading-style);
+    font-size: 1.5rem;
+    line-height: 1.2;
+    margin: 0 0 0.75rem;
+    color: #1c1917;
+  }
+
+  .trust-bar--high-contrast .trust-bar__heading {
+    color: #000000;
+  }
+
+  .trust-bar__description {
+    font-family: var(--font-body-family);
+    font-weight: var(--font-body-weight);
+    font-size: 1rem;
+    line-height: 1.65;
+    color: #57534e;
+    margin: 0;
+  }
+
+  .trust-bar--high-contrast .trust-bar__description {
+    color: #000000;
+    font-weight: 500;
+  }
+
+  .trust-bar__description p {
+    margin: 0;
+  }
+</style>
+
+<section
+  class="trust-bar{{ section_mod }}"
+  id="TrustBar-{{ section.id }}"
+>
+  <div class="trust-bar__container">
+
+    {%- if section.settings.eyebrow != blank -%}
+      <p class="trust-bar__eyebrow">{{ section.settings.eyebrow | escape }}</p>
+    {%- endif -%}
+
+    {%- if section.blocks.size > 0 -%}
+      <div class="trust-bar__grid" role="list">
+
+        {%- for block in section.blocks -%}
+          <div
+            class="trust-bar__item"
+            role="listitem"
+            {{ block.shopify_attributes }}
+          >
+
+            <div class="trust-bar__icon-wrap" aria-hidden="true">
+              {%- case block.settings.icon -%}
+
+                {%- when 'percent' -%}
+                  <svg class="trust-bar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                    <line x1="19" y1="5" x2="5" y2="19"/>
+                    <circle cx="6.5" cy="6.5" r="2.5"/>
+                    <circle cx="17.5" cy="17.5" r="2.5"/>
+                  </svg>
+
+                {%- when 'clock' -%}
+                  <svg class="trust-bar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                    <circle cx="12" cy="12" r="10"/>
+                    <polyline points="12 6 12 12 16 14"/>
+                  </svg>
+
+                {%- when 'package' -%}
+                  <svg class="trust-bar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                    <path d="M16.5 9.4 7.55 4.24"/>
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                    <line x1="12" y1="22.08" x2="12" y2="12"/>
+                  </svg>
+
+                {%- when 'shield' -%}
+                  <svg class="trust-bar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  </svg>
+
+                {%- when 'truck' -%}
+                  <svg class="trust-bar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                    <rect x="1" y="3" width="15" height="13"/>
+                    <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+                    <circle cx="5.5" cy="18.5" r="2.5"/>
+                    <circle cx="18.5" cy="18.5" r="2.5"/>
+                  </svg>
+
+                {%- when 'star' -%}
+                  <svg class="trust-bar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                  </svg>
+
+              {%- endcase -%}
+            </div>
+
+            {%- if block.settings.heading != blank -%}
+              <h3 class="trust-bar__heading">{{ block.settings.heading | escape }}</h3>
+            {%- endif -%}
+
+            {%- if block.settings.description != blank -%}
+              <div class="trust-bar__description">{{ block.settings.description }}</div>
+            {%- endif -%}
+
+          </div>
+        {%- endfor -%}
+
+      </div>
+    {%- endif -%}
+
+  </div>
+</section>
+
+{% render 'accessibility-panel' %}
+
+{% schema %}
+{
+  "name": "Trust Bar B2B",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "checkbox",
+      "id": "high_contrast",
+      "label": "High contrast mode",
+      "info": "Black borders and text on white background.",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Section label",
+      "default": "Why 200+ stores work with us"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "trust_item",
+      "name": "Trust item",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "percent",  "label": "Percent"  },
+            { "value": "clock",    "label": "Clock"    },
+            { "value": "package",  "label": "Package"  },
+            { "value": "shield",   "label": "Shield"   },
+            { "value": "truck",    "label": "Truck"    },
+            { "value": "star",     "label": "Star"     }
+          ],
+          "default": "percent"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Trust Item"
+        },
+        {
+          "type": "richtext",
+          "id": "description",
+          "label": "Description",
+          "default": "<p>Short description of the benefit goes here.</p>"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "Trust Bar B2B",
+      "blocks": [
+        {
+          "type": "trust_item",
+          "settings": {
+            "icon": "percent",
+            "heading": "High Margin",
+            "description": "<p>Special wholesale pricing allows for a retail markup of 100% to 150%, ensuring rapid return on investment.</p>"
+          }
+        },
+        {
+          "type": "trust_item",
+          "settings": {
+            "icon": "clock",
+            "heading": "Fast Shipping",
+            "description": "<p>Our central warehouse is located in Prague. We assemble and dispatch confirmed orders within 1 business day.</p>"
+          }
+        },
+        {
+          "type": "trust_item",
+          "settings": {
+            "icon": "package",
+            "heading": "Flexible Orders",
+            "description": "<p>We don't force massive bulk purchases. Our Minimum Order Quantity (MOQ) is tailored for easy and frequent restocking.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

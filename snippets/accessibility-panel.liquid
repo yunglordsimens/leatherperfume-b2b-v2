@@ -404,25 +404,6 @@
   }
 </style>
 
-{%- comment -%}
-  Trigger button — fixed bottom-right.
-  Deduplication is handled in JS: only the first instance is kept.
-{%- endcomment -%}
-<button
-  type="button"
-  id="open-accessibility"
-  class="a11y-trigger"
-  aria-expanded="false"
-  aria-controls="a11y-panel"
-  aria-label="Open accessibility options"
->
-  <svg class="a11y-trigger__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-    <circle cx="12" cy="8" r="3"/>
-    <path d="M4 19c0-4 3.6-7 8-7s8 3 8 7"/>
-    <path d="M9 13l3 4 3-4"/>
-  </svg>
-</button>
-
 {%- comment -%} Click-outside backdrop {%- endcomment -%}
 <div class="a11y-backdrop" id="a11y-backdrop" aria-hidden="true"></div>
 

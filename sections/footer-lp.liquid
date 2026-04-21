@@ -1,0 +1,412 @@
+{%- liquid
+  assign high_contrast = section.settings.high_contrast
+  assign section_mod = ''
+  if high_contrast
+    assign section_mod = ' footer-lp--high-contrast'
+  endif
+-%}
+
+<style>
+  /* ================================================
+     LP Footer — inline section styles
+     ================================================ */
+
+  .footer-lp {
+    padding: 6rem 0 0;
+    background-color: #1c1917;
+    color: #d6d3d1;
+  }
+
+  .footer-lp--high-contrast {
+    background-color: #ffffff;
+    color: #000000;
+    border-top: 4px solid #000000;
+  }
+
+  html.a11y-high-contrast .footer-lp {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border-top: 4px solid #000000 !important;
+  }
+
+  .footer-lp__container {
+    max-width: var(--page-width, 80rem);
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  /* ── Grid ──────────────────────────────────────── */
+
+  .footer-lp__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    margin-bottom: 4rem;
+  }
+
+  @media screen and (min-width: 750px) {
+    .footer-lp__grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 2.5rem;
+    }
+  }
+
+  @media screen and (min-width: 990px) {
+    .footer-lp__grid {
+      grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      gap: 2rem;
+    }
+  }
+
+  /* ── Column 1: Brand ───────────────────────────── */
+
+  .footer-lp__brand-name {
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight);
+    font-style: var(--font-heading-style);
+    font-size: 1.875rem;
+    color: #ffffff;
+    margin: 0 0 1.5rem;
+    line-height: 1.2;
+  }
+
+  .footer-lp--high-contrast .footer-lp__brand-name,
+  html.a11y-high-contrast .footer-lp__brand-name {
+    color: #000000 !important;
+  }
+
+  .footer-lp__brand-desc {
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.65;
+    opacity: 0.8;
+    margin: 0 0 2rem;
+    font-family: var(--font-body-family);
+  }
+
+  html.a11y-high-contrast .footer-lp__brand-desc {
+    opacity: 1 !important;
+    color: #000000 !important;
+  }
+
+  .footer-lp__socials {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .footer-lp__social-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background-color: #292524;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+    font-family: var(--font-body-family);
+  }
+
+  .footer-lp__social-icon:hover {
+    background-color: #b45309;
+  }
+
+  .footer-lp--high-contrast .footer-lp__social-icon,
+  html.a11y-high-contrast .footer-lp__social-icon {
+    background-color: transparent !important;
+    border: 2px solid #000000 !important;
+    color: #000000 !important;
+  }
+
+  html.a11y-high-contrast .footer-lp__social-icon:hover {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+  }
+
+  /* ── Column headings ───────────────────────────── */
+
+  .footer-lp__col-heading {
+    font-family: var(--font-body-family);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #78716c;
+    margin: 0 0 2rem;
+  }
+
+  html.a11y-high-contrast .footer-lp__col-heading {
+    color: #555555 !important;
+  }
+
+  /* ── Link lists ────────────────────────────────── */
+
+  .footer-lp__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .footer-lp__link {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #d6d3d1;
+    text-decoration: none;
+    transition: color 0.15s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    font-family: var(--font-body-family);
+  }
+
+  .footer-lp__link:hover {
+    color: #f59e0b;
+  }
+
+  .footer-lp--high-contrast .footer-lp__link,
+  html.a11y-high-contrast .footer-lp__link {
+    color: #000000 !important;
+  }
+
+  html.a11y-high-contrast .footer-lp__link:hover {
+    color: #b45309 !important;
+  }
+
+  .footer-lp__link-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex-shrink: 0;
+    opacity: 0.5;
+  }
+
+  /* ── Bottom bar ────────────────────────────────── */
+
+  .footer-lp__bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+    padding: 2rem 0;
+    border-top: 1px solid #292524;
+    font-family: var(--font-body-family);
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.075em;
+    opacity: 0.6;
+  }
+
+  @media screen and (min-width: 750px) {
+    .footer-lp__bottom {
+      flex-direction: row;
+      justify-content: space-between;
+    }
+  }
+
+  .footer-lp__bottom p {
+    margin: 0;
+  }
+
+  .footer-lp--high-contrast .footer-lp__bottom,
+  html.a11y-high-contrast .footer-lp__bottom {
+    border-top: 2px solid #000000 !important;
+    opacity: 1 !important;
+    color: #000000 !important;
+  }
+</style>
+
+<footer
+  class="footer-lp{{ section_mod }}"
+  id="FooterLP-{{ section.id }}"
+>
+  <div class="footer-lp__container">
+
+    <div class="footer-lp__grid">
+
+      {%- comment -%} ── Column 1: Brand ── {%- endcomment -%}
+      <div>
+        <p class="footer-lp__brand-name">{{ section.settings.brand_name | default: shop.name }}</p>
+        {%- if section.settings.brand_desc != blank -%}
+          <p class="footer-lp__brand-desc">{{ section.settings.brand_desc | escape }}</p>
+        {%- endif -%}
+        <div class="footer-lp__socials">
+          {%- if section.settings.linkedin_url != blank -%}
+            <a href="{{ section.settings.linkedin_url }}" class="footer-lp__social-icon" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">In</a>
+          {%- else -%}
+            <span class="footer-lp__social-icon" aria-hidden="true">In</span>
+          {%- endif -%}
+          {%- if section.settings.facebook_url != blank -%}
+            <a href="{{ section.settings.facebook_url }}" class="footer-lp__social-icon" target="_blank" rel="noopener noreferrer" aria-label="Facebook">Fb</a>
+          {%- else -%}
+            <span class="footer-lp__social-icon" aria-hidden="true">Fb</span>
+          {%- endif -%}
+        </div>
+      </div>
+
+      {%- comment -%} ── Column 2: Navigation ── {%- endcomment -%}
+      <div>
+        <h4 class="footer-lp__col-heading">Navigation</h4>
+        <ul class="footer-lp__list" role="list">
+          <li><a href="/collections/perfumes" class="footer-lp__link">Perfume Catalog</a></li>
+          <li><a href="/pages/wholesale-packages" class="footer-lp__link">Wholesale Packages</a></li>
+          <li><a href="/pages/about" class="footer-lp__link">About Us</a></li>
+          <li><a href="/account/login" class="footer-lp__link">Partner Login</a></li>
+        </ul>
+      </div>
+
+      {%- comment -%} ── Column 3: Contact ── {%- endcomment -%}
+      <div>
+        <h4 class="footer-lp__col-heading">Contact</h4>
+        <ul class="footer-lp__list" role="list">
+          {%- if section.settings.phone != blank -%}
+            <li>
+              <span class="footer-lp__link">
+                <svg class="footer-lp__link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.9a16 16 0 0 0 6.08 6.08l.97-.96a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                </svg>
+                {{ section.settings.phone | escape }}
+              </span>
+            </li>
+          {%- endif -%}
+          {%- if section.settings.address != blank -%}
+            <li>
+              <span class="footer-lp__link">
+                <svg class="footer-lp__link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                  <path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z"/>
+                  <circle cx="12" cy="10" r="3"/>
+                </svg>
+                {{ section.settings.address | escape }}
+              </span>
+            </li>
+          {%- endif -%}
+          {%- if section.settings.email != blank -%}
+            <li>
+              <a href="mailto:{{ section.settings.email }}" class="footer-lp__link">
+                {{ section.settings.email | escape }}
+              </a>
+            </li>
+          {%- endif -%}
+        </ul>
+      </div>
+
+      {%- comment -%} ── Column 4: Legal ── {%- endcomment -%}
+      <div>
+        <h4 class="footer-lp__col-heading">Legal</h4>
+        <ul class="footer-lp__list" role="list">
+          <li><a href="/policies/terms-of-service" class="footer-lp__link">B2B Terms of Service</a></li>
+          <li><a href="/policies/privacy-policy" class="footer-lp__link">Privacy Policy</a></li>
+          <li><a href="/policies/refund-policy" class="footer-lp__link">Returns &amp; Claims</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    {%- comment -%} ── Bottom copyright bar ── {%- endcomment -%}
+    <div class="footer-lp__bottom">
+      <p>&copy; {{ 'now' | date: '%Y' }} {{ section.settings.copyright_name | default: shop.name }}. All rights reserved.</p>
+      <span>Made in Europe</span>
+    </div>
+
+  </div>
+</footer>
+
+{% render 'accessibility-panel' %}
+{% render 'scroll-to-top' %}
+
+{% schema %}
+{
+  "name": "LP Footer",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "checkbox",
+      "id": "high_contrast",
+      "label": "High contrast mode",
+      "info": "White background, black text and borders.",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Brand"
+    },
+    {
+      "type": "text",
+      "id": "brand_name",
+      "label": "Brand name",
+      "default": "Leather Parfum"
+    },
+    {
+      "type": "text",
+      "id": "brand_desc",
+      "label": "Brand description",
+      "default": "Your premium wholesale partner. Exclusive terms for retail businesses."
+    },
+    {
+      "type": "header",
+      "content": "Social links"
+    },
+    {
+      "type": "url",
+      "id": "linkedin_url",
+      "label": "LinkedIn URL"
+    },
+    {
+      "type": "url",
+      "id": "facebook_url",
+      "label": "Facebook URL"
+    },
+    {
+      "type": "header",
+      "content": "Contact"
+    },
+    {
+      "type": "text",
+      "id": "phone",
+      "label": "Phone number",
+      "default": "+420 123 456 789"
+    },
+    {
+      "type": "text",
+      "id": "address",
+      "label": "Address",
+      "default": "Prague, Czechia"
+    },
+    {
+      "type": "text",
+      "id": "email",
+      "label": "Email address",
+      "default": "b2b@leatherparfum.com"
+    },
+    {
+      "type": "header",
+      "content": "Copyright"
+    },
+    {
+      "type": "text",
+      "id": "copyright_name",
+      "label": "Copyright name",
+      "default": "Leather Parfum Wholesale"
+    }
+  ],
+  "presets": [
+    {
+      "name": "LP Footer"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,85 @@
+{%- liquid
+  assign high_contrast = section.settings.high_contrast
+  assign section_mod = ''
+  if high_contrast
+    assign section_mod = ' lp-top-bar--high-contrast'
+  endif
+-%}
+
+<style>
+  /* ================================================
+     LP Top Bar — inline section styles
+     ================================================ */
+
+  .lp-top-bar {
+    padding: 0.625rem 1rem;
+    background-color: #92400e;
+    color: #fffbeb;
+    text-align: center;
+    font-family: var(--font-body-family);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    line-height: 1.4;
+  }
+
+  .lp-top-bar--high-contrast {
+    background-color: #000000;
+    color: #ffffff;
+    border-bottom: 2px solid #ffffff;
+  }
+
+  html.a11y-high-contrast .lp-top-bar {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border-bottom: 2px solid #ffffff !important;
+  }
+</style>
+
+<div
+  class="lp-top-bar{{ section_mod }}"
+  id="LpTopBar-{{ section.id }}"
+  role="note"
+  aria-label="Site announcement"
+>
+  {{- section.settings.text | default: 'For verified wholesale partners only' | escape -}}
+</div>
+
+{% schema %}
+{
+  "name": "LP Top Bar",
+  "class": "section",
+  "enabled_on": {
+    "groups": ["header"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "checkbox",
+      "id": "high_contrast",
+      "label": "High contrast mode",
+      "info": "Black background with white text.",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Bar text",
+      "default": "For verified wholesale partners only"
+    }
+  ],
+  "presets": [
+    {
+      "name": "LP Top Bar"
+    }
+  ]
+}
+{% endschema %}

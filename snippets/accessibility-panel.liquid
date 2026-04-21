@@ -43,7 +43,9 @@
   .a11y-backdrop {
     position: fixed;
     inset: 0;
-    background-color: rgba(0, 0, 0, 0.55);
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     z-index: 199;
     opacity: 0;
     pointer-events: none;
@@ -419,7 +421,6 @@
     <path d="M4 19c0-4 3.6-7 8-7s8 3 8 7"/>
     <path d="M9 13l3 4 3-4"/>
   </svg>
-  <span>Accessibility</span>
 </button>
 
 {%- comment -%} Click-outside backdrop {%- endcomment -%}

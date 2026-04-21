@@ -1,0 +1,216 @@
+{%- liquid
+  assign high_contrast = section.settings.high_contrast
+  assign section_mod = ''
+  if high_contrast
+    assign section_mod = ' bottom-cta--high-contrast'
+  endif
+-%}
+
+<style>
+  /* ================================================
+     Bottom CTA — inline section styles
+     ================================================ */
+
+  .bottom-cta {
+    padding: 5rem 0;
+    background-color: #92400e;
+    color: #ffffff;
+  }
+
+  @media screen and (min-width: 750px) {
+    .bottom-cta {
+      padding: 8rem 0;
+    }
+  }
+
+  .bottom-cta--high-contrast {
+    background-color: #ffffff;
+    border-top: 4px solid #000000;
+    color: #000000;
+  }
+
+  .bottom-cta__container {
+    max-width: 56rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    text-align: center;
+  }
+
+  /* ── Heading ───────────────────────────────── */
+
+  .bottom-cta__heading {
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight);
+    font-style: var(--font-heading-style);
+    font-size: clamp(2.25rem, 5vw, 3rem);
+    line-height: 1.15;
+    margin: 0 0 1.5rem;
+    color: #ffffff;
+  }
+
+  @media screen and (min-width: 750px) {
+    .bottom-cta__heading {
+      font-size: clamp(2.75rem, 6vw, 3.75rem);
+    }
+  }
+
+  .bottom-cta--high-contrast .bottom-cta__heading {
+    color: #000000;
+  }
+
+  /* ── Subheading ────────────────────────────── */
+
+  .bottom-cta__subheading {
+    font-family: var(--font-body-family);
+    font-weight: var(--font-body-weight);
+    font-size: 1rem;
+    line-height: 1.65;
+    color: #fef3c7;
+    margin: 0 0 2.5rem;
+  }
+
+  .bottom-cta--high-contrast .bottom-cta__subheading {
+    color: #000000;
+    font-weight: 500;
+  }
+
+  .bottom-cta__subheading p {
+    margin: 0;
+  }
+
+  /* ── Button ────────────────────────────────── */
+
+  .bottom-cta__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 1.25rem 2.5rem;
+    border-radius: 0.75rem;
+    font-family: var(--font-body-family);
+    font-weight: 700;
+    font-size: 1.125rem;
+    line-height: 1;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    background-color: #1c1917;
+    color: #ffffff;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+  }
+
+  .bottom-cta__btn:hover {
+    background-color: #000000;
+    color: #ffffff;
+  }
+
+  .bottom-cta--high-contrast .bottom-cta__btn {
+    background-color: #000000;
+    color: #ffffff;
+    border: 2px solid #000000;
+    box-shadow: none;
+  }
+
+  .bottom-cta--high-contrast .bottom-cta__btn:hover {
+    background-color: #292524;
+  }
+
+  .bottom-cta__btn-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex-shrink: 0;
+  }
+</style>
+
+<section
+  class="bottom-cta{{ section_mod }}"
+  id="BottomCta-{{ section.id }}"
+>
+  <div class="bottom-cta__container">
+
+    {%- if section.settings.heading != blank -%}
+      <h2 class="bottom-cta__heading">{{ section.settings.heading }}</h2>
+    {%- endif -%}
+
+    {%- if section.settings.subheading != blank -%}
+      <div class="bottom-cta__subheading">{{ section.settings.subheading }}</div>
+    {%- endif -%}
+
+    {%- if section.settings.button_label != blank -%}
+      <a
+        href="{{ section.settings.button_link | default: '#' }}"
+        class="bottom-cta__btn"
+      >
+        {{- section.settings.button_label | escape -}}
+        <svg class="bottom-cta__btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <line x1="5" y1="12" x2="19" y2="12"/>
+          <polyline points="12 5 19 12 12 19"/>
+        </svg>
+      </a>
+    {%- endif -%}
+
+  </div>
+</section>
+
+{% render 'accessibility-panel' %}
+
+{% schema %}
+{
+  "name": "Bottom CTA",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "checkbox",
+      "id": "high_contrast",
+      "label": "High contrast mode",
+      "info": "White background with black text and border.",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Ready to elevate your retail space?"
+    },
+    {
+      "type": "richtext",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "<p>Join our network of premium retail partners and get access to exclusive wholesale pricing, priority shipping, and dedicated support.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Label",
+      "default": "Apply for Partnership"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Bottom CTA"
+    }
+  ]
+}
+{% endschema %}

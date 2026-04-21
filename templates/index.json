@@ -1,150 +1,14 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
-    "image_banner": {
-      "type": "image-banner",
-      "blocks": {
-        "heading": {
-          "type": "heading",
-          "settings": {
-            "heading": "Image banner",
-            "heading_size": "h0"
-          }
-        },
-        "text": {
-          "type": "text",
-          "settings": {
-            "text": "Give customers details about the banner image(s) or content on the template.",
-            "text_style": "body"
-          }
-        },
-        "button": {
-          "type": "buttons",
-          "settings": {
-            "button_label_1": "Shop all",
-            "button_link_1": "shopify://collections/all",
-            "button_style_secondary_1": true,
-            "button_label_2": "",
-            "button_link_2": "",
-            "button_style_secondary_2": false
-          }
-        }
-      },
-      "block_order": [
-        "heading",
-        "text",
-        "button"
-      ],
-      "settings": {
-        "image_overlay_opacity": 40,
-        "image_height": "large",
-        "desktop_content_position": "bottom-center",
-        "show_text_box": false,
-        "desktop_content_alignment": "center",
-        "color_scheme": "scheme-3",
-        "mobile_content_alignment": "center",
-        "stack_images_on_mobile": false,
-        "show_text_below": false
-      }
-    },
-    "rich_text": {
-      "type": "rich-text",
-      "blocks": {
-        "heading": {
-          "type": "heading",
-          "settings": {
-            "heading": "Talk about your brand",
-            "heading_size": "h1"
-          }
-        },
-        "text": {
-          "type": "text",
-          "settings": {
-            "text": "<p>Share information about your brand with your customers. Describe a product, make announcements, or welcome customers to your store.<\/p>"
-          }
-        }
-      },
-      "block_order": [
-        "heading",
-        "text"
-      ],
-      "settings": {
-        "color_scheme": "scheme-1",
-        "full_width": true,
-        "padding_top": 40,
-        "padding_bottom": 0
-      }
-    },
-    "featured_collection": {
-      "type": "featured-collection",
-      "settings": {
-        "title": "Featured products",
-        "heading_size": "h2",
-        "collection": "all",
-        "products_to_show": 8,
-        "columns_desktop": 4,
-        "color_scheme": "scheme-1",
-        "show_view_all": false,
-        "swipe_on_mobile": false,
-        "image_ratio": "adapt",
-        "show_secondary_image": true,
-        "show_vendor": false,
-        "show_rating": false,
-        "columns_mobile": "2",
-        "padding_top": 28,
-        "padding_bottom": 36
-      }
-    },
-    "collage": {
-      "type": "collage",
-      "blocks": {
-        "collection-0": {
-          "type": "collection",
-          "settings": {
-            "collection": ""
-          }
-        },
-        "product": {
-          "type": "product",
-          "settings": {
-            "product": "",
-            "second_image": false
-          }
-        },
-        "collection-1": {
-          "type": "collection",
-          "settings": {
-            "collection": ""
-          }
-        }
-      },
-      "block_order": [
-        "collection-0",
-        "product",
-        "collection-1"
-      ],
-      "settings": {
-        "heading": "Multimedia collage",
-        "heading_size": "h2",
-        "desktop_layout": "left",
-        "mobile_layout": "collage",
-        "color_scheme": "scheme-1",
-        "padding_top": 36,
-        "padding_bottom": 36
-      }
-    },
-    "video": {
-      "type": "video",
-      "settings": {
-        "heading": "",
-        "video_url": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
-        "heading_size": "h1",
-        "description": "",
-        "full_width": false,
-        "color_scheme": "scheme-1",
-        "padding_top": 36,
-        "padding_bottom": 36
-      }
-    },
     "multicolumn": {
       "type": "multicolumn",
       "blocks": {
@@ -152,7 +16,7 @@
           "type": "column",
           "settings": {
             "title": "Column",
-            "text": "<p>Pair text with an image to focus on your chosen product, collection, or blog post. Add details on availability, style, or even provide a review.<\/p>",
+            "text": "<p>Pair text with an image to focus on your chosen product, collection, or blog post. Add details on availability, style, or even provide a review.</p>",
             "link_label": "",
             "link": ""
           }
@@ -161,7 +25,7 @@
           "type": "column",
           "settings": {
             "title": "Column",
-            "text": "<p>Pair text with an image to focus on your chosen product, collection, or blog post. Add details on availability, style, or even provide a review.<\/p>",
+            "text": "<p>Pair text with an image to focus on your chosen product, collection, or blog post. Add details on availability, style, or even provide a review.</p>",
             "link_label": "",
             "link": ""
           }
@@ -170,7 +34,7 @@
           "type": "column",
           "settings": {
             "title": "Column",
-            "text": "<p>Pair text with an image to focus on your chosen product, collection, or blog post. Add details on availability, style, or even provide a review.<\/p>",
+            "text": "<p>Pair text with an image to focus on your chosen product, collection, or blog post. Add details on availability, style, or even provide a review.</p>",
             "link_label": "",
             "link": ""
           }
@@ -186,25 +50,152 @@
         "heading_size": "h1",
         "image_width": "third",
         "image_ratio": "adapt",
+        "button_label": "",
+        "button_link": "",
         "columns_desktop": 3,
         "column_alignment": "center",
         "background_style": "none",
-        "button_label": "",
-        "button_link": "",
-        "swipe_on_mobile": false,
         "color_scheme": "scheme-1",
         "columns_mobile": "1",
+        "swipe_on_mobile": false,
         "padding_top": 36,
         "padding_bottom": 36
+      }
+    },
+    "hero_b2b_6RdgDL": {
+      "type": "hero-b2b",
+      "name": "Hero B2B",
+      "settings": {
+        "high_contrast": false,
+        "badge_text": "B2B Partnership",
+        "heading": "Your trusted supplier of niche perfumery.",
+        "subheading": "<p>Official portal for boutique owners. Recommended retail markup from 100%, dispatch from our Prague warehouse in 24 hours. Catalog access is restricted to verified partners.</p>",
+        "button_primary_label": "Apply for Partnership",
+        "button_primary_link": "",
+        "button_secondary_label": "Log in to portal",
+        "button_secondary_link": ""
+      }
+    },
+    "trust_bar_HGTr33": {
+      "type": "trust-bar",
+      "blocks": {
+        "trust_item_X6dH88": {
+          "type": "trust_item",
+          "settings": {
+            "icon": "percent",
+            "heading": "High Margin",
+            "description": "<p>Special wholesale pricing allows for a retail markup of 100% to 150%, ensuring rapid return on investment.</p>"
+          }
+        },
+        "trust_item_jTmbat": {
+          "type": "trust_item",
+          "settings": {
+            "icon": "clock",
+            "heading": "Fast Shipping",
+            "description": "<p>Our central warehouse is located in Prague. We assemble and dispatch confirmed orders within 1 business day.</p>"
+          }
+        },
+        "trust_item_zMbCtC": {
+          "type": "trust_item",
+          "settings": {
+            "icon": "package",
+            "heading": "Flexible Orders",
+            "description": "<p>We don't force massive bulk purchases. Our Minimum Order Quantity (MOQ) is tailored for easy and frequent restocking.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "trust_item_X6dH88",
+        "trust_item_jTmbat",
+        "trust_item_zMbCtC"
+      ],
+      "name": "Trust Bar B2B",
+      "settings": {
+        "high_contrast": false,
+        "eyebrow": "Why 200+ stores work with us"
+      }
+    },
+    "catalog_cards_Le7Cgf": {
+      "type": "catalog-cards",
+      "blocks": {
+        "catalog_card_tMwqmd": {
+          "type": "catalog_card",
+          "settings": {
+            "icon": "image_frame",
+            "heading": "Perfumes",
+            "description": "<p>Premium men's, women's, and unisex fragrances. Available in 50ml, 100ml retail formats and B2B tester sets.</p>",
+            "button_label": "Browse Perfumes",
+            "button_link": ""
+          }
+        },
+        "catalog_card_3iBhaN": {
+          "type": "catalog_card",
+          "settings": {
+            "icon": "package",
+            "heading": "Leather Goods",
+            "description": "<p>Handcrafted belts, wallets, and cardholders made from premium leather. The perfect high-margin cross-sell items.</p>",
+            "button_label": "Browse Leather",
+            "button_link": ""
+          }
+        }
+      },
+      "block_order": [
+        "catalog_card_tMwqmd",
+        "catalog_card_3iBhaN"
+      ],
+      "name": "Catalog Cards B2B",
+      "settings": {
+        "high_contrast": false,
+        "eyebrow": "Our Collections",
+        "heading": "Explore the Catalog"
+      }
+    },
+    "editorial_heritage_YH9ihV": {
+      "type": "editorial-heritage",
+      "blocks": {
+        "checklist_item_8EVhmc": {
+          "type": "checklist_item",
+          "settings": {
+            "text": "European quality certification"
+          }
+        },
+        "checklist_item_cPgkrM": {
+          "type": "checklist_item",
+          "settings": {
+            "text": "Full-size testers for retail partners"
+          }
+        }
+      },
+      "block_order": [
+        "checklist_item_8EVhmc",
+        "checklist_item_cPgkrM"
+      ],
+      "name": "Editorial / Heritage",
+      "settings": {
+        "high_contrast": false,
+        "heading": "Made to be a bestseller.",
+        "paragraph_1": "<p>Leather Parfum is more than just fragrance. It is an anchor product for your retail business. We use the highest quality ingredients to create lasting, memorable compositions that keep clients coming back.</p>",
+        "paragraph_2": "<p>Every bottle and leather item comes in premium packaging designed to look stunning on the shelves of boutiques and concept stores. We provide our partners with all necessary marketing materials for visual merchandising.</p>"
+      }
+    },
+    "bottom_cta_rthwmW": {
+      "type": "bottom-cta",
+      "name": "Bottom CTA",
+      "settings": {
+        "high_contrast": false,
+        "heading": "Ready to elevate your retail space?",
+        "subheading": "<p>Join our network of premium retail partners and get access to exclusive wholesale pricing, priority shipping, and dedicated support.</p>",
+        "button_label": "Apply for Partnership",
+        "button_link": ""
       }
     }
   },
   "order": [
-    "image_banner",
-    "rich_text",
-    "featured_collection",
-    "collage",
-    "video",
-    "multicolumn"
+    "multicolumn",
+    "hero_b2b_6RdgDL",
+    "trust_bar_HGTr33",
+    "catalog_cards_Le7Cgf",
+    "editorial_heritage_YH9ihV",
+    "bottom_cta_rthwmW"
   ]
 }

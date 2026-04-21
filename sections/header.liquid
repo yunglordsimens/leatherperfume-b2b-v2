@@ -1,3 +1,9 @@
+{%- comment -%}
+  ============================================
+  LP B2B CUSTOM HEADER (based on Dawn 13+)
+  ============================================
+{%- endcomment -%}
+
 <link rel="stylesheet" href="{{ 'component-list-menu.css' | asset_url }}" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="{{ 'component-search.css' | asset_url }}" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="{{ 'component-menu-drawer.css' | asset_url }}" media="print" onload="this.media='all'">
@@ -11,7 +17,6 @@
   <link rel="stylesheet" href="{{ 'component-mega-menu.css' | asset_url }}" media="print" onload="this.media='all'">
 {%- endif -%}
 
-
 <style>
   header-drawer {
     justify-self: start;
@@ -24,13 +29,19 @@
     }
   {%- endif -%}
 
-  {%- if section.settings.menu_type_desktop != "drawer" -%}
-    @media screen and (min-width: 990px) {
-      header-drawer {
-        display: none;
-      }
+  @media screen and (min-width: 990px) {
+    header-drawer {
+      display: none;
     }
-  {%- endif -%}
+  }
+
+  @media screen and (min-width: 990px) {
+  .header__lp-nav {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+}
 
   .menu-drawer-container {
     display: flex;
@@ -72,20 +83,19 @@
   }
 
   /* ================================================
-     LP Brand header overrides
+     LP CUSTOM STYLES (overrides Dawn)
      ================================================ */
-
-  /* White header + soft shadow */
   .header-wrapper {
     background-color: #ffffff !important;
     border-bottom: 1px solid #e7e5e4 !important;
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.06) !important;
   }
 
-  /* Hide Dawn's nav on desktop; LP nav occupies the navigation grid area */
+  /* Скрываем стандартное меню Dawn на десктопе */
   @media screen and (min-width: 990px) {
     .header__inline-menu,
-    .header__menu {
+    .header__menu,
+    .header__submenu {
       display: none !important;
     }
 
@@ -97,7 +107,7 @@
     }
   }
 
-  /* ── LP Desktop nav ────────────────────────── */
+  /* LP Desktop nav */
   .lp-nav {
     display: flex;
     align-items: stretch;
@@ -149,7 +159,6 @@
     transition: transform 0.2s ease;
   }
 
-  /* ── Catalog item: hover shows mega ───────── */
   .lp-nav__item--catalog:hover .lp-mega,
   .lp-nav__item--catalog:focus-within .lp-mega {
     opacity: 1;
@@ -166,7 +175,7 @@
     color: #b45309;
   }
 
-  /* ── Mega menu ────────────────────────────── */
+  /* Mega menu */
   .lp-mega {
     position: absolute;
     top: 100%;
@@ -268,13 +277,7 @@
     color: #1c1917;
   }
 
-  .lp-mega__cta-icon {
-    width: 1rem;
-    height: 1rem;
-    flex-shrink: 0;
-  }
-
-  /* ── Language switcher (hover dropdown) ───── */
+  /* Language switcher */
   .header-lang {
     position: relative;
     display: none;
@@ -369,7 +372,7 @@
     background-color: #f5f5f4;
   }
 
-  /* ── Accessibility button ──────────────────── */
+  /* Accessibility button in header */
   .header__icon--a11y {
     display: flex;
     align-items: center;
@@ -396,7 +399,7 @@
     flex-shrink: 0;
   }
 
-  /* ── High contrast overrides ───────────────── */
+  /* High contrast overrides */
   html.a11y-high-contrast .header-wrapper {
     background-color: #ffffff !important;
     border-bottom: 4px solid #000000 !important;
@@ -431,7 +434,7 @@
   }
 
   .section-header {
-    position: sticky; /* This is for fixing a Safari z-index issue. PR #2147 */
+    position: sticky;
     margin-bottom: {{ section.settings.margin_bottom | times: 0.75 | round: 0 }}px;
   }
 
@@ -459,79 +462,47 @@
   endfor
 -%}
 
-{% liquid
-  assign header_tag = 'div'
+<sticky-header data-sticky-type="{{ section.settings.sticky_header_type }}" class="header-wrapper color-{{ section.settings.color_scheme }} gradient{% if section.settings.show_line_separator %} header-wrapper--border-bottom{% endif %}">
+  <header class="header header--{{ section.settings.logo_position }} header--mobile-{{ section.settings.mobile_logo_position }} page-width{% if section.settings.menu_type_desktop == 'drawer' %} drawer-menu{% endif %}{% if section.settings.menu != blank %} header--has-menu{% endif %}{% if has_app_block %} header--has-app{% endif %}{% if shop.customer_accounts_enabled %} header--has-account{% endif %}{% if localization.available_countries.size > 1 or localization.available_languages.size > 1 %} header--has-localizations{% endif %}">
 
-  if section.settings.sticky_header_type != 'none'
-    assign header_tag = 'sticky-header'
-  endif
-%}
-
-<{{ header_tag }} {% if header_tag == 'sticky-header' %}data-sticky-type="{{ section.settings.sticky_header_type }}"{% endif %} class="header-wrapper color-{{ section.settings.color_scheme }} gradient{% if section.settings.show_line_separator %} header-wrapper--border-bottom{% endif %}">
-  {%- liquid
-    assign social_links = false
-    assign localization_forms = false
-
-    if settings.social_twitter_link != blank or settings.social_facebook_link != blank or settings.social_pinterest_link != blank or settings.social_instagram_link != blank or settings.social_youtube_link != blank or settings.social_vimeo_link != blank or settings.social_tiktok_link != blank or settings.social_tumblr_link != blank or settings.social_snapchat_link != blank
-      assign social_links = true
-    endif
-
-    if localization.available_countries.size > 1 and section.settings.enable_country_selector or section.settings.enable_language_selector and localization.available_languages.size > 1
-      assign localization_forms = true
-    endif
-  -%}
-  <header class="header header--{{ section.settings.logo_position }} header--mobile-{{ section.settings.mobile_logo_position }} page-width{% if section.settings.menu_type_desktop == 'drawer' %} drawer-menu{% endif %}{% if section.settings.menu != blank %} header--has-menu{% endif %}{% if has_app_block %} header--has-app{% endif %}{% if social_links %} header--has-social{% endif %}{% if shop.customer_accounts_enabled %} header--has-account{% endif %}{% if localization_forms %} header--has-localizations{% endif %}">
-    {%- liquid
-      if section.settings.menu != blank
-        render 'header-drawer'
-      endif
-
-      if section.settings.logo_position == 'top-center' or section.settings.menu == blank
-        render 'header-search', input_id: 'Search-In-Modal-1'
-      endif
-    -%}
+    {%- if section.settings.menu != blank -%}
+      {% render 'header-drawer' %}
+    {%- endif -%}
 
     {%- if section.settings.logo_position != 'middle-center' -%}
       {%- if request.page_type == 'index' -%}
         <h1 class="header__heading">
       {%- endif -%}
           <a href="{{ routes.root_url }}" class="header__heading-link link link--text focus-inset">
-            {%- if settings.logo != blank -%}
-              <div class="header__heading-logo-wrapper">
-                {%- assign logo_alt = settings.logo.alt | default: shop.name | escape -%}
-                {%- assign logo_height = settings.logo_width | divided_by: settings.logo.aspect_ratio -%}
-                {% capture sizes %}(max-width: {{ settings.logo_width | times: 2 }}px) 50vw, {{ settings.logo_width }}px{% endcapture %}
-                {% capture widths %}{{ settings.logo_width }}, {{ settings.logo_width | times: 1.5 | round }}, {{ settings.logo_width | times: 2 }}{% endcapture %}
-                {{ settings.logo | image_url: width: 600 | image_tag:
-                  class: 'header__heading-logo motion-reduce',
-                  widths: widths,
-                  height: logo_height,
-                  width: settings.logo_width,
-                  alt: logo_alt,
-                  sizes: sizes,
-                  preload: true
-                }}
-              </div>
-            {%- else -%}
-              <span class="h2">{{ shop.name }}</span>
-            {%- endif -%}
+{%- if settings.logo != blank -%}
+  <div class="header__heading-logo-wrapper">
+    {%- assign logo_width = settings.logo.width -%}
+    {%- assign logo_height = logo_width | divided_by: settings.logo.aspect_ratio | round -%}
+    <img
+      src="{{ settings.logo | image_url: width: 600 }}"
+      srcset="{{ settings.logo | image_url: width: 200 }} 200w,
+              {{ settings.logo | image_url: width: 300 }} 300w,
+              {{ settings.logo | image_url: width: 400 }} 400w,
+              {{ settings.logo | image_url: width: 500 }} 500w,
+              {{ settings.logo | image_url: width: 600 }} 600w"
+      sizes="(max-width: 600px) 200px, 600px"
+      alt="{{ settings.logo.alt | default: shop.name | escape }}"
+      width="{{ logo_width }}"
+      height="{{ logo_height }}"
+      class="header__heading-logo motion-reduce"
+      loading="eager"
+    >
+  </div>
+{%- else -%}
+  <span class="h2">{{ shop.name }}</span>
+{%- endif -%}
           </a>
       {%- if request.page_type == 'index' -%}
         </h1>
       {%- endif -%}
     {%- endif -%}
 
-    {%- liquid
-      if section.settings.menu != blank
-        if section.settings.menu_type_desktop == 'dropdown'
-          render 'header-dropdown-menu'
-        elsif section.settings.menu_type_desktop != 'drawer'
-          render 'header-mega-menu'
-        endif
-      endif
-    %}
-
-    {%- comment -%} ── LP custom desktop nav with mega-menu ── {%- endcomment -%}
+    {%- comment -%} ===== LP CUSTOM DESKTOP NAV ===== {%- endcomment -%}
     {%- if section.settings.menu != blank -%}
       <nav class="header__lp-nav small-hide medium-hide" aria-label="Main navigation">
         <ul class="lp-nav" role="list">
@@ -544,17 +515,15 @@
             -%}
 
             {%- if is_catalog -%}
-              <li class="lp-nav__item lp-nav__item--catalog" aria-expanded="false">
-                <button class="lp-nav__btn" type="button" aria-haspopup="true">
-                  {{- link.title | escape -}}
-                  <svg class="lp-nav__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+              <li class="lp-nav__item lp-nav__item--catalog">
+                <button class="lp-nav__btn" type="button" aria-haspopup="true" aria-expanded="false">
+                  {{ link.title | escape }}
+                  <svg class="lp-nav__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <polyline points="6 9 12 15 18 9"/>
                   </svg>
                 </button>
 
                 <div class="lp-mega" role="region" aria-label="{{ link.title | escape }} menu">
-
-                  {%- comment -%} Column 1 — Perfumes {%- endcomment -%}
                   <div class="lp-mega__col">
                     {%- assign col1 = link.links[0] -%}
                     <p class="lp-mega__col-heading">
@@ -563,57 +532,16 @@
                     <ul class="lp-mega__links" role="list">
                       {%- if col1 != blank and col1.links.size > 0 -%}
                         {%- for sub in col1.links -%}
-                          <li>
-                            <a href="{{ sub.url }}" class="lp-mega__link">
-                              <svg class="lp-mega__link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-                                <circle cx="12" cy="5" r="2"/>
-                                <path d="M12 7v8"/>
-                                <path d="M9 19h6"/>
-                                <path d="M8 10c0 0-2 2-2 5h12c0-3-2-5-2-5"/>
-                              </svg>
-                              {{ sub.title | escape }}
-                            </a>
-                          </li>
+                          <li><a href="{{ sub.url }}" class="lp-mega__link">{{ sub.title | escape }}</a></li>
                         {%- endfor -%}
                       {%- else -%}
-                        <li>
-                          <a href="/collections/perfumes-men" class="lp-mega__link">
-                            <svg class="lp-mega__link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-                              <circle cx="12" cy="5" r="2"/>
-                              <path d="M12 7v8"/>
-                              <path d="M9 19h6"/>
-                              <path d="M8 10c0 0-2 2-2 5h12c0-3-2-5-2-5"/>
-                            </svg>
-                            Men's Fragrances
-                          </a>
-                        </li>
-                        <li>
-                          <a href="/collections/perfumes-women" class="lp-mega__link">
-                            <svg class="lp-mega__link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-                              <circle cx="12" cy="5" r="2"/>
-                              <path d="M12 7v8"/>
-                              <path d="M9 19h6"/>
-                              <path d="M8 10c0 0-2 2-2 5h12c0-3-2-5-2-5"/>
-                            </svg>
-                            Women's Fragrances
-                          </a>
-                        </li>
-                        <li>
-                          <a href="/collections/gift-sets" class="lp-mega__link">
-                            <svg class="lp-mega__link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-                              <circle cx="12" cy="5" r="2"/>
-                              <path d="M12 7v8"/>
-                              <path d="M9 19h6"/>
-                              <path d="M8 10c0 0-2 2-2 5h12c0-3-2-5-2-5"/>
-                            </svg>
-                            Gift Sets
-                          </a>
-                        </li>
+                        <li><a href="/collections/all" class="lp-mega__link">All Fragrances</a></li>
+                        <li><a href="/collections/women" class="lp-mega__link">Women's Collection</a></li>
+                        <li><a href="/collections/men" class="lp-mega__link">Men's Collection</a></li>
                       {%- endif -%}
                     </ul>
                   </div>
 
-                  {%- comment -%} Column 2 — Leather Goods {%- endcomment -%}
                   <div class="lp-mega__col">
                     {%- assign col2 = link.links[1] -%}
                     <p class="lp-mega__col-heading">
@@ -622,168 +550,94 @@
                     <ul class="lp-mega__links" role="list">
                       {%- if col2 != blank and col2.links.size > 0 -%}
                         {%- for sub in col2.links -%}
-                          <li>
-                            <a href="{{ sub.url }}" class="lp-mega__link">
-                              <svg class="lp-mega__link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-                                <rect x="2" y="7" width="20" height="14" rx="2"/>
-                                <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
-                              </svg>
-                              {{ sub.title | escape }}
-                            </a>
-                          </li>
+                          <li><a href="{{ sub.url }}" class="lp-mega__link">{{ sub.title | escape }}</a></li>
                         {%- endfor -%}
                       {%- else -%}
-                        <li>
-                          <a href="/collections/belts" class="lp-mega__link">
-                            <svg class="lp-mega__link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-                              <rect x="2" y="7" width="20" height="14" rx="2"/>
-                              <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
-                            </svg>
-                            Belts
-                          </a>
-                        </li>
-                        <li>
-                          <a href="/collections/wallets" class="lp-mega__link">
-                            <svg class="lp-mega__link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-                              <rect x="2" y="7" width="20" height="14" rx="2"/>
-                              <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
-                            </svg>
-                            Wallets
-                          </a>
-                        </li>
-                        <li>
-                          <a href="/collections/bags" class="lp-mega__link">
-                            <svg class="lp-mega__link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-                              <rect x="2" y="7" width="20" height="14" rx="2"/>
-                              <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
-                            </svg>
-                            Bags
-                          </a>
-                        </li>
+                        <li><a href="/collections/leather-goods" class="lp-mega__link">All Leather Goods</a></li>
+                        <li><a href="/collections/belts" class="lp-mega__link">Premium Belts</a></li>
+                        <li><a href="/collections/wallets" class="lp-mega__link">Wallets & Purses</a></li>
                       {%- endif -%}
                     </ul>
                   </div>
 
-                  <hr class="lp-mega__divider" aria-hidden="true">
-
+                  <hr class="lp-mega__divider">
                   <a href="{{ link.url | default: '/collections/all' }}" class="lp-mega__cta">
                     View Full Catalog
-                    <svg class="lp-mega__cta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-                      <line x1="5" y1="12" x2="19" y2="12"/>
-                      <polyline points="12 5 19 12 12 19"/>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
                     </svg>
                   </a>
-
                 </div>
               </li>
-
             {%- else -%}
               <li class="lp-nav__item">
                 <a href="{{ link.url }}" class="lp-nav__link"{% if link.active %} aria-current="page"{% endif %}>
-                  {{- link.title | escape -}}
+                  {{ link.title | escape }}
                 </a>
               </li>
             {%- endif -%}
-
           {%- endfor -%}
         </ul>
       </nav>
     {%- endif -%}
 
-    {%- if section.settings.logo_position == 'middle-center' -%}
-      {%- if request.page_type == 'index' -%}
-        <h1 class="header__heading">
-      {%- endif -%}
-          <a href="{{ routes.root_url }}" class="header__heading-link link link--text focus-inset">
-            {%- if settings.logo != blank -%}
-              <div class="header__heading-logo-wrapper">
-                {%- assign logo_alt = settings.logo.alt | default: shop.name | escape -%}
-                {%- assign logo_height = settings.logo_width | divided_by: settings.logo.aspect_ratio -%}
-                {% capture sizes %}(min-width: 750px) {{ settings.logo_width }}px, 50vw{% endcapture %}
-                {% capture widths %}{{ settings.logo_width }}, {{ settings.logo_width | times: 1.5 | round }}, {{ settings.logo_width | times: 2 }}{% endcapture %}
-                {{ settings.logo | image_url: width: 600 | image_tag:
-                  class: 'header__heading-logo',
-                  widths: widths,
-                  height: logo_height,
-                  width: settings.logo_width,
-                  alt: logo_alt,
-                  sizes: sizes,
-                  preload: true
-                }}
-              </div>
-            {%- else -%}
-              <span class="h2">{{ shop.name }}</span>
-            {%- endif -%}
-          </a>
-      {%- if request.page_type == 'index' -%}
-        </h1>
-      {%- endif -%}
+{%- if section.settings.logo_position == 'middle-center' -%}
+  <a href="{{ routes.root_url }}" class="header__heading-link link link--text focus-inset">
+    {%- if settings.logo != blank -%}
+      <div class="header__heading-logo-wrapper">
+        {%- assign logo_width = settings.logo.width -%}
+        {%- assign logo_height = logo_width | divided_by: settings.logo.aspect_ratio | round -%}
+        <img
+          src="{{ settings.logo | image_url: width: 600 }}"
+          srcset="{{ settings.logo | image_url: width: 200 }} 200w,
+                  {{ settings.logo | image_url: width: 300 }} 300w,
+                  {{ settings.logo | image_url: width: 400 }} 400w,
+                  {{ settings.logo | image_url: width: 500 }} 500w,
+                  {{ settings.logo | image_url: width: 600 }} 600w"
+          sizes="(max-width: 600px) 200px, 600px"
+          alt="{{ settings.logo.alt | default: shop.name | escape }}"
+          width="{{ logo_width }}"
+          height="{{ logo_height }}"
+          class="header__heading-logo motion-reduce"
+          loading="eager"
+        >
+      </div>
+    {%- else -%}
+      <span class="h2">{{ shop.name }}</span>
     {%- endif -%}
+  </a>
+{%- endif -%}
 
-    <div class="header__icons{% if section.settings.enable_country_selector or section.settings.enable_language_selector %} header__icons--localization header-localization{% endif %}">
+    <div class="header__icons{% if localization.available_countries.size > 1 or localization.available_languages.size > 1 %} header__icons--localization header-localization{% endif %}">
       <div class="desktop-localization-wrapper">
-        {%- if section.settings.enable_country_selector and localization.available_countries.size > 1 -%}
-          <localization-form class="small-hide medium-hide" data-prevent-hide>
+        {%- if localization.available_countries.size > 1 and section.settings.enable_country_selector -%}
+          <localization-form class="small-hide medium-hide">
             {%- form 'localization', id: 'HeaderCountryForm', class: 'localization-form' -%}
-              <div>
-                <h2 class="visually-hidden" id="HeaderCountryLabel">{{ 'localization.country_label' | t }}</h2>
-                {%- render 'country-localization', localPosition: 'HeaderCountry' -%}
-              </div>
+              <div>{%- render 'country-localization', localPosition: 'HeaderCountry' -%}</div>
             {%- endform -%}
           </localization-form>
-        {% endif %}
+        {%- endif -%}
 
-        {%- if section.settings.enable_language_selector and localization.available_languages.size > 1 -%}
-          <localization-form class="small-hide medium-hide" data-prevent-hide>
+        {%- if localization.available_languages.size > 1 and section.settings.enable_language_selector -%}
+          <localization-form class="small-hide medium-hide">
             {%- form 'localization', id: 'HeaderLanguageForm', class: 'localization-form' -%}
-              <div>
-                <h2 class="visually-hidden" id="HeaderLanguageLabel">{{ 'localization.language_label' | t }}</h2>
-                {%- render 'language-localization', localPosition: 'HeaderLanguage' -%}
-              </div>
+              <div>{%- render 'language-localization', localPosition: 'HeaderLanguage' -%}</div>
             {%- endform -%}
           </localization-form>
         {%- endif -%}
       </div>
+
       {% render 'header-search', input_id: 'Search-In-Modal' %}
 
       {%- if shop.customer_accounts_enabled -%}
-        <a
-          href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}"
-          class="header__icon header__icon--account link focus-inset{% if section.settings.menu != blank %} small-hide{% endif %}"
-          rel="nofollow"
-        >
-          {%- if section.settings.enable_customer_avatar -%}
-            <account-icon>
-              {%- if customer and customer.has_avatar? -%}
-                {{ customer | avatar }}
-              {%- else -%}
-                <span class="svg-wrapper">{{ 'icon-account.svg' | inline_asset_content }}</span>
-              {%- endif -%}
-            </account-icon>
-          {%- else -%}
-            <span class="svg-wrapper">{{ 'icon-account.svg' | inline_asset_content }}</span>
-          {%- endif -%}
-          <span class="visually-hidden">
-            {%- liquid
-              if customer
-                echo 'customer.account_fallback' | t
-              else
-                echo 'customer.log_in' | t
-              endif
-            -%}
-          </span>
+        <a href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}" class="header__icon header__icon--account link focus-inset{% if section.settings.menu != blank %} small-hide{% endif %}" rel="nofollow">
+          {%- render 'icon-account' -%}
+          <span class="visually-hidden">{%- if customer -%}Account{%- else -%}Log in{%- endif -%}</span>
         </a>
       {%- endif -%}
 
-      {%- for block in section.blocks -%}
-        {%- case block.type -%}
-          {%- when '@app' -%}
-            {% render block %}
-        {%- endcase -%}
-      {%- endfor -%}
-
-      {%- comment -%} ── LP: Language switcher (hover dropdown) ── {%- endcomment -%}
-      <div class="header-lang" role="navigation" aria-label="Language selector">
+      {%- comment -%}── LP: Language switcher (custom) ──{%- endcomment -%}
+      <div class="header-lang">
         {%- assign locale_code = request.locale.iso_code | downcase -%}
         {%- if locale_code == 'cs' -%}
           {%- assign current_flag = '🇨🇿' -%}{%- assign current_label = 'CS' -%}
@@ -795,52 +649,37 @@
         <button class="header-lang__trigger" type="button" aria-haspopup="listbox">
           <span class="header-lang__flag">{{ current_flag }}</span>
           <span>{{ current_label }}</span>
-          <svg class="header-lang__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <svg class="header-lang__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="6 9 12 15 18 9"/>
           </svg>
         </button>
-        <div class="header-lang__dropdown" role="listbox" aria-label="Select language">
-          <a href="?locale=en" hreflang="en" class="header-lang__option" role="option">English <span>🇬🇧</span></a>
-          <a href="?locale=cs" hreflang="cs" class="header-lang__option" role="option">Čeština <span>🇨🇿</span></a>
-          <a href="?locale=vi" hreflang="vi" class="header-lang__option" role="option">Tiếng Việt <span>🇻🇳</span></a>
+        <div class="header-lang__dropdown" role="listbox">
+          <a href="?locale=en" class="header-lang__option">English <span>🇬🇧</span></a>
+          <a href="?locale=cs" class="header-lang__option">Čeština <span>🇨🇿</span></a>
+          <a href="?locale=vi" class="header-lang__option">Tiếng Việt <span>🇻🇳</span></a>
         </div>
       </div>
 
-      {%- comment -%} ── LP: Accessibility button ── {%- endcomment -%}
-      <button
-        id="open-accessibility"
-        class="header__icon header__icon--a11y focus-inset"
-        type="button"
-        aria-label="Accessibility settings"
-        aria-haspopup="dialog"
-      >
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-          <circle cx="12" cy="5" r="1.5"/>
-          <path d="M5 10h14"/>
-          <path d="M12 10v12"/>
-          <path d="M8 22l4-6 4 6"/>
+      {%- comment -%}── LP: Accessibility button in header ──{%- endcomment -%}
+      <button id="open-accessibility" class="header__icon header__icon--a11y focus-inset" type="button" aria-label="Accessibility settings" aria-haspopup="dialog">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+          <circle cx="12" cy="5" r="1.5"/><path d="M5 10h14"/><path d="M12 10v12"/><path d="M8 22l4-6 4 6"/>
         </svg>
       </button>
 
       <a href="{{ routes.cart_url }}" class="header__icon header__icon--cart link focus-inset" id="cart-icon-bubble">
-          {% if cart == empty %}
-            <span class="svg-wrapper">{{'icon-cart-empty.svg' | inline_asset_content }}</span>
-          {% else %}
-            <span class="svg-wrapper">{{'icon-cart.svg' | inline_asset_content }}</span>
-          {% endif %}
+        {%- render 'icon-cart-empty' -%}
         <span class="visually-hidden">{{ 'templates.cart.cart' | t }}</span>
         {%- if cart != empty -%}
           <div class="cart-count-bubble">
-            {%- if cart.item_count < 100 -%}
-              <span aria-hidden="true">{{ cart.item_count }}</span>
-            {%- endif -%}
+            <span aria-hidden="true">{{ cart.item_count }}</span>
             <span class="visually-hidden">{{ 'sections.header.cart_count' | t: count: cart.item_count }}</span>
           </div>
         {%- endif -%}
       </a>
     </div>
   </header>
-</{{ header_tag }}>
+</sticky-header>
 
 {%- if settings.cart_type == "notification" -%}
   {%- render 'cart-notification', color_scheme: section.settings.color_scheme, desktop_menu_type: section.settings.menu_type_desktop -%}
@@ -958,78 +797,11 @@
   customElements.define('sticky-header', StickyHeader);
 {% endjavascript %}
 
-<script type="application/ld+json">
-  {
-    "@context": "http://schema.org",
-    "@type": "Organization",
-    "name": {{ shop.name | json }},
-    {% if settings.logo %}
-      "logo": {{ settings.logo | image_url: width: 500 | prepend: "https:" | json }},
-    {% endif %}
-    "sameAs": [
-      {{ settings.social_twitter_link | json }},
-      {{ settings.social_facebook_link | json }},
-      {{ settings.social_pinterest_link | json }},
-      {{ settings.social_instagram_link | json }},
-      {{ settings.social_tiktok_link | json }},
-      {{ settings.social_tumblr_link | json }},
-      {{ settings.social_snapchat_link | json }},
-      {{ settings.social_youtube_link | json }},
-      {{ settings.social_vimeo_link | json }}
-    ],
-    "url": {{ request.origin | append: page.url | json }}
-  }
-</script>
-
-{%- if request.page_type == 'index' -%}
-  {% assign potential_action_target = request.origin | append: routes.search_url | append: "?q={search_term_string}" %}
-  <script type="application/ld+json">
-    {
-      "@context": "http://schema.org",
-      "@type": "WebSite",
-      "name": {{ shop.name | json }},
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": {{ potential_action_target | json }},
-        "query-input": "required name=search_term_string"
-      },
-      "url": {{ request.origin | append: page.url | json }}
-    }
-  </script>
-{%- endif -%}
-
 {% render 'accessibility-panel' %}
-
-{% javascript %}
-(function () {
-  if (window.lpMegaReady) return;
-  window.lpMegaReady = true;
-
-  /* Mega menu is CSS hover-based; this only handles keyboard (Escape to close) */
-  function init() {
-    var items = document.querySelectorAll('.lp-nav__item--catalog');
-    if (!items.length) return;
-
-    document.addEventListener('keydown', function (e) {
-      if (e.key !== 'Escape') return;
-      items.forEach(function (item) {
-        var btn = item.querySelector('.lp-nav__btn');
-        if (btn) btn.blur();
-      });
-    });
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
-})();
-{% endjavascript %}
 
 {% schema %}
 {
-  "name": "t:sections.header.name",
+  "name": "Header",
   "class": "section-header",
   "max_blocks": 3,
   "settings": [
@@ -1037,143 +809,82 @@
       "type": "select",
       "id": "logo_position",
       "options": [
-        {
-          "value": "top-left",
-          "label": "t:sections.header.settings.logo_position.options__2.label"
-        },
-        {
-          "value": "top-center",
-          "label": "t:sections.header.settings.logo_position.options__3.label"
-        },
-        {
-          "value": "middle-left",
-          "label": "t:sections.header.settings.logo_position.options__1.label"
-        },
-        {
-          "value": "middle-center",
-          "label": "t:sections.header.settings.logo_position.options__4.label"
-        }
+        { "value": "top-left", "label": "Top left" },
+        { "value": "top-center", "label": "Top center" },
+        { "value": "middle-left", "label": "Middle left" },
+        { "value": "middle-center", "label": "Middle center" }
       ],
       "default": "middle-left",
-      "label": "t:sections.header.settings.logo_position.label",
-      "info": "t:sections.header.settings.logo_help.content"
+      "label": "Logo position"
     },
     {
       "type": "select",
       "id": "mobile_logo_position",
       "options": [
-        {
-          "value": "center",
-          "label": "t:sections.header.settings.mobile_logo_position.options__1.label"
-        },
-        {
-          "value": "left",
-          "label": "t:sections.header.settings.mobile_logo_position.options__2.label"
-        }
+        { "value": "center", "label": "Center" },
+        { "value": "left", "label": "Left" }
       ],
       "default": "center",
-      "label": "t:sections.header.settings.mobile_logo_position.label"
-    },    
+      "label": "Mobile logo position"
+    },
     {
       "type": "link_list",
       "id": "menu",
       "default": "main-menu",
-      "label": "t:sections.header.settings.menu.label"
+      "label": "Menu"
     },
     {
       "type": "select",
       "id": "menu_type_desktop",
       "options": [
-        {
-          "value": "dropdown",
-          "label": "t:sections.header.settings.menu_type_desktop.options__1.label"
-        },
-        {
-          "value": "mega",
-          "label": "t:sections.header.settings.menu_type_desktop.options__2.label"
-        },
-        {
-          "value": "drawer",
-          "label": "t:sections.header.settings.menu_type_desktop.options__3.label"
-        }
+        { "value": "dropdown", "label": "Dropdown" },
+        { "value": "mega", "label": "Mega menu" },
+        { "value": "drawer", "label": "Drawer" }
       ],
       "default": "dropdown",
-      "label": "t:sections.header.settings.menu_type_desktop.label"
+      "label": "Desktop menu type"
     },
     {
       "type": "select",
       "id": "sticky_header_type",
       "options": [
-        {
-          "value": "none",
-          "label": "t:sections.header.settings.sticky_header_type.options__1.label"
-        },
-        {
-          "value": "on-scroll-up",
-          "label": "t:sections.header.settings.sticky_header_type.options__2.label"
-        },
-        {
-          "value": "always",
-          "label": "t:sections.header.settings.sticky_header_type.options__3.label"
-        },
-        {
-          "value": "reduce-logo-size",
-          "label": "t:sections.header.settings.sticky_header_type.options__4.label"
-        }
+        { "value": "none", "label": "None" },
+        { "value": "on-scroll-up", "label": "On scroll up" },
+        { "value": "always", "label": "Always" },
+        { "value": "reduce-logo-size", "label": "Reduce logo size" }
       ],
       "default": "on-scroll-up",
-      "label": "t:sections.header.settings.sticky_header_type.label"
+      "label": "Sticky header"
     },
     {
       "type": "checkbox",
       "id": "show_line_separator",
       "default": true,
-      "label": "t:sections.header.settings.show_line_separator.label"
-    },
-    {
-      "type": "header",
-      "content": "t:sections.header.settings.header__1.content"
+      "label": "Show line separator"
     },
     {
       "type": "color_scheme",
       "id": "color_scheme",
-      "label": "t:sections.all.colors.label",
+      "label": "Color scheme",
       "default": "scheme-1"
-    },
-    {
-      "type": "color_scheme",
-      "id": "menu_color_scheme",
-      "label": "t:sections.header.settings.menu_color_scheme.label",
-      "default": "scheme-1"
-    },
-    {
-      "type": "header",
-      "content": "t:sections.header.settings.header__utilities.content"
     },
     {
       "type": "checkbox",
       "id": "enable_country_selector",
       "default": true,
-      "label": "t:sections.header.settings.enable_country_selector.label",
-      "info":"t:sections.header.settings.enable_country_selector.info"
+      "label": "Enable country/region selector"
     },
     {
       "type": "checkbox",
       "id": "enable_language_selector",
       "default": true,
-      "label": "t:sections.header.settings.enable_language_selector.label",
-      "info":"t:sections.header.settings.enable_language_selector.info"
+      "label": "Enable language selector"
     },
     {
       "type": "checkbox",
       "id": "enable_customer_avatar",
       "default": true,
-      "label": "t:sections.header.settings.enable_customer_avatar.label",
-      "info": "t:sections.header.settings.enable_customer_avatar.info"
-    },
-    {
-      "type": "header",
-      "content": "t:sections.all.spacing"
+      "label": "Enable customer avatar"
     },
     {
       "type": "range",
@@ -1182,12 +893,8 @@
       "max": 100,
       "step": 4,
       "unit": "px",
-      "label": "t:sections.header.settings.margin_bottom.label",
+      "label": "Margin bottom",
       "default": 0
-    },
-    {
-      "type": "header",
-      "content": "t:sections.all.padding.section_padding_heading"
     },
     {
       "type": "range",
@@ -1196,7 +903,7 @@
       "max": 36,
       "step": 4,
       "unit": "px",
-      "label": "t:sections.all.padding.padding_top",
+      "label": "Padding top",
       "default": 20
     },
     {
@@ -1206,14 +913,12 @@
       "max": 36,
       "step": 4,
       "unit": "px",
-      "label": "t:sections.all.padding.padding_bottom",
+      "label": "Padding bottom",
       "default": 20
     }
   ],
   "blocks": [
-    {
-      "type": "@app"
-    }
+    { "type": "@app" }
   ]
 }
 {% endschema %}

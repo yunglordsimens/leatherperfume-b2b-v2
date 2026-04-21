@@ -1,0 +1,492 @@
+{%- liquid
+  assign high_contrast = section.settings.high_contrast
+  assign section_mod = ''
+  if high_contrast
+    assign section_mod = ' cat-cards--high-contrast'
+  endif
+-%}
+
+<style>
+  /* ================================================
+     Catalog Cards B2B — inline section styles
+     ================================================ */
+
+  .cat-cards {
+    padding: 6rem 0;
+    background-color: #fafaf9;
+    border-bottom: 1px solid #e7e5e4;
+  }
+
+  .cat-cards--high-contrast {
+    background-color: #ffffff;
+    border-bottom: 4px solid #000000;
+  }
+
+  .cat-cards__container {
+    max-width: var(--page-width, 80rem);
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  /* ── Header ────────────────────────────────── */
+
+  .cat-cards__header {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+
+  .cat-cards__eyebrow {
+    display: block;
+    font-family: var(--font-body-family);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+    color: #b45309;
+  }
+
+  .cat-cards--high-contrast .cat-cards__eyebrow {
+    color: #000000;
+  }
+
+  .cat-cards__heading {
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight);
+    font-style: var(--font-heading-style);
+    font-size: clamp(2.25rem, 5vw, 3rem);
+    line-height: 1.15;
+    margin: 0;
+    color: #1c1917;
+  }
+
+  @media screen and (min-width: 750px) {
+    .cat-cards__heading {
+      font-size: clamp(2.75rem, 6vw, 3.75rem);
+    }
+  }
+
+  .cat-cards--high-contrast .cat-cards__heading {
+    color: #000000;
+  }
+
+  /* ── Grid ──────────────────────────────────── */
+
+  .cat-cards__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
+  @media screen and (min-width: 750px) {
+    .cat-cards__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* ── Card ──────────────────────────────────── */
+
+  .cat-card {
+    background-color: #ffffff;
+    border: 1px solid #e7e5e4;
+    border-radius: 1.5rem;
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  @media screen and (min-width: 750px) {
+    .cat-card {
+      padding: 4rem;
+    }
+  }
+
+  .cat-cards--high-contrast .cat-card {
+    border: 4px solid #000000;
+    background-color: #ffffff;
+  }
+
+  /* ── Icon / image circle ───────────────────── */
+
+  .cat-card__media-wrap {
+    width: 7rem;
+    height: 7rem;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2.5rem;
+    overflow: hidden;
+    background-color: #f5f5f4;
+    border: 1px solid #e7e5e4;
+    transition: transform 0.5s ease;
+  }
+
+  /* Pure-CSS hover scale — no JavaScript */
+  .cat-card:hover .cat-card__media-wrap {
+    transform: scale(1.1);
+  }
+
+  .cat-cards--high-contrast .cat-card__media-wrap {
+    background-color: #ffffff;
+    border: 4px solid #000000;
+  }
+
+  .cat-card__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .cat-card__icon {
+    width: 3rem;
+    height: 3rem;
+    color: #a8a29e;
+    display: block;
+  }
+
+  .cat-cards--high-contrast .cat-card__icon {
+    color: #000000;
+  }
+
+  /* ── Card text ─────────────────────────────── */
+
+  .cat-card__heading {
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight);
+    font-style: var(--font-heading-style);
+    font-size: 1.875rem;
+    line-height: 1.2;
+    margin: 0 0 1.5rem;
+    color: #1c1917;
+  }
+
+  .cat-cards--high-contrast .cat-card__heading {
+    color: #000000;
+  }
+
+  .cat-card__description {
+    font-family: var(--font-body-family);
+    font-weight: var(--font-body-weight);
+    font-size: 1rem;
+    line-height: 1.65;
+    color: rgba(28, 25, 23, 0.8);
+    margin: 0 0 3rem;
+    max-width: 24rem;
+  }
+
+  .cat-cards--high-contrast .cat-card__description {
+    color: #000000;
+    font-weight: 500;
+    opacity: 1;
+  }
+
+  .cat-card__description p {
+    margin: 0;
+  }
+
+  /* ── Button ────────────────────────────────── */
+
+  .cat-card__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    width: 100%;
+    margin-top: auto;
+    padding: 1.25rem 1.5rem;
+    font-family: var(--font-body-family);
+    font-weight: 700;
+    font-size: 1.25rem;
+    line-height: 1;
+    border-radius: 0.75rem;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    background-color: #f59e0b;
+    color: #1c1917;
+  }
+
+  .cat-card__btn:hover {
+    background-color: #fbbf24;
+    color: #1c1917;
+  }
+
+  .cat-cards--high-contrast .cat-card__btn {
+    background-color: #000000;
+    color: #ffffff;
+  }
+
+  .cat-cards--high-contrast .cat-card__btn:hover {
+    background-color: #292524;
+    color: #ffffff;
+  }
+
+  .cat-card__btn-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    flex-shrink: 0;
+  }
+</style>
+
+<section
+  class="cat-cards{{ section_mod }}"
+  id="CatalogCards-{{ section.id }}"
+>
+  <div class="cat-cards__container">
+
+    {%- comment -%} ── Section header ── {%- endcomment -%}
+    {%- if section.settings.eyebrow != blank or section.settings.heading != blank -%}
+      <header class="cat-cards__header">
+        {%- if section.settings.eyebrow != blank -%}
+          <span class="cat-cards__eyebrow">{{ section.settings.eyebrow | escape }}</span>
+        {%- endif -%}
+        {%- if section.settings.heading != blank -%}
+          <h2 class="cat-cards__heading">{{ section.settings.heading }}</h2>
+        {%- endif -%}
+      </header>
+    {%- endif -%}
+
+    {%- comment -%} ── Cards grid ── {%- endcomment -%}
+    {%- if section.blocks.size > 0 -%}
+      <div class="cat-cards__grid">
+
+        {%- for block in section.blocks -%}
+          <article class="cat-card" {{ block.shopify_attributes }}>
+
+            {%- comment -%} Icon / image circle {%- endcomment -%}
+            <div class="cat-card__media-wrap" aria-hidden="true">
+              {%- if block.settings.image != blank -%}
+                {{
+                  block.settings.image
+                  | image_url: width: 400
+                  | image_tag:
+                    class: 'cat-card__image',
+                    loading: 'lazy',
+                    widths: '200, 300, 400',
+                    sizes: '112px'
+                }}
+              {%- else -%}
+                {%- case block.settings.icon -%}
+
+                  {%- when 'image_frame' -%}
+                    <svg class="cat-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                      <circle cx="8.5" cy="8.5" r="1.5"/>
+                      <polyline points="21 15 16 10 5 21"/>
+                    </svg>
+
+                  {%- when 'package' -%}
+                    <svg class="cat-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                      <path d="M16.5 9.4 7.55 4.24"/>
+                      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                      <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                      <line x1="12" y1="22.08" x2="12" y2="12"/>
+                    </svg>
+
+                  {%- when 'droplets' -%}
+                    <svg class="cat-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                      <path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 6.75 7 5.3c-.29 1.45-1.14 2.84-2.29 3.76S3 11.1 3 12.25c0 2.22 1.8 4.05 4 4.05z"/>
+                      <path d="M12.56 6.6A10.97 10.97 0 0 0 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97"/>
+                    </svg>
+
+                  {%- when 'gem' -%}
+                    <svg class="cat-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                      <polygon points="6 3 18 3 22 9 12 22 2 9"/>
+                      <polyline points="2 9 12 9 22 9"/>
+                      <path d="M6 3l6 6 6-6"/>
+                    </svg>
+
+                  {%- when 'heart' -%}
+                    <svg class="cat-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                    </svg>
+
+                  {%- when 'star' -%}
+                    <svg class="cat-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                    </svg>
+
+                  {%- when 'shield' -%}
+                    <svg class="cat-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+
+                  {%- when 'tag' -%}
+                    <svg class="cat-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                      <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
+                      <line x1="7" y1="7" x2="7.01" y2="7"/>
+                    </svg>
+
+                {%- endcase -%}
+              {%- endif -%}
+            </div>
+
+            {%- if block.settings.heading != blank -%}
+              <h3 class="cat-card__heading">{{ block.settings.heading | escape }}</h3>
+            {%- endif -%}
+
+            {%- if block.settings.description != blank -%}
+              <div class="cat-card__description">{{ block.settings.description }}</div>
+            {%- endif -%}
+
+            {%- if block.settings.button_label != blank -%}
+              <a
+                href="{{ block.settings.button_link | default: '#' }}"
+                class="cat-card__btn"
+              >
+                {{- block.settings.button_label | escape -}}
+                <svg class="cat-card__btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                  <line x1="5" y1="12" x2="19" y2="12"/>
+                  <polyline points="12 5 19 12 12 19"/>
+                </svg>
+              </a>
+            {%- endif -%}
+
+          </article>
+        {%- endfor -%}
+
+      </div>
+    {%- endif -%}
+
+  </div>
+</section>
+
+{% render 'accessibility-panel' %}
+
+{% schema %}
+{
+  "name": "Catalog Cards B2B",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "checkbox",
+      "id": "high_contrast",
+      "label": "High contrast mode",
+      "info": "White background, black borders and text.",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Header"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow label",
+      "default": "Our Collections"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Explore the Catalog"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "catalog_card",
+      "name": "Catalog card",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Icon / Image"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image",
+          "info": "Replaces the icon when set. Displayed cropped to a circle."
+        },
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Fallback icon",
+          "info": "Shown when no image is selected.",
+          "options": [
+            { "value": "image_frame", "label": "Image frame"  },
+            { "value": "package",     "label": "Package"      },
+            { "value": "droplets",    "label": "Droplets"     },
+            { "value": "gem",         "label": "Gem"          },
+            { "value": "heart",       "label": "Heart"        },
+            { "value": "star",        "label": "Star"         },
+            { "value": "shield",      "label": "Shield"       },
+            { "value": "tag",         "label": "Tag"          }
+          ],
+          "default": "image_frame"
+        },
+        {
+          "type": "header",
+          "content": "Content"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Category Name"
+        },
+        {
+          "type": "richtext",
+          "id": "description",
+          "label": "Description",
+          "default": "<p>Short description of this product category.</p>"
+        },
+        {
+          "type": "header",
+          "content": "Button"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Label",
+          "default": "Browse Category"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "Link"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 4,
+  "presets": [
+    {
+      "name": "Catalog Cards B2B",
+      "blocks": [
+        {
+          "type": "catalog_card",
+          "settings": {
+            "icon": "image_frame",
+            "heading": "Perfumes",
+            "description": "<p>Premium men's, women's, and unisex fragrances. Available in 50ml, 100ml retail formats and B2B tester sets.</p>",
+            "button_label": "Browse Perfumes"
+          }
+        },
+        {
+          "type": "catalog_card",
+          "settings": {
+            "icon": "package",
+            "heading": "Leather Goods",
+            "description": "<p>Handcrafted belts, wallets, and cardholders made from premium leather. The perfect high-margin cross-sell items.</p>",
+            "button_label": "Browse Leather"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

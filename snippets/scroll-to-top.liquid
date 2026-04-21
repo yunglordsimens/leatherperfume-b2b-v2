@@ -1,0 +1,97 @@
+<style>
+  /* ================================================
+     Scroll-to-top button
+     ================================================ */
+
+  .scroll-top {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 80;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 9999px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background-color: #1c1917;
+    color: #ffffff;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 8px 16px -4px rgba(0, 0, 0, 0.15);
+    transition: transform 0.2s ease, background-color 0.2s ease, opacity 0.25s ease, visibility 0.25s ease;
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .scroll-top.is-visible {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .scroll-top:hover {
+    background-color: #92400e;
+    transform: translateY(-4px);
+  }
+
+  .scroll-top svg {
+    width: 1.5rem;
+    height: 1.5rem;
+    flex-shrink: 0;
+  }
+
+  html.a11y-high-contrast .scroll-top {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border: 2px solid #ffffff !important;
+    box-shadow: none !important;
+  }
+
+  html.a11y-high-contrast .scroll-top:hover {
+    background-color: #292524 !important;
+    transform: translateY(-4px);
+  }
+</style>
+
+<button
+  id="scroll-to-top"
+  class="scroll-top"
+  type="button"
+  aria-label="Scroll to top"
+>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+    <polyline points="18 15 12 9 6 15"/>
+  </svg>
+</button>
+
+<script>
+(function () {
+  if (window.lpScrollTopReady) return;
+  window.lpScrollTopReady = true;
+
+  /* Remove duplicate buttons if snippet is rendered by multiple sections */
+  var all = document.querySelectorAll('#scroll-to-top');
+  all.forEach(function (el, i) { if (i > 0) el.remove(); });
+
+  var btn = document.getElementById('scroll-to-top');
+  if (!btn) return;
+
+  var THRESHOLD = 300;
+
+  function onScroll() {
+    if (window.scrollY > THRESHOLD) {
+      btn.classList.add('is-visible');
+    } else {
+      btn.classList.remove('is-visible');
+    }
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  btn.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+})();
+</script>

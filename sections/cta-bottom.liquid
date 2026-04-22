@@ -1,0 +1,235 @@
+{%- liquid
+  assign high_contrast = section.settings.high_contrast
+  assign section_mod = ''
+  if high_contrast
+    assign section_mod = ' cta-bottom--high-contrast'
+  endif
+-%}
+
+<style>
+  /* ================================================
+     CTA Bottom — inline section styles
+     ================================================ */
+
+  .cta-bottom {
+    padding: 5rem 1.5rem;
+    background-color: #92400e;
+    color: #ffffff;
+  }
+
+  @media screen and (min-width: 750px) {
+    .cta-bottom { padding: 8rem 1.5rem; }
+  }
+
+  .cta-bottom--high-contrast {
+    background-color: #ffffff;
+    color: #000000;
+    border-top: 4px solid #000000;
+  }
+
+  html.a11y-high-contrast .cta-bottom {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border-top: 4px solid #000000 !important;
+  }
+
+  .cta-bottom__inner {
+    max-width: 56rem;
+    margin: 0 auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* ── Heart icon ─────────────────────────────────── */
+
+  .cta-bottom__icon {
+    margin-bottom: 2rem;
+    opacity: 0.5;
+    color: #ffffff;
+  }
+
+  .cta-bottom__icon svg {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .cta-bottom--high-contrast .cta-bottom__icon,
+  html.a11y-high-contrast .cta-bottom__icon {
+    color: #000000 !important;
+    opacity: 0.4 !important;
+  }
+
+  /* ── Heading ───────────────────────────────────── */
+
+  .cta-bottom__heading {
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight);
+    font-style: var(--font-heading-style);
+    font-size: clamp(2.5rem, 7vw, 3.5rem);
+    line-height: 1.1;
+    color: #ffffff;
+    margin: 0 0 1.5rem;
+  }
+
+  @media screen and (min-width: 750px) {
+    .cta-bottom__heading { font-size: clamp(3rem, 8vw, 4rem); }
+  }
+
+  .cta-bottom--high-contrast .cta-bottom__heading,
+  html.a11y-high-contrast .cta-bottom__heading {
+    color: #000000 !important;
+  }
+
+  /* ── Description ───────────────────────────────── */
+
+  .cta-bottom__desc {
+    font-family: var(--font-body-family);
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    color: #fde68a;
+    max-width: 42rem;
+    margin: 0 0 2.5rem;
+  }
+
+  .cta-bottom--high-contrast .cta-bottom__desc,
+  html.a11y-high-contrast .cta-bottom__desc {
+    color: #000000 !important;
+    font-weight: 500 !important;
+  }
+
+  .cta-bottom__desc p { margin: 0; }
+
+  /* ── Button ─────────────────────────────────────── */
+
+  .cta-bottom__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.125rem 2.5rem;
+    font-family: var(--font-body-family);
+    font-size: 1.0625rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.075em;
+    color: #ffffff;
+    background-color: #1c1917;
+    border: 2px solid #1c1917;
+    border-radius: 0.75rem;
+    text-decoration: none;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  }
+
+  .cta-bottom__btn:hover {
+    background-color: #000000;
+    border-color: #000000;
+  }
+
+  .cta-bottom__btn svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex-shrink: 0;
+  }
+
+  .cta-bottom--high-contrast .cta-bottom__btn,
+  html.a11y-high-contrast .cta-bottom__btn {
+    background-color: #000000 !important;
+    border-color: #000000 !important;
+    color: #ffffff !important;
+    box-shadow: none !important;
+  }
+</style>
+
+<section
+  class="cta-bottom{{ section_mod }}"
+  id="CtaBottom-{{ section.id }}"
+>
+  <div class="cta-bottom__inner">
+
+    <div class="cta-bottom__icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+      </svg>
+    </div>
+
+    {%- if section.settings.heading != blank -%}
+      <h2 class="cta-bottom__heading">{{ section.settings.heading | escape }}</h2>
+    {%- endif -%}
+
+    {%- if section.settings.description != blank -%}
+      <div class="cta-bottom__desc">{{ section.settings.description }}</div>
+    {%- endif -%}
+
+    {%- if section.settings.button_label != blank -%}
+      <a
+        href="{{ section.settings.button_link | default: '/pages/wholesale-apply' }}"
+        class="cta-bottom__btn"
+      >
+        {{- section.settings.button_label | escape -}}
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="5" y1="12" x2="19" y2="12"/>
+          <polyline points="12 5 19 12 12 19"/>
+        </svg>
+      </a>
+    {%- endif -%}
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "CTA Bottom",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "checkbox",
+      "id": "high_contrast",
+      "label": "High contrast mode",
+      "info": "White background with black border.",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Ready to elevate your retail space?"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>Join our network of premium retail partners and get access to exclusive wholesale pricing, priority shipping, and dedicated support.</p>"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Apply for Partnership"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "CTA Bottom"
+    }
+  ]
+}
+{% endschema %}

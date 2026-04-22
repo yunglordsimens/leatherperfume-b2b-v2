@@ -11,13 +11,152 @@
   "sections": {
     "main": {
       "type": "main-page",
+      "disabled": true,
       "settings": {
         "padding_top": 28,
         "padding_bottom": 28
       }
+    },
+    "page_header_b2b_7Yp3qd": {
+      "type": "page-header-b2b",
+      "name": "Page Header B2B",
+      "settings": {
+        "high_contrast": false,
+        "eyebrow": "B2B Solutions",
+        "heading": "Wholesale Packages",
+        "description": "<p>We've designed business packages to make it easy to start or expand your retail operation. Each package is curated by our team and comes with a special wholesale discount.</p>"
+      }
+    },
+    "packages_grid_UVNJCW": {
+      "type": "packages-grid",
+      "blocks": {
+        "package_item_DhcTiD": {
+          "type": "package_item",
+          "settings": {
+            "is_featured": false,
+            "badge_label": "Best Value",
+            "icon": "store",
+            "heading": "Starter Kit",
+            "subtitle": "Perfect for new retailers",
+            "tag_sku": "12 SKUs",
+            "tag_discount": "15% off",
+            "description": "<p>A curated entry-level package designed to help you launch with confidence.</p>",
+            "feature_1": "12 best-selling fragrances",
+            "feature_2": "Free display stand included",
+            "feature_3": "Marketing materials",
+            "feature_4": "",
+            "price_label": "Starting from",
+            "price": "€490",
+            "button_label": "Order This Package",
+            "button_link": ""
+          }
+        },
+        "package_item_thzidR": {
+          "type": "package_item",
+          "settings": {
+            "is_featured": true,
+            "badge_label": "Best Value",
+            "icon": "flame",
+            "heading": "Growth Pack",
+            "subtitle": "Our most popular choice",
+            "tag_sku": "30 SKUs",
+            "tag_discount": "22% off",
+            "description": "<p>A curated entry-level package designed to help you launch with confidence.</p>",
+            "feature_1": "30 premium fragrances",
+            "feature_2": "Branded display unit",
+            "feature_3": "Priority support",
+            "feature_4": "Exclusive scents",
+            "price_label": "Starting from",
+            "price": "€1,190",
+            "button_label": "Order This Package",
+            "button_link": ""
+          }
+        },
+        "package_item_dtifKR": {
+          "type": "package_item",
+          "settings": {
+            "is_featured": false,
+            "badge_label": "Best Value",
+            "icon": "sparkles",
+            "heading": "Premium Collection",
+            "subtitle": "For established boutiques",
+            "tag_sku": "50 SKUs",
+            "tag_discount": "28% off",
+            "description": "<p>A curated entry-level package designed to help you launch with confidence.</p>",
+            "feature_1": "50 curated fragrances",
+            "feature_2": "Premium display fixtures",
+            "feature_3": "Dedicated account manager",
+            "feature_4": "",
+            "price_label": "Starting from",
+            "price": "€1,890",
+            "button_label": "Order This Package",
+            "button_link": ""
+          }
+        },
+        "package_item_K8Pjct": {
+          "type": "package_item",
+          "settings": {
+            "is_featured": false,
+            "badge_label": "Best Value",
+            "icon": "refresh",
+            "heading": "Replenishment",
+            "subtitle": "Keep your shelves full",
+            "tag_sku": "Any SKUs",
+            "tag_discount": "18% off",
+            "description": "<p>A curated entry-level package designed to help you launch with confidence.</p>",
+            "feature_1": "Flexible SKU selection",
+            "feature_2": "Monthly delivery option",
+            "feature_3": "No minimum reorder",
+            "feature_4": "",
+            "price_label": "Starting from",
+            "price": "Custom",
+            "button_label": "Order This Package",
+            "button_link": ""
+          }
+        }
+      },
+      "block_order": [
+        "package_item_DhcTiD",
+        "package_item_thzidR",
+        "package_item_dtifKR",
+        "package_item_K8Pjct"
+      ],
+      "name": "Packages Grid",
+      "settings": {
+        "high_contrast": false,
+        "custom_mix_eyebrow": "Need Something Different?",
+        "custom_mix_heading": "Build Your Custom Mix",
+        "custom_mix_desc": "Not sure which package fits your store? Our team can create a custom selection tailored to your market and budget.",
+        "custom_mix_btn_label": "Contact Us",
+        "custom_mix_btn_link": ""
+      }
+    },
+    "how_it_works_NPXmcV": {
+      "type": "how-it-works",
+      "name": "How It Works",
+      "settings": {
+        "high_contrast": false,
+        "heading": "How to Order",
+        "subheading": "A simple, transparent process from selecting your package to getting the products on your shelves."
+      }
+    },
+    "bottom_cta_rnAw4C": {
+      "type": "bottom-cta",
+      "name": "Bottom CTA",
+      "settings": {
+        "high_contrast": false,
+        "heading": "Ready to elevate your retail space?",
+        "subheading": "<p>Join our network of premium retail partners and get access to exclusive wholesale pricing, priority shipping, and dedicated support.</p>",
+        "button_label": "Apply for Partnership",
+        "button_link": ""
+      }
     }
   },
   "order": [
-    "main"
+    "main",
+    "page_header_b2b_7Yp3qd",
+    "packages_grid_UVNJCW",
+    "how_it_works_NPXmcV",
+    "bottom_cta_rnAw4C"
   ]
 }

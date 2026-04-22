@@ -11,13 +11,69 @@
   "sections": {
     "main": {
       "type": "main-page",
+      "disabled": true,
       "settings": {
         "padding_top": 28,
         "padding_bottom": 28
       }
+    },
+    "about_hero_H8fW8G": {
+      "type": "about-hero",
+      "name": "About Hero",
+      "settings": {
+        "high_contrast": false,
+        "eyebrow": "Our Heritage",
+        "heading": "Where olfactive art meets leather craftsmanship.",
+        "description": "<p>Born in Prague, Leather Parfum was founded on a simple philosophy: to create anchor products that evoke emotion, stand the test of time, and elevate the modern retail experience.</p>"
+      }
+    },
+    "about_image_4HrG3j": {
+      "type": "about-image",
+      "name": "About Image",
+      "settings": {
+        "high_contrast": false
+      }
+    },
+    "about_craft_grid_dUQCn4": {
+      "type": "about-craft-grid",
+      "name": "About Craft Grid",
+      "settings": {
+        "high_contrast": false,
+        "heading": "The Art of Creation",
+        "subheading": "<p>We don't compromise on quality. Our collections are developed in partnership with master perfumers and artisan leatherworkers across Europe.</p>",
+        "card_1_icon": "droplet",
+        "card_1_heading": "Niche Formulation",
+        "card_1_desc": "<p>Sourcing raw ingredients directly from Grasse, France, our fragrances are highly concentrated (Eau de Parfum and Extrait). This ensures incredible longevity and projection—qualities that turn first-time buyers into loyal brand advocates.</p>",
+        "card_1_feat_1": "Long-lasting sillage",
+        "card_1_feat_2": "Ethically sourced ingredients",
+        "card_2_icon": "award",
+        "card_2_heading": "Mastery of Leather",
+        "card_2_desc": "<p>Every belt, wallet, and accessory is crafted from full-grain Italian leather. We celebrate the natural imperfections of the material, meaning every piece ages beautifully and develops a unique patina over time.</p>",
+        "card_2_feat_1": "Full-grain Italian leather",
+        "card_2_feat_2": "Hand-finished edges"
+      }
+    },
+    "about_manifesto_xWEMmR": {
+      "type": "about-manifesto",
+      "name": "About Manifesto",
+      "settings": {
+        "high_contrast": false,
+        "image_side": "left",
+        "heading": "Built for your retail shelves.",
+        "paragraph_1": "At Leather Parfum, we understand that our success is entirely dependent on yours. That is why we don't just sell products; we provide complete retail solutions.",
+        "paragraph_2": "From highly attractive wholesale margins to meticulously designed packaging that practically sells itself, every aspect of our B2B offering is optimized to increase your store's average order value and customer retention.",
+        "stat_1_number": "150%",
+        "stat_1_label": "Avg. Retail Markup",
+        "stat_2_number": "200+",
+        "stat_2_label": "Active Partners"
+      }
     }
   },
   "order": [
-    "main"
+    "main",
+    "about_hero_H8fW8G",
+    "about_image_4HrG3j",
+    "about_craft_grid_dUQCn4",
+    "about_manifesto_xWEMmR"
   ]
 }

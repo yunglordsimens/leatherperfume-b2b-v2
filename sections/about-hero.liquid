@@ -1,0 +1,164 @@
+{%- liquid
+  assign high_contrast = section.settings.high_contrast
+  assign section_mod = ''
+  if high_contrast
+    assign section_mod = ' about-hero--high-contrast'
+  endif
+-%}
+
+<style>
+  /* ================================================
+     About Hero — inline section styles
+     ================================================ */
+
+  .about-hero {
+    padding: 4rem 1rem;
+    text-align: center;
+    background-color: #fafaf9;
+  }
+
+  @media screen and (min-width: 750px) {
+    .about-hero { padding: 6rem 1.5rem; }
+  }
+
+  .about-hero--high-contrast {
+    background-color: #ffffff;
+    border-bottom: 4px solid #000000;
+  }
+
+  html.a11y-high-contrast .about-hero {
+    background-color: #ffffff !important;
+    border-bottom: 4px solid #000000 !important;
+  }
+
+  .about-hero__inner {
+    max-width: 56rem;
+    margin: 0 auto;
+  }
+
+  /* ── Eyebrow ───────────────────────────────────── */
+
+  .about-hero__eyebrow {
+    display: block;
+    font-family: var(--font-body-family);
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: #b45309;
+    margin: 0 0 1.5rem;
+  }
+
+  .about-hero--high-contrast .about-hero__eyebrow,
+  html.a11y-high-contrast .about-hero__eyebrow {
+    color: #000000 !important;
+  }
+
+  /* ── Heading ───────────────────────────────────── */
+
+  .about-hero__heading {
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight);
+    font-style: var(--font-heading-style);
+    font-size: clamp(2.75rem, 8vw, 4rem);
+    line-height: 1.1;
+    color: #1c1917;
+    margin: 0 0 2.5rem;
+  }
+
+  @media screen and (min-width: 750px) {
+    .about-hero__heading { font-size: clamp(3.5rem, 9vw, 5rem); }
+  }
+
+  html.a11y-high-contrast .about-hero__heading { color: #000000 !important; }
+
+  /* ── Description ───────────────────────────────── */
+
+  .about-hero__desc {
+    font-family: var(--font-body-family);
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    color: #57534e;
+    max-width: 42rem;
+    margin: 0 auto;
+  }
+
+  .about-hero--high-contrast .about-hero__desc,
+  html.a11y-high-contrast .about-hero__desc {
+    color: #000000 !important;
+    font-weight: 500 !important;
+  }
+
+  .about-hero__desc p { margin: 0; }
+</style>
+
+<section
+  class="about-hero{{ section_mod }}"
+  id="AboutHero-{{ section.id }}"
+>
+  <div class="about-hero__inner">
+
+    {%- if section.settings.eyebrow != blank -%}
+      <span class="about-hero__eyebrow">{{ section.settings.eyebrow | escape }}</span>
+    {%- endif -%}
+
+    {%- if section.settings.heading != blank -%}
+      <h1 class="about-hero__heading">{{ section.settings.heading | escape }}</h1>
+    {%- endif -%}
+
+    {%- if section.settings.description != blank -%}
+      <div class="about-hero__desc">{{ section.settings.description }}</div>
+    {%- endif -%}
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "About Hero",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "checkbox",
+      "id": "high_contrast",
+      "label": "High contrast mode",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow text",
+      "default": "Our Heritage"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Where olfactive art meets leather craftsmanship."
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>Born in Prague, Leather Parfum was founded on a simple philosophy: to create anchor products that evoke emotion, stand the test of time, and elevate the modern retail experience.</p>"
+    }
+  ],
+  "presets": [
+    {
+      "name": "About Hero"
+    }
+  ]
+}
+{% endschema %}

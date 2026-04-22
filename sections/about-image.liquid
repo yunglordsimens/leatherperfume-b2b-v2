@@ -1,0 +1,160 @@
+<style>
+  /* ================================================
+     About Image — inline section styles
+     ================================================ */
+
+  .about-image {
+    padding: 0 1rem 4rem;
+    max-width: 90rem;
+    margin: 0 auto;
+  }
+
+  @media screen and (min-width: 750px) {
+    .about-image { padding: 0 1.5rem 6rem; }
+  }
+
+  .about-image__frame {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 1.5rem;
+    overflow: hidden;
+    position: relative;
+    background-color: #292524;
+  }
+
+  @media screen and (min-width: 750px) {
+    .about-image__frame { aspect-ratio: 21 / 9; }
+  }
+
+  .about-image--high-contrast .about-image__frame,
+  html.a11y-high-contrast .about-image__frame {
+    background-color: #ffffff !important;
+    border: 4px solid #000000 !important;
+  }
+
+  /* Actual image */
+  .about-image__img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  /* Amber tint overlay (non-high-contrast only) */
+  .about-image__overlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(146, 64, 14, 0.1);
+    mix-blend-mode: overlay;
+    pointer-events: none;
+  }
+
+  html.a11y-high-contrast .about-image__overlay,
+  .about-image--high-contrast .about-image__overlay {
+    display: none !important;
+  }
+
+  /* Placeholder shown when no image */
+  .about-image__placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #57534e;
+  }
+
+  .about-image__placeholder svg {
+    width: 5rem;
+    height: 5rem;
+  }
+
+  @media screen and (min-width: 750px) {
+    .about-image__placeholder svg { width: 8rem; height: 8rem; }
+  }
+
+  .about-image--high-contrast .about-image__placeholder,
+  html.a11y-high-contrast .about-image__placeholder {
+    color: #000000 !important;
+  }
+</style>
+
+{%- liquid
+  assign high_contrast = section.settings.high_contrast
+  assign section_mod = ''
+  if high_contrast
+    assign section_mod = ' about-image--high-contrast'
+  endif
+-%}
+
+<section
+  class="about-image{{ section_mod }}"
+  id="AboutImage-{{ section.id }}"
+>
+  <div class="about-image__frame">
+
+    {%- if section.settings.image != blank -%}
+      {{
+        section.settings.image
+        | image_url: width: 2400
+        | image_tag:
+          class: 'about-image__img',
+          loading: 'lazy',
+          widths: '750, 1100, 1440, 1920, 2400',
+          sizes: '100vw',
+          alt: section.settings.image.alt | escape
+      }}
+      {%- unless high_contrast -%}
+        <div class="about-image__overlay" aria-hidden="true"></div>
+      {%- endunless -%}
+    {%- else -%}
+      <div class="about-image__placeholder" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+          <circle cx="8.5" cy="8.5" r="1.5"/>
+          <polyline points="21 15 16 10 5 21"/>
+        </svg>
+      </div>
+    {%- endif -%}
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "About Image",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "checkbox",
+      "id": "high_contrast",
+      "label": "High contrast mode",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Cinematic image",
+      "info": "Recommended: at least 2400 × 1000 px for best quality."
+    }
+  ],
+  "presets": [
+    {
+      "name": "About Image"
+    }
+  ]
+}
+{% endschema %}

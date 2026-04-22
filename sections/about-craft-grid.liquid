@@ -1,0 +1,420 @@
+{%- liquid
+  assign high_contrast = section.settings.high_contrast
+  assign section_mod = ''
+  if high_contrast
+    assign section_mod = ' craft-grid--high-contrast'
+  endif
+-%}
+
+<style>
+  /* ================================================
+     About Craft Grid — inline section styles
+     ================================================ */
+
+  .craft-grid {
+    padding: 5rem 1rem;
+    background-color: #f5f5f4;
+    border-top: 1px solid #e7e5e4;
+    border-bottom: 1px solid #e7e5e4;
+  }
+
+  @media screen and (min-width: 750px) {
+    .craft-grid { padding: 8rem 1.5rem; }
+  }
+
+  .craft-grid--high-contrast {
+    background-color: #ffffff;
+    border-top: 4px solid #000000;
+    border-bottom: 4px solid #000000;
+  }
+
+  html.a11y-high-contrast .craft-grid {
+    background-color: #ffffff !important;
+    border-top: 4px solid #000000 !important;
+    border-bottom: 4px solid #000000 !important;
+  }
+
+  .craft-grid__container {
+    max-width: var(--page-width, 80rem);
+    margin: 0 auto;
+  }
+
+  /* ── Section header ─────────────────────────────── */
+
+  .craft-grid__header {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+
+  @media screen and (min-width: 750px) {
+    .craft-grid__header { margin-bottom: 5rem; }
+  }
+
+  .craft-grid__heading {
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight);
+    font-style: var(--font-heading-style);
+    font-size: clamp(2.5rem, 7vw, 3.5rem);
+    line-height: 1.1;
+    color: #1c1917;
+    margin: 0 0 1.5rem;
+  }
+
+  @media screen and (min-width: 750px) {
+    .craft-grid__heading { font-size: clamp(3rem, 8vw, 4rem); }
+  }
+
+  html.a11y-high-contrast .craft-grid__heading { color: #000000 !important; }
+
+  .craft-grid__subheading {
+    font-family: var(--font-body-family);
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    color: #57534e;
+    max-width: 42rem;
+    margin: 0 auto;
+  }
+
+  .craft-grid--high-contrast .craft-grid__subheading,
+  html.a11y-high-contrast .craft-grid__subheading {
+    color: #000000 !important;
+    font-weight: 500 !important;
+  }
+
+  .craft-grid__subheading p { margin: 0; }
+
+  /* ── Cards grid ─────────────────────────────────── */
+
+  .craft-grid__cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem 4rem;
+  }
+
+  @media screen and (min-width: 750px) {
+    .craft-grid__cards { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* ── Card ───────────────────────────────────────── */
+
+  .craft-card {
+    background-color: #ffffff;
+    border: 1px solid #e7e5e4;
+    border-radius: 1.5rem;
+    padding: 2rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  }
+
+  @media screen and (min-width: 750px) {
+    .craft-card { padding: 3rem; }
+  }
+
+  .craft-grid--high-contrast .craft-card,
+  html.a11y-high-contrast .craft-card {
+    border: 4px solid #000000 !important;
+    box-shadow: none !important;
+  }
+
+  /* Icon box */
+  .craft-card__icon-box {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 1rem;
+    background-color: #fffbeb;
+    color: #b45309;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2rem;
+    font-size: 1.75rem;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .craft-grid--high-contrast .craft-card__icon-box,
+  html.a11y-high-contrast .craft-card__icon-box {
+    background-color: #ffffff !important;
+    border: 2px solid #000000 !important;
+    color: #000000 !important;
+  }
+
+  /* Heading */
+  .craft-card__heading {
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight);
+    font-style: var(--font-heading-style);
+    font-size: clamp(1.75rem, 4vw, 2.25rem);
+    line-height: 1.2;
+    color: #1c1917;
+    margin: 0 0 1rem;
+  }
+
+  html.a11y-high-contrast .craft-card__heading { color: #000000 !important; }
+
+  /* Description */
+  .craft-card__desc {
+    font-family: var(--font-body-family);
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #57534e;
+    margin: 0 0 2rem;
+  }
+
+  .craft-grid--high-contrast .craft-card__desc,
+  html.a11y-high-contrast .craft-card__desc {
+    color: #000000 !important;
+    font-weight: 500 !important;
+  }
+
+  .craft-card__desc p { margin: 0; }
+
+  /* Feature list */
+  .craft-card__features {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .craft-card__feature {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-family: var(--font-body-family);
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1c1917;
+  }
+
+  html.a11y-high-contrast .craft-card__feature { color: #000000 !important; }
+
+  .craft-card__check {
+    width: 1.5rem;
+    height: 1.5rem;
+    flex-shrink: 0;
+    color: #16a34a;
+  }
+
+  .craft-grid--high-contrast .craft-card__check,
+  html.a11y-high-contrast .craft-card__check { color: #000000 !important; }
+</style>
+
+<section
+  class="craft-grid{{ section_mod }}"
+  id="AboutCraftGrid-{{ section.id }}"
+>
+  <div class="craft-grid__container">
+
+    <div class="craft-grid__header">
+      {%- if section.settings.heading != blank -%}
+        <h2 class="craft-grid__heading">{{ section.settings.heading | escape }}</h2>
+      {%- endif -%}
+      {%- if section.settings.subheading != blank -%}
+        <div class="craft-grid__subheading">{{ section.settings.subheading }}</div>
+      {%- endif -%}
+    </div>
+
+    <div class="craft-grid__cards">
+
+      {%- for i in (1..2) -%}
+        {%- liquid
+          case i
+            when 1
+              assign card_icon     = section.settings.card_1_icon
+              assign card_heading  = section.settings.card_1_heading
+              assign card_desc     = section.settings.card_1_desc
+              assign card_feat_1   = section.settings.card_1_feat_1
+              assign card_feat_2   = section.settings.card_1_feat_2
+            when 2
+              assign card_icon     = section.settings.card_2_icon
+              assign card_heading  = section.settings.card_2_heading
+              assign card_desc     = section.settings.card_2_desc
+              assign card_feat_1   = section.settings.card_2_feat_1
+              assign card_feat_2   = section.settings.card_2_feat_2
+          endcase
+
+          case card_icon
+            when 'droplet'
+              assign icon_char = '💧'
+            when 'award'
+              assign icon_char = '🏆'
+            when 'star'
+              assign icon_char = '⭐'
+            when 'leaf'
+              assign icon_char = '🌿'
+            when 'gem'
+              assign icon_char = '💎'
+            else
+              assign icon_char = '✦'
+          endcase
+        -%}
+
+        <div class="craft-card">
+          <div class="craft-card__icon-box" aria-hidden="true">{{ icon_char }}</div>
+
+          {%- if card_heading != blank -%}
+            <h3 class="craft-card__heading">{{ card_heading | escape }}</h3>
+          {%- endif -%}
+
+          {%- if card_desc != blank -%}
+            <div class="craft-card__desc">{{ card_desc }}</div>
+          {%- endif -%}
+
+          {%- if card_feat_1 != blank or card_feat_2 != blank -%}
+            <ul class="craft-card__features" role="list">
+              {%- if card_feat_1 != blank -%}
+                <li class="craft-card__feature">
+                  <svg class="craft-card__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                    <polyline points="22 4 12 14.01 9 11.01"/>
+                  </svg>
+                  {{ card_feat_1 | escape }}
+                </li>
+              {%- endif -%}
+              {%- if card_feat_2 != blank -%}
+                <li class="craft-card__feature">
+                  <svg class="craft-card__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                    <polyline points="22 4 12 14.01 9 11.01"/>
+                  </svg>
+                  {{ card_feat_2 | escape }}
+                </li>
+              {%- endif -%}
+            </ul>
+          {%- endif -%}
+        </div>
+
+      {%- endfor -%}
+
+    </div>
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "About Craft Grid",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "checkbox",
+      "id": "high_contrast",
+      "label": "High contrast mode",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Section header"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "The Art of Creation"
+    },
+    {
+      "type": "richtext",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "<p>We don't compromise on quality. Our collections are developed in partnership with master perfumers and artisan leatherworkers across Europe.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Card 1"
+    },
+    {
+      "type": "select",
+      "id": "card_1_icon",
+      "label": "Icon",
+      "options": [
+        { "value": "droplet",  "label": "💧 Droplet" },
+        { "value": "award",    "label": "🏆 Award" },
+        { "value": "star",     "label": "⭐ Star" },
+        { "value": "leaf",     "label": "🌿 Leaf" },
+        { "value": "gem",      "label": "💎 Gem" }
+      ],
+      "default": "droplet"
+    },
+    {
+      "type": "text",
+      "id": "card_1_heading",
+      "label": "Card 1 heading",
+      "default": "Niche Formulation"
+    },
+    {
+      "type": "richtext",
+      "id": "card_1_desc",
+      "label": "Card 1 description",
+      "default": "<p>Sourcing raw ingredients directly from Grasse, France, our fragrances are highly concentrated (Eau de Parfum and Extrait). This ensures incredible longevity and projection—qualities that turn first-time buyers into loyal brand advocates.</p>"
+    },
+    {
+      "type": "text",
+      "id": "card_1_feat_1",
+      "label": "Feature 1",
+      "default": "Long-lasting sillage"
+    },
+    {
+      "type": "text",
+      "id": "card_1_feat_2",
+      "label": "Feature 2",
+      "default": "Ethically sourced ingredients"
+    },
+    {
+      "type": "header",
+      "content": "Card 2"
+    },
+    {
+      "type": "select",
+      "id": "card_2_icon",
+      "label": "Icon",
+      "options": [
+        { "value": "droplet",  "label": "💧 Droplet" },
+        { "value": "award",    "label": "🏆 Award" },
+        { "value": "star",     "label": "⭐ Star" },
+        { "value": "leaf",     "label": "🌿 Leaf" },
+        { "value": "gem",      "label": "💎 Gem" }
+      ],
+      "default": "award"
+    },
+    {
+      "type": "text",
+      "id": "card_2_heading",
+      "label": "Card 2 heading",
+      "default": "Mastery of Leather"
+    },
+    {
+      "type": "richtext",
+      "id": "card_2_desc",
+      "label": "Card 2 description",
+      "default": "<p>Every belt, wallet, and accessory is crafted from full-grain Italian leather. We celebrate the natural imperfections of the material, meaning every piece ages beautifully and develops a unique patina over time.</p>"
+    },
+    {
+      "type": "text",
+      "id": "card_2_feat_1",
+      "label": "Feature 1",
+      "default": "Full-grain Italian leather"
+    },
+    {
+      "type": "text",
+      "id": "card_2_feat_2",
+      "label": "Feature 2",
+      "default": "Hand-finished edges"
+    }
+  ],
+  "presets": [
+    {
+      "name": "About Craft Grid"
+    }
+  ]
+}
+{% endschema %}

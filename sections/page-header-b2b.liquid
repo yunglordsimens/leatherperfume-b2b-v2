@@ -1,0 +1,175 @@
+{%- liquid
+  assign high_contrast = section.settings.high_contrast
+  assign section_mod = ''
+  if high_contrast
+    assign section_mod = ' page-header-b2b--high-contrast'
+  endif
+-%}
+
+<style>
+  /* ================================================
+     Page Header B2B — inline section styles
+     ================================================ */
+
+  .page-header-b2b {
+    padding: 4rem 1.5rem;
+    text-align: center;
+    background-color: #f5f5f4;
+    border-bottom: 1px solid #e7e5e4;
+  }
+
+  @media screen and (min-width: 750px) {
+    .page-header-b2b {
+      padding: 6rem 1.5rem;
+    }
+  }
+
+  .page-header-b2b--high-contrast {
+    background-color: #ffffff;
+    border-bottom: 4px solid #000000;
+  }
+
+  html.a11y-high-contrast .page-header-b2b {
+    background-color: #ffffff !important;
+    border-bottom: 4px solid #000000 !important;
+  }
+
+  .page-header-b2b__inner {
+    max-width: 56rem;
+    margin: 0 auto;
+  }
+
+  /* ── Eyebrow ───────────────────────────────── */
+
+  .page-header-b2b__eyebrow {
+    display: block;
+    font-family: var(--font-body-family);
+    font-weight: 700;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: #b45309;
+    margin: 0 0 1rem;
+  }
+
+  .page-header-b2b--high-contrast .page-header-b2b__eyebrow,
+  html.a11y-high-contrast .page-header-b2b__eyebrow {
+    color: #000000 !important;
+  }
+
+  /* ── Heading ───────────────────────────────── */
+
+  .page-header-b2b__heading {
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight);
+    font-style: var(--font-heading-style);
+    font-size: clamp(2.75rem, 8vw, 4rem);
+    line-height: 1.1;
+    color: #1c1917;
+    margin: 0 0 2rem;
+  }
+
+  @media screen and (min-width: 750px) {
+    .page-header-b2b__heading {
+      font-size: clamp(3.5rem, 9vw, 5rem);
+    }
+  }
+
+  html.a11y-high-contrast .page-header-b2b__heading {
+    color: #000000 !important;
+  }
+
+  /* ── Description ───────────────────────────── */
+
+  .page-header-b2b__desc {
+    font-family: var(--font-body-family);
+    font-weight: var(--font-body-weight);
+    font-size: 1rem;
+    line-height: 1.65;
+    color: #57534e;
+    max-width: 44rem;
+    margin: 0 auto;
+  }
+
+  .page-header-b2b--high-contrast .page-header-b2b__desc,
+  html.a11y-high-contrast .page-header-b2b__desc {
+    color: #000000 !important;
+    font-weight: 500;
+  }
+
+  .page-header-b2b__desc p {
+    margin: 0;
+  }
+</style>
+
+<section
+  class="page-header-b2b{{ section_mod }}"
+  id="PageHeaderB2B-{{ section.id }}"
+>
+  <div class="page-header-b2b__inner">
+
+    {%- if section.settings.eyebrow != blank -%}
+      <span class="page-header-b2b__eyebrow">{{ section.settings.eyebrow | escape }}</span>
+    {%- endif -%}
+
+    {%- if section.settings.heading != blank -%}
+      <h1 class="page-header-b2b__heading">{{ section.settings.heading | escape }}</h1>
+    {%- endif -%}
+
+    {%- if section.settings.description != blank -%}
+      <div class="page-header-b2b__desc">{{ section.settings.description }}</div>
+    {%- endif -%}
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Page Header B2B",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "checkbox",
+      "id": "high_contrast",
+      "label": "High contrast mode",
+      "info": "White background with black border.",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow text",
+      "default": "B2B Solutions"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Wholesale Packages"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>We've designed business packages to make it easy to start or expand your retail operation. Each package is curated by our team and comes with a special wholesale discount.</p>"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Page Header B2B"
+    }
+  ]
+}
+{% endschema %}

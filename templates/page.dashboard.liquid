@@ -1,0 +1,27 @@
+{% comment %}
+  B2B access guard — redirect non-wholesale customers to the wholesale login page.
+  Customers must be logged in AND have the 'wholesale' tag on their account.
+{% endcomment %}
+
+{%- unless customer and customer.tags contains 'wholesale' -%}
+  {%- if customer -%}
+    {%- comment -%}Logged in but not a wholesale partner — redirect to application page{%- endcomment -%}
+    <script>window.location.replace('{{ routes.root_url }}pages/application');</script>
+    <noscript><meta http-equiv="refresh" content="0;url={{ routes.root_url }}pages/application"></noscript>
+  {%- else -%}
+    {%- comment -%}Not logged in — redirect to wholesale login{%- endcomment -%}
+    <script>window.location.replace('{{ routes.root_url }}pages/login');</script>
+    <noscript><meta http-equiv="refresh" content="0;url={{ routes.root_url }}pages/login"></noscript>
+  {%- endif -%}
+{%- else -%}
+
+  {% section 'dashboard-header' %}
+  {% section 'dashboard-content' %}
+
+{%- endunless -%}
+
+{% schema %}
+{
+  "name": "Dashboard"
+}
+{% endschema %}

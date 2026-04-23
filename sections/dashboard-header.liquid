@@ -1,0 +1,254 @@
+{%- liquid
+  assign high_contrast = section.settings.high_contrast
+  assign section_mod = ''
+  if high_contrast
+    assign section_mod = ' dh--high-contrast'
+  endif
+
+  assign customer_name = customer.first_name | default: ''
+  if customer_name == blank
+    assign welcome = section.settings.heading | default: 'Welcome back'
+  else
+    assign welcome = section.settings.heading | default: 'Welcome back, ' | append: customer_name | append: '!'
+  endif
+-%}
+
+<style>
+  .dh {
+    background-color: #1c1917;
+    padding: 2rem 1.5rem;
+  }
+
+  @media screen and (min-width: 750px) {
+    .dh { padding: 2.5rem 2rem; }
+  }
+
+  @media screen and (min-width: 990px) {
+    .dh { padding: 3rem 2.5rem; }
+  }
+
+  .dh__inner {
+    max-width: var(--page-width, 1440px);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  @media screen and (min-width: 750px) {
+    .dh__inner {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+    }
+  }
+
+  .dh__text {}
+
+  .dh__eyebrow {
+    display: inline-block;
+    font-family: var(--font-body-family);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #d97706;
+    margin-bottom: 0.5rem;
+  }
+
+  .dh--high-contrast .dh__eyebrow,
+  html.a11y-high-contrast .dh__eyebrow {
+    color: #fbbf24;
+  }
+
+  .dh__heading {
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight);
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    color: #fafaf9;
+    line-height: 1.2;
+    margin: 0 0 0.5rem;
+  }
+
+  html.a11y-high-contrast .dh__heading {
+    color: #ffffff;
+  }
+
+  .dh__sub {
+    font-family: var(--font-body-family);
+    font-size: 0.9375rem;
+    color: #a8a29e;
+    margin: 0;
+  }
+
+  html.a11y-high-contrast .dh__sub {
+    color: #d4d4d4;
+  }
+
+  .dh__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-shrink: 0;
+  }
+
+  .dh__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.875rem 1.5rem;
+    font-family: var(--font-body-family);
+    font-size: 0.9375rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.075em;
+    color: #ffffff;
+    background-color: #b45309;
+    border: 2px solid #b45309;
+    border-radius: 0.75rem;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .dh__btn:hover {
+    background-color: #92400e;
+    border-color: #92400e;
+    color: #ffffff;
+  }
+
+  .dh--high-contrast .dh__btn,
+  html.a11y-high-contrast .dh__btn {
+    background-color: #ffffff;
+    border-color: #ffffff;
+    color: #000000;
+  }
+
+  html.a11y-high-contrast .dh__btn:hover {
+    background-color: #e5e5e5;
+    border-color: #e5e5e5;
+  }
+
+  .dh__btn-icon {
+    width: 1.125rem;
+    height: 1.125rem;
+    flex-shrink: 0;
+  }
+
+  .dh__divider {
+    width: 100%;
+    height: 1px;
+    background-color: #292524;
+    margin: 0;
+    border: none;
+  }
+
+  html.a11y-high-contrast .dh__divider {
+    background-color: #555555;
+  }
+</style>
+
+<div class="dh{{ section_mod }}" id="DashboardHeader-{{ section.id }}">
+  <div class="dh__inner">
+    <div class="dh__text">
+      <span class="dh__eyebrow">Partner Dashboard</span>
+      <h1 class="dh__heading">
+        {%- if customer.first_name != blank -%}
+          {{ section.settings.welcome_prefix | default: 'Welcome back,' }} {{ customer.first_name }}!
+        {%- else -%}
+          {{ section.settings.heading | default: 'Welcome back' }}
+        {%- endif -%}
+      </h1>
+      {%- if section.settings.welcome_text != blank -%}
+        <p class="dh__sub">{{ section.settings.welcome_text }}</p>
+      {%- else -%}
+        <p class="dh__sub">Manage your orders, invoices and account settings.</p>
+      {%- endif -%}
+    </div>
+
+    <div class="dh__actions">
+      <a
+        href="{{ section.settings.order_link | default: '/collections/all' }}"
+        class="dh__btn"
+        aria-label="{{ section.settings.button_text | default: 'New Order' }}"
+      >
+        <svg class="dh__btn-icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+        </svg>
+        {{ section.settings.button_text | default: 'New Order' }}
+      </a>
+    </div>
+  </div>
+</div>
+
+<hr class="dh__divider">
+
+{% schema %}
+{
+  "name": "Dashboard Header",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "checkbox",
+      "id": "high_contrast",
+      "label": "High contrast mode",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "welcome_prefix",
+      "label": "Welcome prefix",
+      "default": "Welcome back,",
+      "info": "Shown before the customer's first name."
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Fallback heading",
+      "default": "Welcome back",
+      "info": "Used when the customer's name is not available."
+    },
+    {
+      "type": "text",
+      "id": "welcome_text",
+      "label": "Subtitle",
+      "default": "Manage your orders, invoices and account settings."
+    },
+    {
+      "type": "header",
+      "content": "CTA Button"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button label",
+      "default": "New Order"
+    },
+    {
+      "type": "url",
+      "id": "order_link",
+      "label": "Button link",
+      "info": "Default: /collections/all"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Dashboard Header"
+    }
+  ]
+}
+{% endschema %}

@@ -27,7 +27,7 @@
     "massy-form-wrapper": {
       "type": "massy-form-wrapper",
       "settings": {
-        "high_contrast": true
+        "high_contrast": false
       }
     }
   },

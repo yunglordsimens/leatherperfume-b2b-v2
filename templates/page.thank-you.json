@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "cart-success": {
+      "type": "cart-success-b2b",
+      "settings": {}
+    }
+  },
+  "order": ["cart-success"]
+}

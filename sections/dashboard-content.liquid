@@ -1,385 +1,268 @@
 {%- liquid
-  assign high_contrast = section.settings.high_contrast
-  assign section_mod = ''
-  if high_contrast
-    assign section_mod = ' dc--high-contrast'
-  endif
+  assign mgr_name  = section.settings.manager_name  | default: 'Your Account Manager'
+  assign mgr_email = section.settings.manager_email | default: 'wholesale@leatherparfum.com'
+  assign mgr_phone = section.settings.manager_phone | default: ''
 
-  assign discount_tier = customer.metafields.custom.discount_tier | default: 'Standard'
-  assign manager_name  = section.settings.manager_name  | default: 'Account Manager'
-  assign manager_email = section.settings.manager_email | default: ''
-  assign manager_phone = section.settings.manager_phone | default: ''
+  assign tier       = customer.metafields.custom.discount_tier        | default: '—'
+  assign disc_pct   = customer.metafields.custom.discount_percentage  | default: '0'
 -%}
 
 <style>
-  /* ── Shell ─────────────────────────────────────────── */
+  /* ─── layout ─────────────────────────────────────────── */
   .dc {
     background-color: #f5f5f4;
-    padding: 2rem 1.5rem;
-    min-height: 60vh;
+    padding: 2.5rem 1.5rem 4rem;
   }
-
-  @media screen and (min-width: 990px) {
-    .dc { padding: 3rem 2.5rem; }
-  }
+  html.a11y-high-contrast .dc { background-color: #ffffff !important; }
 
   .dc__inner {
     max-width: var(--page-width, 1440px);
     margin: 0 auto;
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
   }
 
   @media screen and (min-width: 990px) {
     .dc__inner {
-      grid-template-columns: 240px 1fr;
-      align-items: start;
-      gap: 2rem;
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 2.5rem;
     }
   }
 
-  /* ── Sidebar / nav ─────────────────────────────────── */
-  .dc__sidebar {
-    background-color: #ffffff;
+  /* ─── sidebar nav ─────────────────────────────────────── */
+  .dc__nav {
+    background: #ffffff;
     border: 1px solid #e7e5e4;
     border-radius: 1rem;
     overflow: hidden;
+    flex-shrink: 0;
   }
 
-  @media screen and (min-width: 990px) {
-    .dc__sidebar {
-      position: sticky;
-      top: 9rem;
-    }
-  }
+  @media screen and (min-width: 990px) { .dc__nav { width: 14rem; } }
 
-  .dc__nav {
-    display: flex;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    gap: 0;
-  }
-
-  .dc__nav::-webkit-scrollbar { display: none; }
-
-  @media screen and (min-width: 990px) {
-    .dc__nav { flex-direction: column; }
-  }
+  html.a11y-high-contrast .dc__nav { border: 2px solid #000000 !important; }
 
   .dc__nav-btn {
     display: flex;
     align-items: center;
-    gap: 0.625rem;
+    gap: 0.75rem;
+    width: 100%;
     padding: 0.875rem 1.25rem;
     font-family: var(--font-body-family);
     font-size: 0.9375rem;
-    font-weight: 500;
-    color: #78716c;
-    background: none;
+    font-weight: 600;
+    color: #57534e;
+    background: transparent;
     border: none;
-    border-bottom: 2px solid transparent;
+    border-bottom: 1px solid #f5f5f4;
     cursor: pointer;
-    white-space: nowrap;
-    transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
     text-align: left;
-    width: auto;
+    transition: background-color 0.12s ease, color 0.12s ease;
   }
+  .dc__nav-btn:last-child { border-bottom: none; }
+  .dc__nav-btn:hover { background-color: #f5f5f4; color: #1c1917; }
+  .dc__nav-btn.is-active { background-color: #1c1917; color: #ffffff; }
 
-  @media screen and (min-width: 990px) {
-    .dc__nav-btn {
-      width: 100%;
-      padding: 0.9rem 1.25rem;
-      border-bottom: none;
-      border-left: 3px solid transparent;
-    }
-  }
-
-  .dc__nav-btn:hover {
-    color: #1c1917;
-    background-color: #fafaf9;
-  }
-
-  .dc__nav-btn.is-active {
-    color: #b45309;
-    font-weight: 700;
-    background-color: #fffbeb;
-    border-bottom-color: #b45309;
-  }
-
-  @media screen and (min-width: 990px) {
-    .dc__nav-btn.is-active {
-      border-bottom-color: transparent;
-      border-left-color: #b45309;
-    }
-  }
-
-  .dc--high-contrast .dc__nav-btn.is-active,
   html.a11y-high-contrast .dc__nav-btn.is-active {
-    color: #000000;
-    background-color: #f0f0f0;
-    border-left-color: #000000;
-    border-bottom-color: #000000;
+    background-color: #000000 !important;
+    color: #ffffff !important;
   }
 
-  .dc__nav-icon {
-    width: 1.125rem;
-    height: 1.125rem;
-    flex-shrink: 0;
-  }
+  .dc__nav-icon { width: 1rem; height: 1rem; flex-shrink: 0; opacity: 0.7; }
+  .dc__nav-btn.is-active .dc__nav-icon { opacity: 1; }
 
-  /* ── Main panel ────────────────────────────────────── */
-  .dc__panel {
-    display: none;
-  }
+  /* ─── panels ──────────────────────────────────────────── */
+  .dc__panels { flex: 1; min-width: 0; }
+  .dc__panel { display: none; }
+  .dc__panel.is-active { display: block; }
 
-  .dc__panel.is-active {
-    display: block;
-  }
-
-  /* ── Cards grid (overview) ─────────────────────────── */
+  /* ─── stat cards ──────────────────────────────────────── */
   .dc__cards {
     display: grid;
     grid-template-columns: 1fr;
     gap: 1rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
   }
-
-  @media screen and (min-width: 600px) {
-    .dc__cards { grid-template-columns: repeat(2, 1fr); }
-  }
-
-  @media screen and (min-width: 1200px) {
-    .dc__cards { grid-template-columns: repeat(3, 1fr); }
-  }
+  @media screen and (min-width: 600px) { .dc__cards { grid-template-columns: repeat(2, 1fr); } }
+  @media screen and (min-width: 990px) { .dc__cards { grid-template-columns: repeat(3, 1fr); } }
 
   .dc__card {
-    background-color: #ffffff;
+    background: #ffffff;
     border: 1px solid #e7e5e4;
     border-radius: 1rem;
-    padding: 1.25rem 1.5rem;
+    padding: 1.5rem;
   }
-
-  .dc--high-contrast .dc__card,
-  html.a11y-high-contrast .dc__card {
-    border: 2px solid #000000;
-  }
+  html.a11y-high-contrast .dc__card { border: 2px solid #000000 !important; }
 
   .dc__card-label {
     font-family: var(--font-body-family);
     font-size: 0.75rem;
     font-weight: 700;
-    letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: #a8a29e;
+    letter-spacing: 0.07em;
+    color: #78716c;
     margin: 0 0 0.5rem;
   }
+  html.a11y-high-contrast .dc__card-label { color: #000000 !important; }
 
   .dc__card-value {
     font-family: var(--font-heading-family);
     font-weight: var(--font-heading-weight);
-    font-size: clamp(1.25rem, 2.5vw, 1.625rem);
+    font-size: 1.75rem;
     color: #1c1917;
-    margin: 0 0 0.25rem;
+    line-height: 1.2;
+    margin: 0 0 0.375rem;
   }
+  html.a11y-high-contrast .dc__card-value { color: #000000 !important; }
 
   .dc__card-sub {
     font-family: var(--font-body-family);
     font-size: 0.8125rem;
-    color: #a8a29e;
+    color: #78716c;
     margin: 0;
   }
+  html.a11y-high-contrast .dc__card-sub { color: #000000 !important; }
 
-  .dc__card--tier .dc__card-value { color: #b45309; }
-
-  html.a11y-high-contrast .dc__card-value,
-  html.a11y-high-contrast .dc__card--tier .dc__card-value {
-    color: #000000;
-  }
-
-  /* Manager card */
-  .dc__card--manager {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .dc__manager-name {
-    font-family: var(--font-body-family);
-    font-size: 1rem;
+  /* tier badge */
+  .dc__tier-badge {
+    display: inline-block;
+    padding: 0.2rem 0.65rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
     font-weight: 700;
-    color: #1c1917;
-    margin: 0;
+    background-color: #d97706;
+    color: #ffffff;
+    margin-left: 0.5rem;
+    vertical-align: middle;
+  }
+  html.a11y-high-contrast .dc__tier-badge {
+    background-color: #000000 !important;
+    color: #ffffff !important;
   }
 
-  html.a11y-high-contrast .dc__manager-name { color: #000000; }
-
-  .dc__manager-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    font-family: var(--font-body-family);
-    font-size: 0.875rem;
-    color: #b45309;
-    text-decoration: none;
-  }
-
-  .dc__manager-link:hover { text-decoration: underline; }
-
-  html.a11y-high-contrast .dc__manager-link { color: #000000; }
-
-  /* ── Section heading ───────────────────────────────── */
-  .dc__section-heading {
+  /* ─── section title ───────────────────────────────────── */
+  .dc__section-title {
     font-family: var(--font-heading-family);
     font-weight: var(--font-heading-weight);
-    font-size: 1.125rem;
+    font-size: 1.25rem;
     color: #1c1917;
     margin: 0 0 1rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 1px solid #e7e5e4;
   }
+  html.a11y-high-contrast .dc__section-title { color: #000000 !important; }
 
-  html.a11y-high-contrast .dc__section-heading {
-    color: #000000;
-    border-bottom-color: #000000;
-  }
-
-  /* ── Orders table ──────────────────────────────────── */
-  .dc__orders-wrap {
-    background-color: #ffffff;
+  /* ─── table ───────────────────────────────────────────── */
+  .dc__table-wrap {
+    background: #ffffff;
     border: 1px solid #e7e5e4;
     border-radius: 1rem;
     overflow: hidden;
   }
-
-  .dc--high-contrast .dc__orders-wrap,
-  html.a11y-high-contrast .dc__orders-wrap {
-    border: 2px solid #000000;
-  }
+  html.a11y-high-contrast .dc__table-wrap { border: 2px solid #000000 !important; }
 
   .dc__table {
     width: 100%;
     border-collapse: collapse;
     font-family: var(--font-body-family);
-    font-size: 0.9375rem;
+    font-size: 0.875rem;
   }
 
-  .dc__table thead {
-    background-color: #fafaf9;
-  }
+  .dc__table thead { background-color: #f5f5f4; }
+  html.a11y-high-contrast .dc__table thead { background-color: #ffffff !important; }
 
   .dc__table th {
-    padding: 0.875rem 1.25rem;
+    padding: 0.75rem 1rem;
     text-align: left;
     font-size: 0.75rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
     color: #78716c;
-    border-bottom: 1px solid #e7e5e4;
     white-space: nowrap;
+    border-bottom: 1px solid #e7e5e4;
   }
-
-  html.a11y-high-contrast .dc__table th {
-    color: #000000;
-    border-bottom-color: #000000;
-  }
+  html.a11y-high-contrast .dc__table th { color: #000000 !important; border-bottom: 2px solid #000000 !important; }
 
   .dc__table td {
-    padding: 1rem 1.25rem;
+    padding: 0.875rem 1rem;
     color: #1c1917;
     border-bottom: 1px solid #f5f5f4;
     vertical-align: middle;
   }
+  .dc__table tbody tr:last-child td { border-bottom: none; }
+  html.a11y-high-contrast .dc__table td { color: #000000 !important; border-bottom: 1px solid #cccccc !important; }
 
-  html.a11y-high-contrast .dc__table td {
-    color: #000000;
-    border-bottom-color: #cccccc;
+  .dc__table tbody tr:hover td { background-color: #fafaf9; }
+
+  .dc__order-link {
+    font-weight: 700;
+    color: #1c1917;
+    text-decoration: none;
   }
+  .dc__order-link:hover { text-decoration: underline; }
+  html.a11y-high-contrast .dc__order-link { color: #000000 !important; text-decoration: underline; }
 
-  .dc__table tr:last-child td { border-bottom: none; }
-
-  .dc__table tbody tr:hover { background-color: #fafaf9; }
-
-  /* Mobile responsive table */
-  @media screen and (max-width: 749px) {
-    .dc__table thead { display: none; }
-
-    .dc__table tbody tr {
-      display: block;
-      padding: 0.875rem 1.25rem;
-      border-bottom: 1px solid #e7e5e4;
-    }
-
-    .dc__table tbody tr:last-child { border-bottom: none; }
-
-    .dc__table td {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0.25rem 0;
-      border-bottom: none;
-      font-size: 0.875rem;
-    }
-
-    .dc__table td::before {
-      content: attr(data-label);
-      font-weight: 700;
-      font-size: 0.75rem;
-      color: #78716c;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-right: 0.5rem;
-      flex-shrink: 0;
-    }
-  }
-
-  /* Status badge */
+  /* status badges */
   .dc__badge {
     display: inline-block;
-    padding: 0.25rem 0.625rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
     font-size: 0.75rem;
     font-weight: 700;
-    border-radius: 999px;
     text-transform: capitalize;
   }
-
-  .dc__badge--paid {
-    background-color: #dcfce7;
-    color: #15803d;
-  }
-
-  .dc__badge--pending,
-  .dc__badge--unpaid {
-    background-color: #fef3c7;
-    color: #92400e;
-  }
-
-  .dc__badge--refunded,
-  .dc__badge--voided {
-    background-color: #fee2e2;
-    color: #dc2626;
-  }
+  .dc__badge--paid    { background-color: #d1fae5; color: #065f46; }
+  .dc__badge--pending { background-color: #fef3c7; color: #92400e; }
+  .dc__badge--refunded, .dc__badge--voided { background-color: #fee2e2; color: #991b1b; }
+  .dc__badge--other   { background-color: #e7e5e4; color: #44403c; }
 
   html.a11y-high-contrast .dc__badge {
-    background-color: #000000 !important;
-    color: #ffffff !important;
-    border: 1px solid #ffffff;
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border: 1px solid #000000 !important;
   }
 
-  /* Order link */
-  .dc__order-link {
-    color: #b45309;
-    text-decoration: none;
+  /* action buttons */
+  .dc__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.375rem 0.75rem;
+    font-family: var(--font-body-family);
+    font-size: 0.8125rem;
     font-weight: 600;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.12s ease, border-color 0.12s ease;
+    white-space: nowrap;
+  }
+  .dc__btn--outline {
+    color: #1c1917;
+    background: #ffffff;
+    border: 1px solid #d6d3d1;
+  }
+  .dc__btn--outline:hover { background-color: #f5f5f4; border-color: #a8a29e; }
+  .dc__btn--dark {
+    color: #ffffff;
+    background: #1c1917;
+    border: 1px solid #1c1917;
+  }
+  .dc__btn--dark:hover { background-color: #292524; }
+
+  html.a11y-high-contrast .dc__btn--outline {
+    border: 2px solid #000000 !important;
+    color: #000000 !important;
+  }
+  html.a11y-high-contrast .dc__btn--dark {
+    background-color: #000000 !important;
+    border: 2px solid #000000 !important;
   }
 
-  .dc__order-link:hover { text-decoration: underline; }
+  .dc__btn-group { display: flex; gap: 0.375rem; flex-wrap: wrap; }
 
-  html.a11y-high-contrast .dc__order-link { color: #000000; }
-
-  /* Empty state */
+  /* ─── empty state ─────────────────────────────────────── */
   .dc__empty {
     padding: 3rem 1.5rem;
     text-align: center;
@@ -387,362 +270,409 @@
     font-family: var(--font-body-family);
     font-size: 0.9375rem;
   }
+  html.a11y-high-contrast .dc__empty { color: #000000 !important; }
 
-  /* ── Placeholder panels ────────────────────────────── */
-  .dc__placeholder {
-    background-color: #ffffff;
-    border: 1px solid #e7e5e4;
+  /* ─── account manager card ────────────────────────────── */
+  .dc__mgr {
+    background: #1c1917;
     border-radius: 1rem;
-    padding: 3rem 2rem;
-    text-align: center;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
   }
+  html.a11y-high-contrast .dc__mgr { background-color: #000000 !important; border: 2px solid #000000 !important; }
 
-  .dc__placeholder-icon {
-    width: 3rem;
-    height: 3rem;
-    color: #d6d3d1;
-    margin: 0 auto 1rem;
+  .dc__mgr-label {
+    font-family: var(--font-body-family);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #a8a29e;
+    margin: 0 0 0.5rem;
   }
-
-  .dc__placeholder-heading {
+  .dc__mgr-name {
     font-family: var(--font-heading-family);
     font-weight: var(--font-heading-weight);
     font-size: 1.125rem;
-    color: #1c1917;
-    margin: 0 0 0.5rem;
+    color: #ffffff;
+    margin: 0 0 0.875rem;
   }
-
-  .dc__placeholder-text {
-    font-family: var(--font-body-family);
-    font-size: 0.9375rem;
-    color: #78716c;
-    margin: 0 0 1.5rem;
+  .dc__mgr-contact {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
   }
-
-  .dc__placeholder-btn {
+  .dc__mgr-link {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.75rem 1.5rem;
+    font-family: var(--font-body-family);
+    font-size: 0.875rem;
+    color: #d6d3d1;
+    text-decoration: none;
+  }
+  .dc__mgr-link:hover { color: #ffffff; text-decoration: underline; }
+  .dc__mgr-link svg { width: 0.875rem; height: 0.875rem; flex-shrink: 0; }
+
+  /* ─── placeholder panel ───────────────────────────────── */
+  .dc__coming-soon {
+    background: #ffffff;
+    border: 1px solid #e7e5e4;
+    border-radius: 1rem;
+    padding: 4rem 2rem;
+    text-align: center;
+  }
+  html.a11y-high-contrast .dc__coming-soon { border: 2px solid #000000 !important; }
+
+  .dc__coming-soon svg { width: 3rem; height: 3rem; color: #d6d3d1; margin-bottom: 1rem; }
+  html.a11y-high-contrast .dc__coming-soon svg { color: #000000 !important; }
+  .dc__coming-soon h3 {
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight);
+    font-size: 1.25rem;
+    color: #1c1917;
+    margin: 0 0 0.5rem;
+  }
+  .dc__coming-soon p {
+    font-family: var(--font-body-family);
+    font-size: 0.9375rem;
+    color: #78716c;
+    margin: 0;
+  }
+  html.a11y-high-contrast .dc__coming-soon h3,
+  html.a11y-high-contrast .dc__coming-soon p { color: #000000 !important; }
+
+  /* ─── auth gate ───────────────────────────────────────── */
+  .dc__auth-gate {
+    background: #ffffff;
+    border: 1px solid #e7e5e4;
+    border-radius: 1rem;
+    padding: 4rem 2rem;
+    text-align: center;
+    max-width: 30rem;
+    margin: 0 auto;
+  }
+  html.a11y-high-contrast .dc__auth-gate { border: 2px solid #000000 !important; }
+  .dc__auth-gate h2 {
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight);
+    font-size: 1.5rem;
+    color: #1c1917;
+    margin: 0 0 0.75rem;
+  }
+  .dc__auth-gate p {
+    font-family: var(--font-body-family);
+    font-size: 0.9375rem;
+    color: #57534e;
+    margin: 0 0 1.5rem;
+  }
+  .dc__auth-gate a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.875rem 2rem;
+    background-color: #1c1917;
+    color: #ffffff;
     font-family: var(--font-body-family);
     font-size: 0.9375rem;
     font-weight: 700;
-    color: #ffffff;
-    background-color: #1c1917;
-    border: 2px solid #1c1917;
     border-radius: 0.75rem;
-    cursor: pointer;
     text-decoration: none;
-    transition: background-color 0.2s, border-color 0.2s;
   }
+  .dc__auth-gate a:hover { background-color: #292524; }
 
-  .dc__placeholder-btn:hover {
-    background-color: #b45309;
-    border-color: #b45309;
-    color: #ffffff;
-  }
-
-  html.a11y-high-contrast .dc__placeholder-btn {
-    background-color: #000000;
-    border-color: #000000;
-  }
+  /* table scroll on mobile */
+  .dc__table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 </style>
 
-<div class="dc{{ section_mod }}" id="DashboardContent-{{ section.id }}">
+{%- unless customer -%}
+  <div class="dc">
+    <div class="dc__inner" style="justify-content: center;">
+      <div class="dc__auth-gate">
+        <h2>{{ section.settings.auth_heading | default: 'Sign in to access your dashboard' }}</h2>
+        <p>{{ section.settings.auth_text | default: 'Please log in with your wholesale account to view your dashboard.' }}</p>
+        <a href="/account/login?return_url={{ request.path | url_encode }}">{{ section.settings.auth_btn | default: 'Sign in' }}</a>
+      </div>
+    </div>
+  </div>
+{%- else -%}
+
+<div class="dc" id="DashboardContent-{{ section.id }}">
   <div class="dc__inner">
 
-    <!-- Sidebar / Nav -->
-    <nav class="dc__sidebar" aria-label="Dashboard navigation">
-      <div class="dc__nav" role="tablist">
-        <button
-          class="dc__nav-btn is-active"
-          role="tab"
-          aria-selected="true"
-          aria-controls="DcPanel-overview-{{ section.id }}"
-          data-dc-tab="overview"
-          id="DcTab-overview-{{ section.id }}"
-        >
-          <svg class="dc__nav-icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
-          </svg>
-          Overview
-        </button>
-
-        <button
-          class="dc__nav-btn"
-          role="tab"
-          aria-selected="false"
-          aria-controls="DcPanel-orders-{{ section.id }}"
-          data-dc-tab="orders"
-          id="DcTab-orders-{{ section.id }}"
-        >
-          <svg class="dc__nav-icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007z" />
-          </svg>
-          Orders
-        </button>
-
-        <button
-          class="dc__nav-btn"
-          role="tab"
-          aria-selected="false"
-          aria-controls="DcPanel-invoices-{{ section.id }}"
-          data-dc-tab="invoices"
-          id="DcTab-invoices-{{ section.id }}"
-        >
-          <svg class="dc__nav-icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-          </svg>
-          Invoices
-        </button>
-
-        <button
-          class="dc__nav-btn"
-          role="tab"
-          aria-selected="false"
-          aria-controls="DcPanel-settings-{{ section.id }}"
-          data-dc-tab="settings"
-          id="DcTab-settings-{{ section.id }}"
-        >
-          <svg class="dc__nav-icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 010 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 010-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28z" />
-            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-          </svg>
-          Settings
-        </button>
-      </div>
+    <!-- ── sidebar nav ─────────────────────────────────── -->
+    <nav class="dc__nav" aria-label="Dashboard navigation">
+      <button class="dc__nav-btn is-active" type="button" data-dc-tab="overview">
+        <svg class="dc__nav-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        {{ section.settings.tab_overview | default: 'Overview' }}
+      </button>
+      <button class="dc__nav-btn" type="button" data-dc-tab="orders">
+        <svg class="dc__nav-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        {{ section.settings.tab_orders | default: 'Order History' }}
+      </button>
+      <button class="dc__nav-btn" type="button" data-dc-tab="invoices">
+        <svg class="dc__nav-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        {{ section.settings.tab_invoices | default: 'Invoices' }}
+      </button>
+      <button class="dc__nav-btn" type="button" data-dc-tab="settings">
+        <svg class="dc__nav-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        {{ section.settings.tab_settings | default: 'Settings' }}
+      </button>
     </nav>
 
-    <!-- Main content -->
-    <div class="dc__main">
+    <!-- ── panels ──────────────────────────────────────── -->
+    <div class="dc__panels">
 
-      <!-- ── Overview tab ──────────────────────────────── -->
-      <div
-        class="dc__panel is-active"
-        id="DcPanel-overview-{{ section.id }}"
-        role="tabpanel"
-        aria-labelledby="DcTab-overview-{{ section.id }}"
-      >
+      <!-- Overview panel -->
+      <div class="dc__panel is-active" id="dc-panel-overview" role="tabpanel">
+
+        <!-- stat cards -->
         <div class="dc__cards">
 
-          <!-- Discount Tier -->
-          <div class="dc__card dc__card--tier">
-            <p class="dc__card-label">Discount Tier</p>
-            <p class="dc__card-value">{{ discount_tier }}</p>
-            <p class="dc__card-sub">Up to 40% off RRP</p>
-          </div>
-
-          <!-- YTD Purchases -->
+          <!-- discount tier -->
           <div class="dc__card">
-            <p class="dc__card-label">{{ section.settings.total_spent_label | default: 'Total Purchases' }}</p>
+            <p class="dc__card-label">{{ section.settings.label_tier | default: 'Discount Tier' }}</p>
+            <p class="dc__card-value">
+              {{ tier }}
+              {%- if tier != '—' -%}
+                <span class="dc__tier-badge">{{ disc_pct }}% off</span>
+              {%- endif -%}
+            </p>
+            <p class="dc__card-sub">{{ section.settings.sub_tier | default: 'Your active wholesale rate' }}</p>
+          </div>
+
+          <!-- total purchases -->
+          <div class="dc__card">
+            <p class="dc__card-label">{{ section.settings.label_spent | default: 'Total Purchases' }}</p>
             <p class="dc__card-value">{{ customer.total_spent | money }}</p>
-            <p class="dc__card-sub">Lifetime value</p>
+            <p class="dc__card-sub">{{ section.settings.sub_spent | default: 'Lifetime wholesale spend' }}</p>
           </div>
 
-          <!-- Account Manager -->
-          <div class="dc__card dc__card--manager">
-            <p class="dc__card-label">Account Manager</p>
-            <p class="dc__manager-name">{{ manager_name }}</p>
-            {%- if manager_email != blank -%}
-              <a href="mailto:{{ manager_email }}" class="dc__manager-link">
-                <svg style="width:0.875rem;height:0.875rem;flex-shrink:0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
-                </svg>
-                {{ manager_email }}
-              </a>
-            {%- endif -%}
-            {%- if manager_phone != blank -%}
-              <a href="tel:{{ manager_phone }}" class="dc__manager-link">
-                <svg style="width:0.875rem;height:0.875rem;flex-shrink:0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
-                </svg>
-                {{ manager_phone }}
-              </a>
-            {%- endif -%}
+          <!-- orders count -->
+          <div class="dc__card">
+            <p class="dc__card-label">{{ section.settings.label_orders | default: 'Orders Placed' }}</p>
+            <p class="dc__card-value">{{ customer.orders_count }}</p>
+            <p class="dc__card-sub">{{ section.settings.sub_orders | default: 'All time' }}</p>
           </div>
 
-        </div><!-- /.dc__cards -->
+        </div>
 
-        <!-- Recent Orders -->
-        <h2 class="dc__section-heading">Recent Orders</h2>
+        <!-- recent orders -->
+        <h2 class="dc__section-title">{{ section.settings.recent_orders_title | default: 'Recent Orders' }}</h2>
 
-        <div class="dc__orders-wrap">
+        <div class="dc__table-wrap">
           {%- if customer.orders.size > 0 -%}
-            <table class="dc__table">
-              <thead>
-                <tr>
-                  <th scope="col">Order</th>
-                  <th scope="col">Date</th>
-                  <th scope="col">Status</th>
-                  <th scope="col">Total</th>
-                  <th scope="col"><span class="visually-hidden">Actions</span></th>
-                </tr>
-              </thead>
-              <tbody>
-                {%- for order in customer.orders limit: 5 -%}
-                  {%- assign status_lower = order.financial_status | downcase -%}
+            <div class="dc__table-scroll">
+              <table class="dc__table">
+                <thead>
                   <tr>
-                    <td data-label="Order">
-                      <a href="{{ order.customer_url }}" class="dc__order-link">{{ order.name }}</a>
-                    </td>
-                    <td data-label="Date">{{ order.created_at | date: "%b %d, %Y" }}</td>
-                    <td data-label="Status">
-                      <span class="dc__badge dc__badge--{{ status_lower }}">{{ order.financial_status_label }}</span>
-                    </td>
-                    <td data-label="Total">{{ order.total_price | money }}</td>
-                    <td>
-                      <a href="{{ order.customer_url }}" class="dc__order-link" aria-label="View order {{ order.name }}">View</a>
-                    </td>
+                    <th>{{ section.settings.col_order | default: 'Order' }}</th>
+                    <th>{{ section.settings.col_po | default: 'PO Number' }}</th>
+                    <th>{{ section.settings.col_date | default: 'Date' }}</th>
+                    <th>{{ section.settings.col_status | default: 'Status' }}</th>
+                    <th>{{ section.settings.col_total | default: 'Total' }}</th>
+                    <th>{{ section.settings.col_actions | default: 'Actions' }}</th>
                   </tr>
-                {%- endfor -%}
-              </tbody>
-            </table>
-          {%- else -%}
-            <div class="dc__empty">No orders yet. Place your first order to get started.</div>
-          {%- endif -%}
-        </div><!-- /.dc__orders-wrap -->
+                </thead>
+                <tbody>
+                  {%- for order in customer.orders limit: 5 -%}
+                    {%- liquid
+                      assign po_num   = order.attributes.po_number | default: '—'
+                      assign fin_stat = order.financial_status
+                      assign badge_mod = 'other'
+                      if fin_stat == 'paid'
+                        assign badge_mod = 'paid'
+                      elsif fin_stat == 'pending' or fin_stat == 'authorized'
+                        assign badge_mod = 'pending'
+                      elsif fin_stat == 'refunded' or fin_stat == 'voided'
+                        assign badge_mod = 'refunded'
+                      endif
 
-      </div><!-- /#DcPanel-overview -->
-
-      <!-- ── Orders tab ────────────────────────────────── -->
-      <div
-        class="dc__panel"
-        id="DcPanel-orders-{{ section.id }}"
-        role="tabpanel"
-        aria-labelledby="DcTab-orders-{{ section.id }}"
-      >
-        <h2 class="dc__section-heading">All Orders</h2>
-        <div class="dc__orders-wrap">
-          {%- if customer.orders.size > 0 -%}
-            <table class="dc__table">
-              <thead>
-                <tr>
-                  <th scope="col">Order</th>
-                  <th scope="col">Date</th>
-                  <th scope="col">Status</th>
-                  <th scope="col">Total</th>
-                  <th scope="col"><span class="visually-hidden">Actions</span></th>
-                </tr>
-              </thead>
-              <tbody>
-                {%- for order in customer.orders -%}
-                  {%- assign status_lower = order.financial_status | downcase -%}
-                  <tr>
-                    <td data-label="Order">
-                      <a href="{{ order.customer_url }}" class="dc__order-link">{{ order.name }}</a>
-                    </td>
-                    <td data-label="Date">{{ order.created_at | date: "%b %d, %Y" }}</td>
-                    <td data-label="Status">
-                      <span class="dc__badge dc__badge--{{ status_lower }}">{{ order.financial_status_label }}</span>
-                    </td>
-                    <td data-label="Total">{{ order.total_price | money }}</td>
-                    <td>
-                      <a href="{{ order.customer_url }}" class="dc__order-link" aria-label="View order {{ order.name }}">View</a>
-                    </td>
-                  </tr>
-                {%- endfor -%}
-              </tbody>
-            </table>
+                      assign reorder_params = ''
+                      for item in order.line_items
+                        assign sep = '&' | unless forloop.first | default: ''
+                        assign reorder_params = reorder_params | append: sep | append: 'items[][id]=' | append: item.variant_id | append: '&items[][quantity]=' | append: item.quantity
+                      endfor
+                    -%}
+                    <tr>
+                      <td>
+                        <a class="dc__order-link" href="{{ order.customer_url }}">{{ order.name }}</a>
+                      </td>
+                      <td>{{ po_num }}</td>
+                      <td>{{ order.created_at | date: '%b %d, %Y' }}</td>
+                      <td>
+                        <span class="dc__badge dc__badge--{{ badge_mod }}">{{ fin_stat | replace: '_', ' ' }}</span>
+                      </td>
+                      <td>{{ order.total_price | money }}</td>
+                      <td>
+                        <div class="dc__btn-group">
+                          <a class="dc__btn dc__btn--outline" href="{{ order.customer_url }}" aria-label="Invoice for {{ order.name }}">
+                            <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                            {{ section.settings.btn_invoice | default: 'Invoice' }}
+                          </a>
+                          {%- if order.line_items.size > 0 -%}
+                            <a class="dc__btn dc__btn--dark" href="/cart/add?{{ reorder_params }}" aria-label="Reorder {{ order.name }}">
+                              <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.95"/></svg>
+                              {{ section.settings.btn_reorder | default: 'Reorder' }}
+                            </a>
+                          {%- endif -%}
+                        </div>
+                      </td>
+                    </tr>
+                  {%- endfor -%}
+                </tbody>
+              </table>
+            </div>
           {%- else -%}
-            <div class="dc__empty">No orders yet.</div>
+            <div class="dc__empty">{{ section.settings.no_orders_text | default: "You haven't placed any orders yet." }}</div>
           {%- endif -%}
         </div>
-      </div><!-- /#DcPanel-orders -->
 
-      <!-- ── Invoices tab ──────────────────────────────── -->
-      <div
-        class="dc__panel"
-        id="DcPanel-invoices-{{ section.id }}"
-        role="tabpanel"
-        aria-labelledby="DcTab-invoices-{{ section.id }}"
-      >
-        <h2 class="dc__section-heading">Invoices</h2>
-        <div class="dc__placeholder">
-          <svg class="dc__placeholder-icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-          </svg>
-          <h3 class="dc__placeholder-heading">Invoices Coming Soon</h3>
-          <p class="dc__placeholder-text">Invoice management is currently under development. Your account manager can send invoices directly by email.</p>
-          <button class="dc__placeholder-btn" data-dc-back-tab="overview" data-dc-section="{{ section.id }}">
-            Back to Overview
-          </button>
+        <!-- account manager -->
+        {%- if mgr_name != blank -%}
+          <div class="dc__mgr">
+            <p class="dc__mgr-label">{{ section.settings.mgr_section_label | default: 'Your Account Manager' }}</p>
+            <p class="dc__mgr-name">{{ mgr_name }}</p>
+            <div class="dc__mgr-contact">
+              {%- if mgr_email != blank -%}
+                <a class="dc__mgr-link" href="mailto:{{ mgr_email }}">
+                  <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                  {{ mgr_email }}
+                </a>
+              {%- endif -%}
+              {%- if mgr_phone != blank -%}
+                <a class="dc__mgr-link" href="tel:{{ mgr_phone }}">
+                  <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.47 2 2 0 0 1 3.6 1.29h3a2 2 0 0 1 2 1.72c.13 1 .37 1.97.71 2.91a2 2 0 0 1-.45 2.11L7.91 9.03a16 16 0 0 0 6 6l.96-.95a2 2 0 0 1 2.11-.45c.94.34 1.91.58 2.91.71A2 2 0 0 1 21.73 16.92z"/></svg>
+                  {{ mgr_phone }}
+                </a>
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endif -%}
+
+      </div>
+      <!-- /overview -->
+
+      <!-- Order History panel -->
+      <div class="dc__panel" id="dc-panel-orders" role="tabpanel">
+        <h2 class="dc__section-title">{{ section.settings.tab_orders | default: 'Order History' }}</h2>
+        <div class="dc__table-wrap">
+          {%- if customer.orders.size > 0 -%}
+            <div class="dc__table-scroll">
+              <table class="dc__table">
+                <thead>
+                  <tr>
+                    <th>{{ section.settings.col_order | default: 'Order' }}</th>
+                    <th>{{ section.settings.col_po | default: 'PO Number' }}</th>
+                    <th>{{ section.settings.col_date | default: 'Date' }}</th>
+                    <th>{{ section.settings.col_status | default: 'Status' }}</th>
+                    <th>{{ section.settings.col_total | default: 'Total' }}</th>
+                    <th>{{ section.settings.col_actions | default: 'Actions' }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {%- for order in customer.orders -%}
+                    {%- liquid
+                      assign po_num   = order.attributes.po_number | default: '—'
+                      assign fin_stat = order.financial_status
+                      assign badge_mod = 'other'
+                      if fin_stat == 'paid'
+                        assign badge_mod = 'paid'
+                      elsif fin_stat == 'pending' or fin_stat == 'authorized'
+                        assign badge_mod = 'pending'
+                      elsif fin_stat == 'refunded' or fin_stat == 'voided'
+                        assign badge_mod = 'refunded'
+                      endif
+                      assign reorder_params = ''
+                      for item in order.line_items
+                        assign sep = '&' | unless forloop.first | default: ''
+                        assign reorder_params = reorder_params | append: sep | append: 'items[][id]=' | append: item.variant_id | append: '&items[][quantity]=' | append: item.quantity
+                      endfor
+                    -%}
+                    <tr>
+                      <td><a class="dc__order-link" href="{{ order.customer_url }}">{{ order.name }}</a></td>
+                      <td>{{ po_num }}</td>
+                      <td>{{ order.created_at | date: '%b %d, %Y' }}</td>
+                      <td><span class="dc__badge dc__badge--{{ badge_mod }}">{{ fin_stat | replace: '_', ' ' }}</span></td>
+                      <td>{{ order.total_price | money }}</td>
+                      <td>
+                        <div class="dc__btn-group">
+                          <a class="dc__btn dc__btn--outline" href="{{ order.customer_url }}">
+                            <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                            {{ section.settings.btn_invoice | default: 'Invoice' }}
+                          </a>
+                          {%- if order.line_items.size > 0 -%}
+                            <a class="dc__btn dc__btn--dark" href="/cart/add?{{ reorder_params }}">
+                              <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.95"/></svg>
+                              {{ section.settings.btn_reorder | default: 'Reorder' }}
+                            </a>
+                          {%- endif -%}
+                        </div>
+                      </td>
+                    </tr>
+                  {%- endfor -%}
+                </tbody>
+              </table>
+            </div>
+          {%- else -%}
+            <div class="dc__empty">{{ section.settings.no_orders_text | default: "You haven't placed any orders yet." }}</div>
+          {%- endif -%}
         </div>
-      </div><!-- /#DcPanel-invoices -->
+      </div>
+      <!-- /orders -->
 
-      <!-- ── Settings tab ──────────────────────────────── -->
-      <div
-        class="dc__panel"
-        id="DcPanel-settings-{{ section.id }}"
-        role="tabpanel"
-        aria-labelledby="DcTab-settings-{{ section.id }}"
-      >
-        <h2 class="dc__section-heading">Account Settings</h2>
-        <div class="dc__placeholder">
-          <svg class="dc__placeholder-icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 010 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 010-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28z" />
-            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-          </svg>
-          <h3 class="dc__placeholder-heading">Settings Coming Soon</h3>
-          <p class="dc__placeholder-text">Account settings management is currently under development. Contact your account manager to update your details.</p>
-          <button class="dc__placeholder-btn" data-dc-back-tab="overview" data-dc-section="{{ section.id }}">
-            Back to Overview
-          </button>
+      <!-- Invoices placeholder panel -->
+      <div class="dc__panel" id="dc-panel-invoices" role="tabpanel">
+        <div class="dc__coming-soon">
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          <h3>{{ section.settings.invoices_coming_title | default: 'Invoices coming soon' }}</h3>
+          <p>{{ section.settings.invoices_coming_text | default: 'Download invoices and statements will be available here shortly.' }}</p>
         </div>
-      </div><!-- /#DcPanel-settings -->
+      </div>
 
-    </div><!-- /.dc__main -->
-  </div><!-- /.dc__inner -->
-</div><!-- /.dc -->
+      <!-- Settings placeholder panel -->
+      <div class="dc__panel" id="dc-panel-settings" role="tabpanel">
+        <div class="dc__coming-soon">
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <h3>{{ section.settings.settings_coming_title | default: 'Account settings' }}</h3>
+          <p>{{ section.settings.settings_coming_text | default: 'Manage your account details, shipping addresses, and notification preferences here soon.' }}</p>
+        </div>
+      </div>
+
+    </div>
+    <!-- /panels -->
+
+  </div>
+</div>
 
 <script>
 (function () {
-  if (window.lpDashboardReady) return;
-  window.lpDashboardReady = true;
+  if (window.lpDcReady) return;
+  window.lpDcReady = true;
 
-  function initDashboard(sectionId) {
-    var tabs = document.querySelectorAll('[data-dc-tab]');
-    if (!tabs.length) return;
+  var btns   = document.querySelectorAll('[data-dc-tab]');
+  var panels = document.querySelectorAll('.dc__panel');
 
-    function activateTab(tabKey) {
-      tabs.forEach(function (btn) {
-        var isActive = btn.getAttribute('data-dc-tab') === tabKey;
-        btn.classList.toggle('is-active', isActive);
-        btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
-      });
+  btns.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var target = btn.getAttribute('data-dc-tab');
 
-      var panels = document.querySelectorAll('.dc__panel');
-      panels.forEach(function (panel) {
-        var isActive = panel.id === ('DcPanel-' + tabKey + '-' + sectionId);
-        panel.classList.toggle('is-active', isActive);
-      });
-    }
+      btns.forEach(function (b) { b.classList.remove('is-active'); });
+      panels.forEach(function (p) { p.classList.remove('is-active'); });
 
-    tabs.forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        activateTab(btn.getAttribute('data-dc-tab'));
-      });
+      btn.classList.add('is-active');
+      var panel = document.getElementById('dc-panel-' + target);
+      if (panel) panel.classList.add('is-active');
     });
-
-    /* Back buttons inside placeholder panels */
-    document.querySelectorAll('[data-dc-back-tab]').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        activateTab(btn.getAttribute('data-dc-back-tab'));
-      });
-    });
-  }
-
-  /* Init once DOM is ready */
-  var sid = document.querySelector('[id^="DashboardContent-"]');
-  if (sid) {
-    var id = sid.id.replace('DashboardContent-', '');
-    initDashboard(id);
-  }
+  });
 })();
 </script>
 
+{%- endunless -%}
+
 {% schema %}
 {
-  "name": "Dashboard Content",
+  "name": "Dashboard Content B2B",
   "tag": "section",
   "class": "section",
   "disabled_on": {
@@ -751,13 +681,157 @@
   "settings": [
     {
       "type": "header",
-      "content": "Appearance"
+      "content": "Auth gate"
     },
     {
-      "type": "checkbox",
-      "id": "high_contrast",
-      "label": "High contrast mode",
-      "default": false
+      "type": "text",
+      "id": "auth_heading",
+      "label": "Auth gate heading",
+      "default": "Sign in to access your dashboard"
+    },
+    {
+      "type": "textarea",
+      "id": "auth_text",
+      "label": "Auth gate body text",
+      "default": "Please log in with your wholesale account to view your dashboard."
+    },
+    {
+      "type": "text",
+      "id": "auth_btn",
+      "label": "Auth gate button label",
+      "default": "Sign in"
+    },
+    {
+      "type": "header",
+      "content": "Navigation tabs"
+    },
+    {
+      "type": "text",
+      "id": "tab_overview",
+      "label": "Overview tab label",
+      "default": "Overview"
+    },
+    {
+      "type": "text",
+      "id": "tab_orders",
+      "label": "Order History tab label",
+      "default": "Order History"
+    },
+    {
+      "type": "text",
+      "id": "tab_invoices",
+      "label": "Invoices tab label",
+      "default": "Invoices"
+    },
+    {
+      "type": "text",
+      "id": "tab_settings",
+      "label": "Settings tab label",
+      "default": "Settings"
+    },
+    {
+      "type": "header",
+      "content": "Stat cards"
+    },
+    {
+      "type": "text",
+      "id": "label_tier",
+      "label": "Tier card label",
+      "default": "Discount Tier"
+    },
+    {
+      "type": "text",
+      "id": "sub_tier",
+      "label": "Tier card subtext",
+      "default": "Your active wholesale rate"
+    },
+    {
+      "type": "text",
+      "id": "label_spent",
+      "label": "Spent card label",
+      "default": "Total Purchases"
+    },
+    {
+      "type": "text",
+      "id": "sub_spent",
+      "label": "Spent card subtext",
+      "default": "Lifetime wholesale spend"
+    },
+    {
+      "type": "text",
+      "id": "label_orders",
+      "label": "Orders card label",
+      "default": "Orders Placed"
+    },
+    {
+      "type": "text",
+      "id": "sub_orders",
+      "label": "Orders card subtext",
+      "default": "All time"
+    },
+    {
+      "type": "header",
+      "content": "Recent orders table"
+    },
+    {
+      "type": "text",
+      "id": "recent_orders_title",
+      "label": "Section title",
+      "default": "Recent Orders"
+    },
+    {
+      "type": "text",
+      "id": "col_order",
+      "label": "Column: Order",
+      "default": "Order"
+    },
+    {
+      "type": "text",
+      "id": "col_po",
+      "label": "Column: PO Number",
+      "default": "PO Number"
+    },
+    {
+      "type": "text",
+      "id": "col_date",
+      "label": "Column: Date",
+      "default": "Date"
+    },
+    {
+      "type": "text",
+      "id": "col_status",
+      "label": "Column: Status",
+      "default": "Status"
+    },
+    {
+      "type": "text",
+      "id": "col_total",
+      "label": "Column: Total",
+      "default": "Total"
+    },
+    {
+      "type": "text",
+      "id": "col_actions",
+      "label": "Column: Actions",
+      "default": "Actions"
+    },
+    {
+      "type": "text",
+      "id": "btn_invoice",
+      "label": "Invoice button label",
+      "default": "Invoice"
+    },
+    {
+      "type": "text",
+      "id": "btn_reorder",
+      "label": "Reorder button label",
+      "default": "Reorder"
+    },
+    {
+      "type": "text",
+      "id": "no_orders_text",
+      "label": "Empty orders text",
+      "default": "You haven't placed any orders yet."
     },
     {
       "type": "header",
@@ -765,34 +839,60 @@
     },
     {
       "type": "text",
+      "id": "mgr_section_label",
+      "label": "Section label",
+      "default": "Your Account Manager"
+    },
+    {
+      "type": "text",
       "id": "manager_name",
       "label": "Manager name",
-      "default": "Account Manager"
+      "default": "Your Account Manager"
     },
     {
       "type": "text",
       "id": "manager_email",
-      "label": "Manager email"
+      "label": "Manager email",
+      "default": "wholesale@leatherparfum.com"
     },
     {
       "type": "text",
       "id": "manager_phone",
-      "label": "Manager phone"
+      "label": "Manager phone",
+      "default": ""
     },
     {
       "type": "header",
-      "content": "Labels"
+      "content": "Placeholder panels"
     },
     {
       "type": "text",
-      "id": "total_spent_label",
-      "label": "Total purchases label",
-      "default": "Total Purchases"
+      "id": "invoices_coming_title",
+      "label": "Invoices panel title",
+      "default": "Invoices coming soon"
+    },
+    {
+      "type": "textarea",
+      "id": "invoices_coming_text",
+      "label": "Invoices panel text",
+      "default": "Download invoices and statements will be available here shortly."
+    },
+    {
+      "type": "text",
+      "id": "settings_coming_title",
+      "label": "Settings panel title",
+      "default": "Account settings"
+    },
+    {
+      "type": "textarea",
+      "id": "settings_coming_text",
+      "label": "Settings panel text",
+      "default": "Manage your account details, shipping addresses, and notification preferences here soon."
     }
   ],
   "presets": [
     {
-      "name": "Dashboard Content"
+      "name": "Dashboard Content B2B"
     }
   ]
 }

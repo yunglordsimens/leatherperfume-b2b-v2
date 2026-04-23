@@ -1,0 +1,13 @@
+{
+  "sections": {
+    "dashboard-header": {
+      "type": "dashboard-header",
+      "settings": {}
+    },
+    "dashboard-content": {
+      "type": "dashboard-content",
+      "settings": {}
+    }
+  },
+  "order": ["dashboard-header", "dashboard-content"]
+}

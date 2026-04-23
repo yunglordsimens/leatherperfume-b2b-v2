@@ -1,0 +1,483 @@
+{%- liquid
+  assign moq_amount  = section.settings.moq_amount  | default: 500000
+  assign vat_rate    = section.settings.vat_rate    | default: 21
+  assign submit_btn  = section.settings.submit_btn  | default: 'Submit for Invoicing'
+  assign submit_note = section.settings.submit_note | default: 'No payment required now. You will receive an invoice after order confirmation.'
+  assign moq_label   = section.settings.moq_label   | default: 'MOQ Target'
+  assign moq_reached_label = section.settings.moq_reached_label | default: 'MOQ Reached'
+
+  assign moq_reached = false
+  if cart.total_price >= moq_amount
+    assign moq_reached = true
+  endif
+
+  assign progress_raw = cart.total_price | times: 100 | divided_by: moq_amount
+  if progress_raw > 100
+    assign progress_raw = 100
+  endif
+
+  assign remaining = moq_amount | minus: cart.total_price
+
+  assign vat_cents = cart.items_subtotal_price | times: vat_rate | divided_by: 100
+-%}
+
+<style>
+  .csb {
+    padding: 2rem 1.5rem;
+    background-color: #f5f5f4;
+  }
+
+  @media screen and (min-width: 990px) {
+    .shopify-section:has(.csb) {
+      width: 36%;
+      float: right;
+      clear: right;
+    }
+    .shopify-section:has(.csb)::after {
+      content: '';
+      display: table;
+      clear: both;
+    }
+    .csb { padding: 3rem 0 3rem 2rem; }
+  }
+
+  .csb__card {
+    background-color: #ffffff;
+    border: 1px solid #e7e5e4;
+    border-radius: 1.5rem;
+    padding: 2rem 1.5rem;
+    box-shadow: 0 8px 24px rgba(0,0,0,.08);
+    position: sticky;
+    top: 9rem;
+  }
+
+  @media screen and (min-width: 600px) { .csb__card { padding: 2.5rem; } }
+
+  html.a11y-high-contrast .csb__card {
+    border: 4px solid #000000 !important;
+    box-shadow: none !important;
+  }
+
+  .csb__heading {
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight);
+    font-size: 1.375rem;
+    color: #1c1917;
+    margin: 0 0 1.5rem;
+  }
+
+  html.a11y-high-contrast .csb__heading { color: #000000 !important; }
+
+  /* ── MOQ tracker ──────────────────────────────────── */
+  .csb__moq {
+    background-color: #fafaf9;
+    border: 1px solid #e7e5e4;
+    border-radius: 1rem;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+
+  html.a11y-high-contrast .csb__moq {
+    border: 4px solid #000000 !important;
+    background-color: #ffffff !important;
+  }
+
+  .csb__moq-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.875rem;
+  }
+
+  .csb__moq-title {
+    font-family: var(--font-body-family);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #78716c;
+  }
+
+  .csb__moq-title--reached { color: #15803d; }
+
+  html.a11y-high-contrast .csb__moq-title { color: #000000 !important; }
+
+  .csb__moq-target {
+    font-family: var(--font-body-family);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #1c1917;
+  }
+
+  html.a11y-high-contrast .csb__moq-target { color: #000000 !important; }
+
+  .csb__track {
+    height: 0.75rem;
+    background-color: #e7e5e4;
+    border-radius: 9999px;
+    overflow: hidden;
+  }
+
+  html.a11y-high-contrast .csb__track {
+    border: 2px solid #000000 !important;
+    background-color: #ffffff !important;
+  }
+
+  .csb__fill {
+    height: 100%;
+    border-radius: 9999px;
+    background-color: #f59e0b;
+    transition: width 0.4s ease;
+  }
+
+  .csb__fill--reached { background-color: #22c55e; }
+
+  html.a11y-high-contrast .csb__fill { background-color: #000000 !important; }
+
+  .csb__moq-msg {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-top: 0.875rem;
+    font-family: var(--font-body-family);
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #b45309;
+  }
+
+  html.a11y-high-contrast .csb__moq-msg { color: #000000 !important; }
+
+  .csb__moq-msg svg { width: 1.125rem; height: 1.125rem; flex-shrink: 0; margin-top: 0.1rem; }
+
+  /* ── Breakdown ────────────────────────────────────── */
+  .csb__breakdown {
+    border-bottom: 1px solid #e7e5e4;
+    margin-bottom: 1.25rem;
+    padding-bottom: 1.25rem;
+  }
+
+  html.a11y-high-contrast .csb__breakdown { border-bottom-color: #000000 !important; }
+
+  .csb__line {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+    font-family: var(--font-body-family);
+    font-size: 0.9375rem;
+  }
+
+  .csb__line:last-child { margin-bottom: 0; }
+
+  .csb__line-label {
+    color: #57534e;
+    font-weight: 500;
+  }
+
+  html.a11y-high-contrast .csb__line-label { color: #000000 !important; font-weight: 700; }
+
+  .csb__line-value {
+    color: #1c1917;
+    font-weight: 700;
+  }
+
+  html.a11y-high-contrast .csb__line-value { color: #000000 !important; }
+
+  .csb__line-value--muted {
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #a8a29e;
+    font-weight: 700;
+  }
+
+  html.a11y-high-contrast .csb__line-value--muted { color: #000000 !important; }
+
+  /* ── Total ────────────────────────────────────────── */
+  .csb__total {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+  }
+
+  .csb__total-label {
+    font-family: var(--font-body-family);
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1c1917;
+  }
+
+  html.a11y-high-contrast .csb__total-label { color: #000000 !important; }
+
+  .csb__total-value {
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight);
+    font-size: clamp(1.75rem, 3vw, 2.25rem);
+    color: #1c1917;
+    line-height: 1;
+  }
+
+  html.a11y-high-contrast .csb__total-value { color: #000000 !important; }
+
+  /* ── Submit button ────────────────────────────────── */
+  .csb__submit-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.625rem;
+    width: 100%;
+    padding: 1.125rem 1.5rem;
+    font-family: var(--font-body-family);
+    font-size: 1.0625rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #ffffff;
+    background-color: #1c1917;
+    border: 2px solid #1c1917;
+    border-radius: 0.875rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .csb__submit-btn:hover:not([disabled]) { background-color: #b45309; border-color: #b45309; color: #ffffff; }
+
+  .csb__submit-btn[disabled],
+  .csb__submit-btn.is-disabled {
+    background-color: #d6d3d1;
+    border-color: #d6d3d1;
+    color: #a8a29e;
+    cursor: not-allowed;
+  }
+
+  html.a11y-high-contrast .csb__submit-btn {
+    background-color: #000000 !important;
+    border-color: #000000 !important;
+  }
+
+  html.a11y-high-contrast .csb__submit-btn[disabled] {
+    background-color: #999999 !important;
+    border-color: #999999 !important;
+    color: #ffffff !important;
+  }
+
+  .csb__submit-icon { width: 1.25rem; height: 1.25rem; flex-shrink: 0; }
+
+  .csb__submit-note {
+    font-family: var(--font-body-family);
+    font-size: 0.8125rem;
+    color: #78716c;
+    text-align: center;
+    margin: 0.875rem 0 0;
+  }
+
+  html.a11y-high-contrast .csb__submit-note { color: #000000 !important; }
+</style>
+
+<div
+  class="csb"
+  id="CartSummaryB2B-{{ section.id }}"
+  data-moq="{{ moq_amount }}"
+  data-vat="{{ vat_rate }}"
+  data-money-format="{{ shop.money_format | escape }}"
+>
+  <div class="csb__card">
+    <h2 class="csb__heading">{{ section.settings.summary_heading | default: 'Summary' }}</h2>
+
+    <!-- MOQ tracker -->
+    <div class="csb__moq">
+      <div class="csb__moq-header">
+        <span class="csb__moq-title{% if moq_reached %} csb__moq-title--reached{% endif %}" id="CsbMoqTitle">
+          {%- if moq_reached -%}{{ moq_reached_label }}{%- else -%}{{ moq_label }}{%- endif -%}
+        </span>
+        <span class="csb__moq-target">{{ moq_amount | money }}</span>
+      </div>
+      <div class="csb__track">
+        <div
+          class="csb__fill{% if moq_reached %} csb__fill--reached{% endif %}"
+          id="CsbMoqFill"
+          style="width: {{ progress_raw }}%"
+          role="progressbar"
+          aria-valuenow="{{ progress_raw }}"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        ></div>
+      </div>
+      {%- unless moq_reached -%}
+        <p class="csb__moq-msg" id="CsbMoqMsg">
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          <span id="CsbMoqMsgText">{{ section.settings.moq_msg_prefix | default: 'Add' }} {{ remaining | money }} {{ section.settings.moq_msg_suffix | default: 'more to proceed with this order.' }}</span>
+        </p>
+      {%- endunless -%}
+    </div>
+
+    <!-- Cost breakdown -->
+    <div class="csb__breakdown">
+      <div class="csb__line">
+        <span class="csb__line-label">{{ section.settings.subtotal_label | default: 'Subtotal (WSP)' }}</span>
+        <span class="csb__line-value" id="CsbSubtotal">{{ cart.items_subtotal_price | money }}</span>
+      </div>
+      <div class="csb__line">
+        <span class="csb__line-label">{{ section.settings.vat_label | default: 'Estimated VAT' }} ({{ vat_rate }}%)</span>
+        <span class="csb__line-value" id="CsbVat">{{ vat_cents | money }}</span>
+      </div>
+      <div class="csb__line">
+        <span class="csb__line-label">{{ section.settings.shipping_label | default: 'Shipping' }}</span>
+        <span class="csb__line-value csb__line-value--muted">{{ section.settings.shipping_value | default: 'Calculated Later' }}</span>
+      </div>
+    </div>
+
+    <!-- Total -->
+    <div class="csb__total">
+      <span class="csb__total-label">{{ section.settings.total_label | default: 'Total' }}</span>
+      <span class="csb__total-value" id="CsbTotal">{{ cart.total_price | money }}</span>
+    </div>
+
+    <!-- Submit -->
+    {%- if moq_reached -%}
+      <a href="/checkout" class="csb__submit-btn" id="CsbSubmitBtn">
+        {{ submit_btn }}
+        <svg class="csb__submit-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+        </svg>
+      </a>
+    {%- else -%}
+      <button type="button" class="csb__submit-btn is-disabled" disabled id="CsbSubmitBtn" aria-disabled="true">
+        {{ submit_btn }}
+        <svg class="csb__submit-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+        </svg>
+      </button>
+    {%- endif -%}
+
+    <p class="csb__submit-note">{{ submit_note }}</p>
+  </div>
+</div>
+
+<script>
+(function () {
+  if (window.lpCartSummaryReady) return;
+  window.lpCartSummaryReady = true;
+
+  var wrap      = document.getElementById('CartSummaryB2B-{{ section.id }}');
+  var moqTarget = parseInt(wrap.getAttribute('data-moq')) || 500000;
+  var vatRate   = parseInt(wrap.getAttribute('data-vat')) || 21;
+  var moneyFmt  = wrap.getAttribute('data-money-format') || '{{ shop.money_format | escape }}';
+
+  var moqTitle  = document.getElementById('CsbMoqTitle');
+  var moqFill   = document.getElementById('CsbMoqFill');
+  var moqMsg    = document.getElementById('CsbMoqMsg');
+  var moqMsgTxt = document.getElementById('CsbMoqMsgText');
+  var subtotEl  = document.getElementById('CsbSubtotal');
+  var vatEl     = document.getElementById('CsbVat');
+  var totalEl   = document.getElementById('CsbTotal');
+  var submitBtn = document.getElementById('CsbSubmitBtn');
+
+  function fmtMoney(cents) {
+    var val = (cents / 100).toFixed(2);
+    return moneyFmt
+      .replace(/\{\{\s*amount\s*\}\}/g, val)
+      .replace(/\{\{\s*amount_no_decimals\s*\}\}/g, Math.floor(cents / 100))
+      .replace(/\{\{\s*amount_with_comma_separator\s*\}\}/g, val.replace('.', ','))
+      .replace(/\{\{\s*amount_no_decimals_with_comma_separator\s*\}\}/g, Math.floor(cents / 100));
+  }
+
+  window.addEventListener('cart:updated', function (e) {
+    var cart = e.detail;
+    if (!cart) return;
+
+    var subtotal   = cart.items_subtotal_price || 0;
+    var total      = cart.total_price          || 0;
+    var vat        = Math.round(subtotal * vatRate / 100);
+    var pct        = Math.min(Math.round(total * 100 / moqTarget), 100);
+    var reached    = total >= moqTarget;
+    var remaining  = moqTarget - total;
+
+    if (subtotEl) subtotEl.textContent = fmtMoney(subtotal);
+    if (vatEl)    vatEl.textContent    = fmtMoney(vat);
+    if (totalEl)  totalEl.textContent  = fmtMoney(total);
+
+    if (moqFill) {
+      moqFill.style.width      = pct + '%';
+      moqFill.setAttribute('aria-valuenow', pct);
+      moqFill.classList.toggle('csb__fill--reached', reached);
+    }
+
+    if (moqTitle) {
+      moqTitle.classList.toggle('csb__moq-title--reached', reached);
+      moqTitle.textContent = reached
+        ? '{{ section.settings.moq_reached_label | default: "MOQ Reached" }}'
+        : '{{ section.settings.moq_label | default: "MOQ Target" }}';
+    }
+
+    if (moqMsg) moqMsg.style.display = reached ? 'none' : '';
+    if (moqMsgTxt && !reached) {
+      moqMsgTxt.textContent = '{{ section.settings.moq_msg_prefix | default: "Add" }} ' + fmtMoney(remaining) + ' {{ section.settings.moq_msg_suffix | default: "more to proceed with this order." }}';
+    }
+
+    if (submitBtn) {
+      if (reached) {
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('is-disabled');
+        submitBtn.setAttribute('href', '/checkout');
+        if (submitBtn.tagName === 'BUTTON') {
+          var link = document.createElement('a');
+          link.href        = '/checkout';
+          link.className   = submitBtn.className.replace('is-disabled', '').trim();
+          link.id          = submitBtn.id;
+          link.innerHTML   = submitBtn.innerHTML;
+          submitBtn.parentNode.replaceChild(link, submitBtn);
+        }
+      } else {
+        if (submitBtn.tagName === 'A') {
+          var btn = document.createElement('button');
+          btn.type      = 'button';
+          btn.className = submitBtn.className + ' is-disabled';
+          btn.id        = submitBtn.id;
+          btn.disabled  = true;
+          btn.setAttribute('aria-disabled', 'true');
+          btn.innerHTML = submitBtn.innerHTML;
+          submitBtn.parentNode.replaceChild(btn, submitBtn);
+        } else {
+          submitBtn.disabled = true;
+          submitBtn.classList.add('is-disabled');
+        }
+      }
+    }
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Cart Summary B2B",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": { "groups": ["header", "footer"] },
+  "settings": [
+    { "type": "text",   "id": "summary_heading",     "label": "Card heading",             "default": "Summary" },
+    { "type": "header", "content": "MOQ Tracker" },
+    { "type": "number", "id": "moq_amount",          "label": "MOQ threshold (cents)",    "default": 500000,
+      "info": "In store currency cents. 500000 = 5,000 CZK / €5,000." },
+    { "type": "text",   "id": "moq_label",           "label": "MOQ label",                "default": "MOQ Target" },
+    { "type": "text",   "id": "moq_reached_label",   "label": "MOQ reached label",        "default": "MOQ Reached" },
+    { "type": "text",   "id": "moq_msg_prefix",      "label": "Remaining msg prefix",     "default": "Add" },
+    { "type": "text",   "id": "moq_msg_suffix",      "label": "Remaining msg suffix",     "default": "more to proceed with this order." },
+    { "type": "header", "content": "Breakdown" },
+    { "type": "text",   "id": "subtotal_label",      "label": "Subtotal label",           "default": "Subtotal (WSP)" },
+    { "type": "number", "id": "vat_rate",            "label": "VAT rate (%)",             "default": 21 },
+    { "type": "text",   "id": "vat_label",           "label": "VAT label",                "default": "Estimated VAT" },
+    { "type": "text",   "id": "shipping_label",      "label": "Shipping label",           "default": "Shipping" },
+    { "type": "text",   "id": "shipping_value",      "label": "Shipping value text",      "default": "Calculated Later" },
+    { "type": "text",   "id": "total_label",         "label": "Total label",              "default": "Total" },
+    { "type": "header", "content": "Submit Button" },
+    { "type": "text",   "id": "submit_btn",          "label": "Button label",             "default": "Submit for Invoicing" },
+    { "type": "text",   "id": "submit_note",         "label": "Note below button",        "default": "No payment required now. You will receive an invoice after order confirmation." }
+  ],
+  "presets": [{ "name": "Cart Summary B2B" }]
+}
+{% endschema %}

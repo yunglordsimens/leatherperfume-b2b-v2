@@ -11,13 +11,39 @@
   "sections": {
     "main": {
       "type": "main-page",
+      "disabled": true,
       "settings": {
         "padding_top": 28,
         "padding_bottom": 28
       }
+    },
+    "dashboard_header_VgVBDA": {
+      "type": "dashboard-header",
+      "name": "Dashboard Header",
+      "settings": {
+        "high_contrast": false,
+        "welcome_prefix": "Welcome back,",
+        "heading": "Welcome back",
+        "welcome_text": "Manage your orders, invoices and account settings.",
+        "button_text": "New Order",
+        "order_link": ""
+      }
+    },
+    "dashboard_content_MjQNeX": {
+      "type": "dashboard-content",
+      "name": "Dashboard Content",
+      "settings": {
+        "high_contrast": false,
+        "manager_name": "Account Manager",
+        "manager_email": "",
+        "manager_phone": "",
+        "total_spent_label": "Total Purchases"
+      }
     }
   },
   "order": [
-    "main"
+    "main",
+    "dashboard_header_VgVBDA",
+    "dashboard_content_MjQNeX"
   ]
 }

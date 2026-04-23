@@ -14,20 +14,20 @@
       "settings": {
         "high_contrast": false,
         "heading": "Wholesale Application",
-        "description": "<p>Become an official distributor of Leather Parfum. Please provide your business details below, and we will get back to you with a personalized offer.<\/p>",
+        "description": "<p>Become an official distributor of Leather Parfum. Please provide your business details below, and we will get back to you with a personalized offer.</p>",
         "step_1_title": "1. Submit Application",
         "step_1_desc": "Fill in your business and contact information.",
         "step_2_title": "2. Verification (1 day)",
-        "step_2_desc": "Our manager will verify your VAT\/IČO and confirm your partner status.",
+        "step_2_desc": "Our manager will verify your VAT/IČO and confirm your partner status.",
         "step_3_title": "3. Access Granted",
         "step_3_desc": "Gain full access to the B2B catalog with up to 40% discount from RRP.",
-        "security_text": "<p>Your data is securely encrypted. We never share our partners’ business information with third parties.<\/p>"
+        "security_text": "<p>Your data is securely encrypted. We never share our partners’ business information with third parties.</p>"
       }
     },
     "massy-form-wrapper": {
       "type": "massy-form-wrapper",
       "settings": {
-        "high_contrast": false
+        "high_contrast": true
       }
     }
   },

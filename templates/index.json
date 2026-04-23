@@ -135,6 +135,23 @@
         "button_label": "Apply for Partnership",
         "button_link": ""
       }
+    },
+    "177693082300a09817": {
+      "type": "apps",
+      "blocks": {
+        "massy_b2b_wholesale_massy_registration_form_3dwDeE": {
+          "type": "shopify://apps/massy-b2b-wholesale/blocks/massy-registration-form/755249cf-b2d3-401e-a5e9-91307113bce4",
+          "settings": {
+            "form_url_handle": ""
+          }
+        }
+      },
+      "block_order": [
+        "massy_b2b_wholesale_massy_registration_form_3dwDeE"
+      ],
+      "settings": {
+        "include_margins": true
+      }
     }
   },
   "order": [
@@ -142,6 +159,7 @@
     "trust_bar_HGTr33",
     "catalog_cards_Le7Cgf",
     "editorial_heritage_YH9ihV",
-    "bottom_cta_rthwmW"
+    "bottom_cta_rthwmW",
+    "177693082300a09817"
   ]
 }

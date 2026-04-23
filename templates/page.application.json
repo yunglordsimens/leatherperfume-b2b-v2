@@ -45,11 +45,29 @@
         "step_3_desc": "Gain full access to the B2B catalog with up to 40% discount from RRP.",
         "security_text": "<p>Your data is securely encrypted. We never share our partners' business information with third parties.</p>"
       }
+    },
+    "177693100865e86eca": {
+      "type": "apps",
+      "blocks": {
+        "massy_b2b_wholesale_massy_registration_form_Y8yfiy": {
+          "type": "shopify://apps/massy-b2b-wholesale/blocks/massy-registration-form/755249cf-b2d3-401e-a5e9-91307113bce4",
+          "settings": {
+            "form_url_handle": "https://leather-perfume-demo.myshopify.com/apps/massy/pages/registration-form/wholesaleapplication"
+          }
+        }
+      },
+      "block_order": [
+        "massy_b2b_wholesale_massy_registration_form_Y8yfiy"
+      ],
+      "settings": {
+        "include_margins": true
+      }
     }
   },
   "order": [
     "application-info",
     "massy-form-wrapper",
-    "application_info_LEPMYK"
+    "application_info_LEPMYK",
+    "177693100865e86eca"
   ]
 }

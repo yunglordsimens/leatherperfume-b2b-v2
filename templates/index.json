@@ -72,7 +72,7 @@
             "heading": "Perfumes",
             "description": "<p>Premium men's, women's, and unisex fragrances. Available in 50ml, 100ml retail formats and B2B tester sets.</p>",
             "button_label": "Browse Perfumes",
-            "button_link": ""
+            "button_link": "shopify://collections/perfumes"
           }
         },
         "catalog_card_3iBhaN": {
@@ -82,7 +82,7 @@
             "heading": "Leather Goods",
             "description": "<p>Handcrafted belts, wallets, and cardholders made from premium leather. The perfect high-margin cross-sell items.</p>",
             "button_label": "Browse Leather",
-            "button_link": ""
+            "button_link": "shopify://collections/leather-goods"
           }
         }
       },
@@ -125,17 +125,6 @@
         "paragraph_2": "<p>Every bottle and leather item comes in premium packaging designed to look stunning on the shelves of boutiques and concept stores. We provide our partners with all necessary marketing materials for visual merchandising.</p>"
       }
     },
-    "bottom_cta_rthwmW": {
-      "type": "bottom-cta",
-      "name": "Bottom CTA",
-      "settings": {
-        "high_contrast": false,
-        "heading": "Ready to elevate your retail space?",
-        "subheading": "<p>Join our network of premium retail partners and get access to exclusive wholesale pricing, priority shipping, and dedicated support.</p>",
-        "button_label": "Apply for Partnership",
-        "button_link": ""
-      }
-    },
     "packages_wholesale_pX8HYH": {
       "type": "packages-wholesale",
       "name": "Packages Wholesale",
@@ -149,7 +138,7 @@
         "p1_desc": "Ideal for existing clothing or shoe boutiques. A compact display featuring the most popular fragrances for cross-selling. Includes a basic tester set.",
         "p1_price": "from 25,000 CZK",
         "p1_btn_label": "Learn More",
-        "p1_btn_link": "",
+        "p1_btn_link": "shopify://products/fragrance-corner",
         "p2_badge": "Best Value",
         "p2_name": "Boutique Launch",
         "p2_skus": "60 SKUs",
@@ -159,7 +148,18 @@
         "p2_btn_label": "Apply Now",
         "p2_btn_link": "",
         "more_label": "View more wholesale packages",
-        "more_link": ""
+        "more_link": "shopify://pages/packages"
+      }
+    },
+    "bottom_cta_rthwmW": {
+      "type": "bottom-cta",
+      "name": "Bottom CTA",
+      "settings": {
+        "high_contrast": false,
+        "heading": "Ready to elevate your retail space?",
+        "subheading": "<p>Join our network of premium retail partners and get access to exclusive wholesale pricing, priority shipping, and dedicated support.</p>",
+        "button_label": "Apply for Partnership",
+        "button_link": ""
       }
     }
   },

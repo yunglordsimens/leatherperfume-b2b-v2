@@ -464,6 +464,25 @@
     border: 2px solid #000000 !important;
   }
 
+  .cb2b__input.is-error,
+  .cb2b__textarea.is-error {
+    border-color: #dc2626 !important;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12) !important;
+  }
+
+  .cb2b__error-msg {
+    display: none;
+    font-family: var(--font-body-family);
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #dc2626;
+    margin-top: 0.5rem;
+  }
+
+  .cb2b__error-msg.is-visible { display: block; }
+
+  html.a11y-high-contrast .cb2b__error-msg { color: #000000 !important; }
+
   .cb2b__textarea { resize: none; }
 
   /* Submit button */
@@ -724,7 +743,7 @@
         <div class="cb2b__card">
           <h2 class="cb2b__card-heading">Send a Message</h2>
 
-          {%- form 'contact', id: 'ContactForm' -%}
+          {%- form 'contact', id: 'ContactFormB2B', data-contact-b2b: section.id -%}
 
             {%- if form.posted_successfully? -%}
               <div class="cb2b__success" role="status">
@@ -767,6 +786,7 @@
                       value="{{ form.name }}"
                       required
                     >
+                    <span class="cb2b__error-msg" id="CbErrName-{{ section.id }}">Please enter your name.</span>
                   </div>
                   <div class="cb2b__field">
                     <label class="cb2b__label" for="ContactEmail-{{ section.id }}">
@@ -784,6 +804,7 @@
                       value="{{ form.email }}"
                       required
                     >
+                    <span class="cb2b__error-msg" id="CbErrEmail-{{ section.id }}">Please enter a valid email address.</span>
                   </div>
                 </div>
 
@@ -799,6 +820,7 @@
                     placeholder="How can we help you?"
                     required
                   >{{ form.body }}</textarea>
+                  <span class="cb2b__error-msg" id="CbErrBody-{{ section.id }}">Please enter your message.</span>
                 </div>
 
                 <div>
@@ -844,6 +866,73 @@
     </div>
   </div>
 </section>
+
+<script>
+(function () {
+  if (window.lpContactB2BReady) return;
+  window.lpContactB2BReady = true;
+
+  document.querySelectorAll('form[data-contact-b2b]').forEach(function (form) {
+    var sid = form.getAttribute('data-contact-b2b');
+
+    var fields = [
+      {
+        id: 'ContactName-'  + sid,
+        errId: 'CbErrName-'  + sid,
+        validate: function (v) { return v.trim() !== ''; }
+      },
+      {
+        id: 'ContactEmail-' + sid,
+        errId: 'CbErrEmail-' + sid,
+        validate: function (v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()); }
+      },
+      {
+        id: 'ContactBody-'  + sid,
+        errId: 'CbErrBody-'  + sid,
+        validate: function (v) { return v.trim() !== ''; }
+      }
+    ];
+
+    function setError(f, hasError) {
+      var el  = document.getElementById(f.id);
+      var err = document.getElementById(f.errId);
+      if (!el || !err) return;
+      if (hasError) {
+        el.classList.add('is-error');
+        err.classList.add('is-visible');
+      } else {
+        el.classList.remove('is-error');
+        err.classList.remove('is-visible');
+      }
+    }
+
+    /* Clear error as user types / changes value */
+    fields.forEach(function (f) {
+      var el = document.getElementById(f.id);
+      if (!el) return;
+      el.addEventListener('input',  function () { setError(f, false); });
+      el.addEventListener('change', function () { setError(f, false); });
+    });
+
+    form.addEventListener('submit', function (e) {
+      var valid = true;
+      fields.forEach(function (f) {
+        var el = document.getElementById(f.id);
+        if (!el) return;
+        var ok = f.validate(el.value);
+        setError(f, !ok);
+        if (!ok) valid = false;
+      });
+
+      if (!valid) {
+        e.preventDefault();
+        var firstErr = form.querySelector('.is-error');
+        if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    });
+  });
+})();
+</script>
 
 {% schema %}
 {

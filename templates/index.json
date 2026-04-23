@@ -135,6 +135,32 @@
         "button_label": "Apply for Partnership",
         "button_link": ""
       }
+    },
+    "packages_wholesale_pX8HYH": {
+      "type": "packages-wholesale",
+      "name": "Packages Wholesale",
+      "settings": {
+        "getting_started_text": "Getting Started",
+        "heading": "Ready-Made Solutions",
+        "subheading": "We've designed optimal packages for a quick sales launch. Choose the one that best fits your retail format.",
+        "p1_name": "Fragrance Corner",
+        "p1_skus": "20 SKUs",
+        "p1_discount": "10% Discount",
+        "p1_desc": "Ideal for existing clothing or shoe boutiques. A compact display featuring the most popular fragrances for cross-selling. Includes a basic tester set.",
+        "p1_price": "from 25,000 CZK",
+        "p1_btn_label": "Learn More",
+        "p1_btn_link": "",
+        "p2_badge": "Best Value",
+        "p2_name": "Boutique Launch",
+        "p2_skus": "60 SKUs",
+        "p2_discount": "15% Discount",
+        "p2_desc": "Full inventory for a new store. Includes the entire fragrance line, leather accessories, gift sets, and extensive marketing support with a dedicated manager.",
+        "p2_price": "from 50,000 CZK",
+        "p2_btn_label": "Apply Now",
+        "p2_btn_link": "",
+        "more_label": "View more wholesale packages",
+        "more_link": ""
+      }
     }
   },
   "order": [
@@ -142,6 +168,7 @@
     "trust_bar_HGTr33",
     "catalog_cards_Le7Cgf",
     "editorial_heritage_YH9ihV",
+    "packages_wholesale_pX8HYH",
     "bottom_cta_rthwmW"
   ]
 }

@@ -123,12 +123,7 @@
       ],
       "name": "Packages Grid",
       "settings": {
-        "high_contrast": false,
-        "custom_mix_eyebrow": "Need Something Different?",
-        "custom_mix_heading": "Build Your Custom Mix",
-        "custom_mix_desc": "Not sure which package fits your store? Our team can create a custom selection tailored to your market and budget.",
-        "custom_mix_btn_label": "Contact Us",
-        "custom_mix_btn_link": ""
+        "high_contrast": false
       }
     },
     "how_it_works_NPXmcV": {

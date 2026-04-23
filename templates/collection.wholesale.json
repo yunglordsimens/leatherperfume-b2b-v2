@@ -1,0 +1,21 @@
+{
+  "sections": {
+    "catalog-header": {
+      "type": "catalog-header",
+      "settings": {}
+    },
+    "catalog-sidebar": {
+      "type": "catalog-sidebar",
+      "settings": {}
+    },
+    "product-grid-b2b": {
+      "type": "product-grid-b2b",
+      "settings": {}
+    }
+  },
+  "order": [
+    "catalog-header",
+    "catalog-sidebar",
+    "product-grid-b2b"
+  ]
+}

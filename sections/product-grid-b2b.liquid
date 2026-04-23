@@ -1,0 +1,689 @@
+<style>
+  /* ── Grid layout integration ─────────────────────────
+     Takes the remaining width next to the sidebar float.
+  ──────────────────────────────────────────────────── */
+  @media screen and (min-width: 990px) {
+    .shopify-section:has(.pgb) {
+      float: right;
+      width: calc(100% - 320px);
+      clear: right;
+    }
+    /* Clearfix for the parent wrapper */
+    .shopify-section:has(.pgb)::after {
+      content: '';
+      display: table;
+      clear: both;
+    }
+  }
+
+  .pgb {
+    padding: 2rem 1.5rem;
+  }
+
+  @media screen and (min-width: 990px) {
+    .pgb { padding: 2.5rem 0 2.5rem 2rem; }
+  }
+
+  /* ── Meta bar ─────────────────────────────────────── */
+  .pgb__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .pgb__count {
+    font-family: var(--font-body-family);
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: #78716c;
+  }
+
+  html.a11y-high-contrast .pgb__count { color: #000000 !important; }
+
+  .pgb__active-filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.375rem 0.875rem;
+    font-family: var(--font-body-family);
+    font-size: 0.875rem;
+    font-weight: 700;
+    background-color: #f5f5f4;
+    color: #1c1917;
+    border-radius: 9999px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+  }
+
+  .pgb__active-filter:hover { background-color: #e7e5e4; }
+
+  html.a11y-high-contrast .pgb__active-filter {
+    border: 2px solid #000000 !important;
+    background-color: #ffffff !important;
+  }
+
+  /* ── Grid ─────────────────────────────────────────── */
+  .pgb__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  @media screen and (min-width: 600px) {
+    .pgb__grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media screen and (min-width: 1200px) {
+    .pgb__grid { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  /* ── Product card ─────────────────────────────────── */
+  .pgb__card {
+    background-color: #ffffff;
+    border: 1px solid #e7e5e4;
+    border-radius: 1.25rem;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.2s ease;
+  }
+
+  .pgb__card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  }
+
+  html.a11y-high-contrast .pgb__card {
+    border: 4px solid #000000 !important;
+    box-shadow: none !important;
+  }
+
+  .pgb__card[hidden] { display: none !important; }
+
+  /* Image area */
+  .pgb__img-wrap {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    border-radius: 0.875rem;
+    overflow: hidden;
+    background-color: #f5f5f4;
+    border: 1px solid #e7e5e4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.25rem;
+  }
+
+  html.a11y-high-contrast .pgb__img-wrap {
+    border: 2px solid #000000 !important;
+  }
+
+  .pgb__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s ease;
+  }
+
+  .pgb__card:hover .pgb__img { transform: scale(1.04); }
+
+  .pgb__img-placeholder {
+    color: #d6d3d1;
+  }
+
+  .pgb__img-placeholder svg {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  /* Badges */
+  .pgb__badges {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+
+  .pgb__badge {
+    display: inline-block;
+    padding: 0.25rem 0.625rem;
+    font-family: var(--font-body-family);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    border-radius: 0.375rem;
+  }
+
+  .pgb__badge--dark {
+    background-color: #1c1917;
+    color: #ffffff;
+  }
+
+  .pgb__badge--amber {
+    background-color: #b45309;
+    color: #ffffff;
+  }
+
+  html.a11y-high-contrast .pgb__badge {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+  }
+
+  /* Card body */
+  .pgb__body { flex-grow: 1; display: flex; flex-direction: column; }
+
+  .pgb__meta-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .pgb__category {
+    font-family: var(--font-body-family);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #78716c;
+  }
+
+  html.a11y-high-contrast .pgb__category { color: #000000 !important; }
+
+  .pgb__sku {
+    font-family: monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #a8a29e;
+    background-color: #f5f5f4;
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.375rem;
+  }
+
+  html.a11y-high-contrast .pgb__sku {
+    background-color: #f0f0f0 !important;
+    color: #000000 !important;
+  }
+
+  .pgb__title {
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight);
+    font-size: 1.125rem;
+    color: #1c1917;
+    margin: 0 0 0.375rem;
+    line-height: 1.3;
+  }
+
+  html.a11y-high-contrast .pgb__title { color: #000000 !important; }
+
+  .pgb__size {
+    font-family: var(--font-body-family);
+    font-size: 0.9rem;
+    color: #78716c;
+    margin: 0 0 1.25rem;
+  }
+
+  html.a11y-high-contrast .pgb__size { color: #000000 !important; }
+
+  /* Footer */
+  .pgb__foot {
+    margin-top: auto;
+  }
+
+  .pgb__stock {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-body-family);
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #57534e;
+    margin-bottom: 0.875rem;
+  }
+
+  html.a11y-high-contrast .pgb__stock { color: #000000 !important; }
+
+  .pgb__stock-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    flex-shrink: 0;
+  }
+
+  .pgb__stock-dot--green { background-color: #22c55e; }
+  .pgb__stock-dot--amber { background-color: #f59e0b; }
+  .pgb__stock-dot--red   { background-color: #ef4444; }
+
+  html.a11y-high-contrast .pgb__stock-dot {
+    background-color: #000000 !important;
+  }
+
+  .pgb__price-row {
+    padding-top: 0.875rem;
+    border-top: 1px solid #e7e5e4;
+  }
+
+  html.a11y-high-contrast .pgb__price-row {
+    border-top-color: #000000 !important;
+  }
+
+  .pgb__rrp {
+    font-family: var(--font-body-family);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #78716c;
+    margin: 0 0 0.625rem;
+  }
+
+  html.a11y-high-contrast .pgb__rrp { color: #000000 !important; }
+
+  /* B2B price display (logged-in wholesale) */
+  .pgb__b2b-price {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+
+  .pgb__b2b-label {
+    font-family: var(--font-body-family);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #15803d;
+  }
+
+  html.a11y-high-contrast .pgb__b2b-label { color: #000000 !important; }
+
+  .pgb__b2b-amount {
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight);
+    font-size: 1.25rem;
+    color: #1c1917;
+  }
+
+  html.a11y-high-contrast .pgb__b2b-amount { color: #000000 !important; }
+
+  /* B2B gate button (not logged in / no wholesale tag) */
+  .pgb__gate-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0.875rem 1rem;
+    font-family: var(--font-body-family);
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: #78350f;
+    background-color: #fffbeb;
+    border: 1px solid #fcd34d;
+    border-radius: 0.75rem;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+  }
+
+  .pgb__gate-btn:hover {
+    background-color: #fef3c7;
+    color: #78350f;
+  }
+
+  html.a11y-high-contrast .pgb__gate-btn {
+    background-color: #ffffff !important;
+    border: 2px solid #000000 !important;
+    color: #000000 !important;
+  }
+
+  .pgb__gate-icon {
+    width: 1.125rem;
+    height: 1.125rem;
+    flex-shrink: 0;
+  }
+
+  /* ── Empty state ──────────────────────────────────── */
+  .pgb__empty {
+    text-align: center;
+    padding: 4rem 2rem;
+    background-color: #ffffff;
+    border: 1px solid #e7e5e4;
+    border-radius: 1.5rem;
+  }
+
+  html.a11y-high-contrast .pgb__empty {
+    border: 4px solid #000000 !important;
+  }
+
+  .pgb__empty-icon {
+    width: 3.5rem;
+    height: 3.5rem;
+    color: #d6d3d1;
+    margin: 0 auto 1.25rem;
+  }
+
+  .pgb__empty-heading {
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight);
+    font-size: 1.375rem;
+    color: #1c1917;
+    margin: 0 0 0.5rem;
+  }
+
+  html.a11y-high-contrast .pgb__empty-heading { color: #000000 !important; }
+
+  .pgb__empty-text {
+    font-family: var(--font-body-family);
+    font-size: 0.9375rem;
+    color: #78716c;
+    margin: 0 0 1.5rem;
+  }
+
+  html.a11y-high-contrast .pgb__empty-text { color: #000000 !important; }
+
+  .pgb__empty-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.875rem 2rem;
+    font-family: var(--font-body-family);
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: #ffffff;
+    background-color: #1c1917;
+    border: 2px solid #1c1917;
+    border-radius: 0.75rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  .pgb__empty-btn:hover { background-color: #b45309; border-color: #b45309; color: #ffffff; }
+
+  html.a11y-high-contrast .pgb__empty-btn {
+    background-color: #000000 !important;
+    border-color: #000000 !important;
+  }
+
+  .pgb__no-results { display: none; }
+  .pgb__no-results.is-visible { display: block; }
+</style>
+
+<div class="pgb" id="ProductGridB2B-{{ section.id }}">
+
+  <!-- Meta bar: count + active filter pill -->
+  <div class="pgb__meta">
+    <p class="pgb__count" id="PgbCount-{{ section.id }}">
+      Showing {{ collection.products_count }} result{% if collection.products_count != 1 %}s{% endif %}
+    </p>
+    <span
+      class="pgb__active-filter"
+      id="PgbActiveFilter-{{ section.id }}"
+      style="display:none"
+      aria-live="polite"
+    ></span>
+  </div>
+
+  <!-- Product grid -->
+  <div class="pgb__grid" id="PgbGrid-{{ section.id }}" aria-live="polite">
+
+    {%- for product in collection.products -%}
+      {%- liquid
+        assign sku = product.variants.first.sku | default: product.id
+
+        if product.available
+          assign inv = product.variants.first.inventory_quantity | default: 99
+          if inv > 0 and inv < 5
+            assign stock_label = 'Low Stock'
+            assign stock_mod   = 'amber'
+          else
+            assign stock_label = 'In Stock'
+            assign stock_mod   = 'green'
+          endif
+        else
+          assign stock_label = 'Out of Stock'
+          assign stock_mod   = 'red'
+        endif
+
+        assign first_option = product.variants.first.option1 | default: ''
+        if product.variants.first.option2 != blank
+          assign first_option = first_option | append: ' / ' | append: product.variants.first.option2
+        endif
+      -%}
+
+      <div
+        class="pgb__card"
+        data-title="{{ product.title | downcase | escape }}"
+        data-sku="{{ sku | downcase | escape }}"
+        data-category="{{ product.type | escape }}"
+        data-available="{{ product.available }}"
+      >
+        <!-- Image -->
+        <div class="pgb__img-wrap">
+          {%- if product.featured_image -%}
+            {{ product.featured_image | image_url: width: 600 | image_tag:
+              class: 'pgb__img',
+              alt: product.featured_image.alt | default: product.title | escape,
+              loading: 'lazy',
+              width: product.featured_image.width,
+              height: product.featured_image.height
+            }}
+          {%- else -%}
+            <div class="pgb__img-placeholder" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
+              </svg>
+            </div>
+          {%- endif -%}
+
+          <!-- Badges from product tags -->
+          <div class="pgb__badges" aria-hidden="true">
+            {%- if product.tags contains 'Bestseller' -%}
+              <span class="pgb__badge pgb__badge--dark">Bestseller</span>
+            {%- elsif product.tags contains 'New' -%}
+              <span class="pgb__badge pgb__badge--amber">New</span>
+            {%- elsif product.tags contains 'B2B Only' -%}
+              <span class="pgb__badge pgb__badge--dark">B2B Only</span>
+            {%- endif -%}
+          </div>
+        </div><!-- /.pgb__img-wrap -->
+
+        <!-- Body -->
+        <div class="pgb__body">
+          <div class="pgb__meta-row">
+            <span class="pgb__category">{{ product.type | default: 'Product' }}</span>
+            <span class="pgb__sku">{{ sku }}</span>
+          </div>
+
+          <h3 class="pgb__title">
+            <a href="{{ product.url }}" style="color:inherit;text-decoration:none;">{{ product.title }}</a>
+          </h3>
+
+          {%- if first_option != blank and first_option != 'Default Title' -%}
+            <p class="pgb__size">{{ first_option }}</p>
+          {%- endif -%}
+
+          <!-- Footer -->
+          <div class="pgb__foot">
+            <div class="pgb__stock">
+              <span class="pgb__stock-dot pgb__stock-dot--{{ stock_mod }}" aria-hidden="true"></span>
+              {{ stock_label }}
+            </div>
+
+            <div class="pgb__price-row">
+              <p class="pgb__rrp">RRP: {{ product.price | money }}</p>
+
+              {%- if customer and customer.tags contains 'wholesale' -%}
+                {%- liquid
+                  assign wh_price_meta = product.metafields.custom.wholesale_price
+                  if wh_price_meta != blank
+                    assign wh_price = wh_price_meta
+                  else
+                    assign wh_price = product.price | money
+                  endif
+                -%}
+                <div class="pgb__b2b-price">
+                  <span class="pgb__b2b-label">B2B</span>
+                  <span class="pgb__b2b-amount">{{ wh_price }}</span>
+                </div>
+              {%- else -%}
+                <a href="{{ routes.account_login_url }}" class="pgb__gate-btn">
+                  <span style="display:flex;align-items:center;gap:0.5rem">
+                    <svg class="pgb__gate-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                    Log in for B2B price
+                  </span>
+                  <svg style="width:1rem;height:1rem;opacity:.5;flex-shrink:0" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+                  </svg>
+                </a>
+              {%- endif -%}
+            </div><!-- /.pgb__price-row -->
+          </div><!-- /.pgb__foot -->
+        </div><!-- /.pgb__body -->
+      </div><!-- /.pgb__card -->
+    {%- endfor -%}
+
+    <!-- No results state (hidden until JS shows it) -->
+    <div class="pgb__no-results pgb__empty" id="PgbEmpty-{{ section.id }}" aria-live="assertive">
+      <svg class="pgb__empty-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <h3 class="pgb__empty-heading">No products found</h3>
+      <p class="pgb__empty-text" id="PgbEmptyMsg-{{ section.id }}">Try adjusting your filters.</p>
+      <button class="pgb__empty-btn" id="PgbClearBtn-{{ section.id }}" type="button">Clear Filters</button>
+    </div>
+
+  </div><!-- /.pgb__grid -->
+
+</div><!-- /.pgb -->
+
+<script>
+(function () {
+  if (window.lpProductGridReady) return;
+  window.lpProductGridReady = true;
+
+  var sid        = '{{ section.id }}';
+  var countEl    = document.getElementById('PgbCount-' + sid);
+  var filterPill = document.getElementById('PgbActiveFilter-' + sid);
+  var emptyEl    = document.getElementById('PgbEmpty-' + sid);
+  var emptyMsg   = document.getElementById('PgbEmptyMsg-' + sid);
+  var clearBtn   = document.getElementById('PgbClearBtn-' + sid);
+  var cards      = Array.from(document.querySelectorAll('#ProductGridB2B-' + sid + ' .pgb__card'));
+
+  function getFilters() {
+    var searchInput = document.querySelector('[data-catalog-search]');
+    var catChecked  = document.querySelector('[data-catalog-category]:checked');
+    var stockCheck  = document.querySelector('[data-catalog-instock]');
+
+    return {
+      search:   searchInput  ? searchInput.value.trim().toLowerCase()  : '',
+      category: catChecked   ? catChecked.value                        : 'all',
+      inStock:  stockCheck   ? stockCheck.checked                      : false
+    };
+  }
+
+  function applyFilters() {
+    var f = getFilters();
+    var visible = 0;
+
+    cards.forEach(function (card) {
+      var title     = card.getAttribute('data-title')    || '';
+      var sku       = card.getAttribute('data-sku')      || '';
+      var category  = card.getAttribute('data-category') || '';
+      var available = card.getAttribute('data-available');
+
+      var matchSearch   = !f.search   || title.includes(f.search) || sku.includes(f.search);
+      var matchCategory = f.category === 'all' || category.toLowerCase() === f.category.toLowerCase();
+      var matchStock    = !f.inStock  || available === 'true';
+
+      var show = matchSearch && matchCategory && matchStock;
+      card.hidden = !show;
+      if (show) visible++;
+    });
+
+    /* Count label */
+    if (countEl) {
+      countEl.textContent = 'Showing ' + visible + ' result' + (visible !== 1 ? 's' : '');
+    }
+
+    /* Active filter pill */
+    if (filterPill) {
+      if (f.category !== 'all') {
+        filterPill.textContent = f.category + ' ×';
+        filterPill.style.display = 'inline-flex';
+        filterPill.onclick = function () {
+          var allRadio = document.querySelector('[data-catalog-category="all"]');
+          if (allRadio) { allRadio.checked = true; allRadio.dispatchEvent(new Event('change')); }
+        };
+      } else {
+        filterPill.style.display = 'none';
+      }
+    }
+
+    /* Empty state */
+    if (emptyEl) {
+      if (visible === 0) {
+        emptyEl.classList.add('is-visible');
+        if (emptyMsg && f.search) {
+          emptyMsg.textContent = 'No products matched "' + f.search + '".';
+        } else if (emptyMsg) {
+          emptyMsg.textContent = 'Try adjusting your filters.';
+        }
+      } else {
+        emptyEl.classList.remove('is-visible');
+      }
+    }
+  }
+
+  /* Clear button resets all filters */
+  if (clearBtn) {
+    clearBtn.addEventListener('click', function () {
+      var searchInput = document.querySelector('[data-catalog-search]');
+      var allRadio    = document.querySelector('[data-catalog-category="all"]');
+      var stockCheck  = document.querySelector('[data-catalog-instock]');
+
+      if (searchInput) searchInput.value = '';
+      if (allRadio)    { allRadio.checked = true; allRadio.dispatchEvent(new Event('change')); }
+      if (stockCheck)  stockCheck.checked = false;
+
+      applyFilters();
+    });
+  }
+
+  /* Listen for filter events from the sidebar section */
+  window.addEventListener('catalog:filter', applyFilters);
+
+  /* Run once on init */
+  applyFilters();
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Product Grid B2B",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "This section renders products from the current collection. Wholesale pricing requires the customer to be logged in with the 'wholesale' tag, and an optional product metafield: custom.wholesale_price."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Grid B2B"
+    }
+  ]
+}
+{% endschema %}

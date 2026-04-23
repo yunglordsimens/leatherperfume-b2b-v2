@@ -1,0 +1,328 @@
+{%- liquid
+  assign search_label       = section.settings.search_label       | default: 'Search'
+  assign search_placeholder = section.settings.search_placeholder | default: 'SKU or product name'
+  assign category_label     = section.settings.category_label     | default: 'Categories'
+  assign avail_label        = section.settings.avail_label        | default: 'Availability'
+
+  comment
+    Build a sorted unique list of product types from the collection
+  endcomment
+  assign type_list = ''
+  for product in collection.products
+    unless type_list contains product.type
+      if product.type != blank
+        assign type_list = type_list | append: product.type | append: '|'
+      endif
+    endunless
+  endfor
+  assign type_array = type_list | split: '|'
+-%}
+
+<style>
+  /* ── Sidebar layout integration ──────────────────────
+     Floats next to the product grid via :has() when on desktop.
+  ──────────────────────────────────────────────────── */
+  @media screen and (min-width: 990px) {
+    .shopify-section:has(.cat-sb) {
+      width: 280px;
+      float: left;
+      clear: left;
+    }
+  }
+
+  .cat-sb {
+    padding: 2rem 1.5rem;
+    display: none;
+  }
+
+  .cat-sb.is-open { display: block; }
+
+  @media screen and (min-width: 990px) {
+    .cat-sb {
+      display: block;
+      padding: 2.5rem 1.5rem 2.5rem 0;
+    }
+  }
+
+  .cat-sb__inner {
+    position: sticky;
+    top: 9rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  /* ── Group ────────────────────────────────────────── */
+  .cat-sb__group {}
+
+  .cat-sb__group-label {
+    display: block;
+    font-family: var(--font-body-family);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #78716c;
+    margin-bottom: 1rem;
+  }
+
+  html.a11y-high-contrast .cat-sb__group-label { color: #000000 !important; }
+
+  .cat-sb__divider {
+    border: none;
+    border-top: 1px solid #e7e5e4;
+    margin: 0;
+  }
+
+  html.a11y-high-contrast .cat-sb__divider { border-top-color: #000000 !important; }
+
+  /* ── Search ───────────────────────────────────────── */
+  .cat-sb__search-wrap {
+    position: relative;
+  }
+
+  .cat-sb__search-icon {
+    position: absolute;
+    top: 50%;
+    left: 0.875rem;
+    transform: translateY(-50%);
+    width: 1.125rem;
+    height: 1.125rem;
+    color: #a8a29e;
+    pointer-events: none;
+    flex-shrink: 0;
+  }
+
+  .cat-sb__search-input {
+    width: 100%;
+    padding: 0.875rem 1rem 0.875rem 2.75rem;
+    font-family: var(--font-body-family);
+    font-size: 0.9375rem;
+    color: #1c1917;
+    background-color: #ffffff;
+    border: 1.5px solid #d6d3d1;
+    border-radius: 0.75rem;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .cat-sb__search-input::placeholder { color: #a8a29e; }
+
+  .cat-sb__search-input:focus {
+    border-color: #b45309;
+    box-shadow: 0 0 0 3px rgba(180, 83, 9, 0.12);
+  }
+
+  html.a11y-high-contrast .cat-sb__search-input {
+    border: 2px solid #000000 !important;
+    background-color: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  html.a11y-high-contrast .cat-sb__search-input:focus {
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.2) !important;
+  }
+
+  /* ── Category radios ──────────────────────────────── */
+  .cat-sb__options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+  }
+
+  .cat-sb__option {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    font-family: var(--font-body-family);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: #57534e;
+    transition: color 0.15s ease;
+  }
+
+  .cat-sb__option:hover { color: #1c1917; }
+
+  .cat-sb__option input[type="radio"],
+  .cat-sb__option input[type="checkbox"] {
+    width: 1.125rem;
+    height: 1.125rem;
+    flex-shrink: 0;
+    accent-color: #b45309;
+    cursor: pointer;
+  }
+
+  html.a11y-high-contrast .cat-sb__option input {
+    accent-color: #000000 !important;
+  }
+
+  .cat-sb__option.is-active {
+    color: #1c1917;
+    font-weight: 700;
+  }
+</style>
+
+<aside
+  class="cat-sb"
+  id="CatalogSidebar"
+  aria-label="Filter products"
+>
+  <div class="cat-sb__inner">
+
+    <!-- Search -->
+    <div class="cat-sb__group">
+      <span class="cat-sb__group-label">{{ search_label }}</span>
+      <div class="cat-sb__search-wrap">
+        <svg class="cat-sb__search-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input
+          type="search"
+          class="cat-sb__search-input"
+          id="CatalogSearchInput"
+          placeholder="{{ search_placeholder }}"
+          autocomplete="off"
+          data-catalog-search
+          aria-label="{{ search_label }}"
+        >
+      </div>
+    </div>
+
+    <hr class="cat-sb__divider">
+
+    <!-- Categories -->
+    <div class="cat-sb__group">
+      <span class="cat-sb__group-label" id="CatalogCategoryLabel">{{ category_label }}</span>
+      <div class="cat-sb__options" role="radiogroup" aria-labelledby="CatalogCategoryLabel">
+
+        <label class="cat-sb__option is-active">
+          <input
+            type="radio"
+            name="catalog-category"
+            value="all"
+            checked
+            data-catalog-category="all"
+          >
+          All
+        </label>
+
+        {%- for type in type_array -%}
+          {%- if type != blank -%}
+            <label class="cat-sb__option">
+              <input
+                type="radio"
+                name="catalog-category"
+                value="{{ type | escape }}"
+                data-catalog-category="{{ type | escape }}"
+              >
+              {{ type }}
+            </label>
+          {%- endif -%}
+        {%- endfor -%}
+
+      </div>
+    </div>
+
+    <hr class="cat-sb__divider">
+
+    <!-- Availability -->
+    <div class="cat-sb__group">
+      <span class="cat-sb__group-label">{{ avail_label }}</span>
+      <div class="cat-sb__options">
+        <label class="cat-sb__option">
+          <input
+            type="checkbox"
+            id="CatalogInStockOnly"
+            data-catalog-instock
+          >
+          In Stock Only
+        </label>
+      </div>
+    </div>
+
+  </div>
+</aside>
+
+<script>
+(function () {
+  if (window.lpCatalogSidebarReady) return;
+  window.lpCatalogSidebarReady = true;
+
+  /* Highlight active radio label */
+  document.querySelectorAll('[data-catalog-category]').forEach(function (radio) {
+    radio.addEventListener('change', function () {
+      document.querySelectorAll('.cat-sb__option').forEach(function (lbl) {
+        lbl.classList.remove('is-active');
+      });
+      if (radio.checked) radio.closest('.cat-sb__option').classList.add('is-active');
+      window.dispatchEvent(new CustomEvent('catalog:filter'));
+    });
+  });
+
+  /* Search input debounced */
+  var searchInput = document.querySelector('[data-catalog-search]');
+  if (searchInput) {
+    var debounceTimer;
+    searchInput.addEventListener('input', function () {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(function () {
+        window.dispatchEvent(new CustomEvent('catalog:filter'));
+      }, 200);
+    });
+  }
+
+  /* In-stock checkbox */
+  var stockCheck = document.querySelector('[data-catalog-instock]');
+  if (stockCheck) {
+    stockCheck.addEventListener('change', function () {
+      window.dispatchEvent(new CustomEvent('catalog:filter'));
+    });
+  }
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Catalog Sidebar",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "search_label",
+      "label": "Search label",
+      "default": "Search"
+    },
+    {
+      "type": "text",
+      "id": "search_placeholder",
+      "label": "Search placeholder",
+      "default": "SKU or product name"
+    },
+    {
+      "type": "text",
+      "id": "category_label",
+      "label": "Category label",
+      "default": "Categories"
+    },
+    {
+      "type": "text",
+      "id": "avail_label",
+      "label": "Availability label",
+      "default": "Availability"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Catalog Sidebar"
+    }
+  ]
+}
+{% endschema %}

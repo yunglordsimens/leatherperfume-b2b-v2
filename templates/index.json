@@ -18,9 +18,9 @@
         "heading": "Your trusted supplier of niche perfumery.",
         "subheading": "<p>Official portal for boutique owners. Recommended retail markup from 100%, dispatch from our Prague warehouse in 24 hours. Catalog access is restricted to verified partners.</p>",
         "button_primary_label": "Apply for Partnership",
-        "button_primary_link": "",
+        "button_primary_link": "shopify://pages/wholesale-application",
         "button_secondary_label": "Log in to portal",
-        "button_secondary_link": ""
+        "button_secondary_link": "shopify://pages/login"
       }
     },
     "trust_bar_HGTr33": {

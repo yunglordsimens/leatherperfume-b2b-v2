@@ -76,7 +76,7 @@
         "heading": "Ready to elevate your retail space?",
         "description": "<p>Join our network of premium retail partners and get access to exclusive wholesale pricing, priority shipping, and dedicated support.</p>",
         "button_label": "Apply for Partnership",
-        "button_link": ""
+        "button_link": "shopify://pages/wholesale-application"
       }
     }
   },

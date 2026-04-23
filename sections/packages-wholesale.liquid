@@ -1,523 +1,509 @@
 {%- liquid
-  assign high_contrast = section.settings.high_contrast
-  assign section_mod = ''
-  if high_contrast
-    assign section_mod = ' packages-ws--high-contrast'
-  endif
+  assign heading         = section.settings.heading         | default: 'Ready-Made Solutions'
+  assign getting_started = section.settings.getting_started_text | default: 'Getting Started'
+  assign subheading      = section.settings.subheading
+
+  assign p1_name     = section.settings.p1_name      | default: 'Fragrance Corner'
+  assign p1_desc     = section.settings.p1_desc
+  assign p1_skus     = section.settings.p1_skus      | default: '20 SKUs'
+  assign p1_discount = section.settings.p1_discount  | default: '10% Discount'
+  assign p1_price    = section.settings.p1_price     | default: 'from 25,000 CZK'
+  assign p1_btn      = section.settings.p1_btn_label | default: 'Learn More'
+  assign p1_link     = section.settings.p1_btn_link
+
+  assign p2_name     = section.settings.p2_name      | default: 'Boutique Launch'
+  assign p2_desc     = section.settings.p2_desc
+  assign p2_skus     = section.settings.p2_skus      | default: '60 SKUs'
+  assign p2_discount = section.settings.p2_discount  | default: '15% Discount'
+  assign p2_price    = section.settings.p2_price     | default: 'from 50,000 CZK'
+  assign p2_btn      = section.settings.p2_btn_label | default: 'Apply Now'
+  assign p2_link     = section.settings.p2_btn_link
+  assign p2_badge    = section.settings.p2_badge     | default: 'Best Value'
+
+  assign more_label = section.settings.more_label | default: 'View more wholesale packages'
+  assign more_link  = section.settings.more_link
 -%}
 
 <style>
   /* ================================================
-     Wholesale Packages — inline section styles
+     Packages Wholesale — inline section styles
      ================================================ */
 
-  .packages-ws {
-    padding: 6rem 0;
+  .pkg-wh {
     background-color: #1c1917;
     color: #ffffff;
+    padding: 5rem 1.5rem;
   }
 
-  .packages-ws--high-contrast {
-    background-color: #ffffff;
-    border-top: 4px solid #000000;
-    color: #000000;
+  @media screen and (min-width: 990px) {
+    .pkg-wh { padding: 6rem 1.5rem; }
   }
 
-  .packages-ws__container {
-    max-width: var(--page-width, 80rem);
+  html.a11y-high-contrast .pkg-wh {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border-top: 4px solid #000000 !important;
+  }
+
+  .pkg-wh__inner {
+    max-width: var(--page-width, 1440px);
     margin: 0 auto;
-    padding: 0 1.5rem;
   }
 
-  /* ── Header ────────────────────────────────── */
-
-  .packages-ws__header {
+  /* ── Header ───────────────────────────────────────── */
+  .pkg-wh__header {
     text-align: center;
     margin-bottom: 4rem;
   }
 
-  .packages-ws__eyebrow {
+  .pkg-wh__eyebrow {
     display: block;
     font-family: var(--font-body-family);
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
     font-size: 0.875rem;
-    margin-bottom: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
     color: #f59e0b;
+    margin-bottom: 1rem;
   }
 
-  .packages-ws--high-contrast .packages-ws__eyebrow {
-    color: #000000;
+  html.a11y-high-contrast .pkg-wh__eyebrow {
+    color: #000000 !important;
   }
 
-  .packages-ws__heading {
+  .pkg-wh__heading {
     font-family: var(--font-heading-family);
     font-weight: var(--font-heading-weight);
-    font-style: var(--font-heading-style);
-    font-size: clamp(2.25rem, 5vw, 3rem);
-    line-height: 1.15;
-    margin: 0 0 1.5rem;
+    font-size: clamp(2.25rem, 5vw, 3.75rem);
+    line-height: 1.1;
     color: #ffffff;
+    margin: 0 0 1.5rem;
   }
 
-  @media screen and (min-width: 750px) {
-    .packages-ws__heading {
-      font-size: clamp(2.75rem, 6vw, 3.75rem);
-    }
+  html.a11y-high-contrast .pkg-wh__heading {
+    color: #000000 !important;
   }
 
-  .packages-ws--high-contrast .packages-ws__heading {
-    color: #000000;
-  }
-
-  .packages-ws__subheading {
-    font-family: var(--font-body-family);
-    font-size: 1rem;
-    line-height: 1.65;
-    color: #a8a29e;
+  .pkg-wh__subheading {
     max-width: 42rem;
     margin: 0 auto;
+    font-family: var(--font-body-family);
+    font-size: clamp(1rem, 1.5vw, 1.125rem);
+    line-height: 1.7;
+    color: #a8a29e;
   }
 
-  .packages-ws--high-contrast .packages-ws__subheading {
-    color: #000000;
+  html.a11y-high-contrast .pkg-wh__subheading {
+    color: #000000 !important;
     font-weight: 500;
   }
 
-  .packages-ws__subheading p {
-    margin: 0;
-  }
-
-  /* ── Grid ──────────────────────────────────── */
-
-  .packages-ws__grid {
+  /* ── Cards grid ───────────────────────────────────── */
+  .pkg-wh__grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 3rem;
+    gap: 2rem;
     margin-bottom: 4rem;
   }
 
   @media screen and (min-width: 990px) {
-    .packages-ws__grid {
-      grid-template-columns: repeat(2, 1fr);
+    .pkg-wh__grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
     }
   }
 
-  /* ── Package card ──────────────────────────── */
-
-  .pkg-card {
-    padding: 2.5rem;
-    border-radius: 1.5rem;
+  /* ── Card base ────────────────────────────────────── */
+  .pkg-wh__card {
+    position: relative;
     display: flex;
     flex-direction: column;
-    position: relative;
+    padding: 2.5rem;
+    border-radius: 1.5rem;
     background-color: #292524;
     border: 1px solid #44403c;
     color: #ffffff;
   }
 
   @media screen and (min-width: 750px) {
-    .pkg-card {
-      padding: 3rem;
-    }
+    .pkg-wh__card { padding: 3rem; }
   }
 
-  .pkg-card--featured {
+  html.a11y-high-contrast .pkg-wh__card {
+    background-color: #ffffff !important;
+    border: 4px solid #000000 !important;
+    color: #000000 !important;
+  }
+
+  /* ── Card — featured variant ─────────────────────── */
+  .pkg-wh__card--featured {
     background-color: #b45309;
     border-color: transparent;
-    box-shadow: 0 25px 50px -12px rgba(120, 53, 15, 0.2);
+    box-shadow: 0 25px 50px -12px rgba(120, 53, 15, 0.4);
   }
 
-  .packages-ws--high-contrast .pkg-card {
-    background-color: transparent;
-    border: 4px solid #000000;
-    color: #000000;
-    box-shadow: none;
+  html.a11y-high-contrast .pkg-wh__card--featured {
+    background-color: #ffffff !important;
+    border: 8px solid #000000 !important;
+    box-shadow: none !important;
   }
 
-  .packages-ws--high-contrast .pkg-card--featured {
-    border: 8px solid #000000;
-    box-shadow: none;
-  }
-
-  /* ── Top badge ("Best Value") ──────────────── */
-
-  .pkg-card__top-badge {
+  /* ── "Best Value" badge ──────────────────────────── */
+  .pkg-wh__badge {
     position: absolute;
     top: 0;
     left: 50%;
     transform: translate(-50%, -50%);
-    padding: 0.375rem 1.5rem;
+    padding: 0.5rem 1.5rem;
+    background-color: #ffffff;
+    color: #78350f;
     font-family: var(--font-body-family);
     font-size: 0.8125rem;
     font-weight: 700;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
     border-radius: 9999px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     white-space: nowrap;
-    background-color: #ffffff;
-    color: #92400e;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.15);
   }
 
-  .packages-ws--high-contrast .pkg-card__top-badge {
-    background-color: #000000;
-    color: #ffffff;
-    box-shadow: none;
+  html.a11y-high-contrast .pkg-wh__badge {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    box-shadow: none !important;
   }
 
-  /* ── Card header ───────────────────────────── */
-
-  .pkg-card__header {
-    margin-bottom: 2rem;
-  }
-
-  .pkg-card--featured .pkg-card__header {
+  /* Push content down on featured card to accommodate badge */
+  .pkg-wh__card--featured .pkg-wh__card-head {
     padding-top: 1rem;
   }
 
-  .pkg-card__heading {
+  /* ── Card header ──────────────────────────────────── */
+  .pkg-wh__card-head {
+    margin-bottom: 2rem;
+  }
+
+  .pkg-wh__card-title {
     font-family: var(--font-heading-family);
     font-weight: var(--font-heading-weight);
-    font-style: var(--font-heading-style);
-    font-size: 1.875rem;
+    font-size: clamp(1.75rem, 3vw, 2.25rem);
     line-height: 1.2;
+    color: inherit;
     margin: 0 0 1rem;
   }
 
-  .pkg-card__badges {
+  .pkg-wh__tags {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 0.75rem;
-    flex-wrap: wrap;
   }
 
-  /* Inline SKU / discount tags */
-  .pkg-card__tag {
+  .pkg-wh__tag {
+    display: inline-block;
     padding: 0.25rem 0.75rem;
     font-family: var(--font-body-family);
     font-size: 0.8125rem;
     font-weight: 700;
+    letter-spacing: 0.075em;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
     border-radius: 0.375rem;
-    line-height: 1.5;
   }
 
-  /* Standard card tags */
-  .pkg-card__tag--sku {
+  .pkg-wh__tag--skus {
     background-color: #1c1917;
     color: #d6d3d1;
   }
 
-  .pkg-card__tag--discount {
+  .pkg-wh__tag--discount {
     background-color: rgba(120, 53, 15, 0.5);
     color: #f59e0b;
   }
 
   /* Featured card tags */
-  .pkg-card--featured .pkg-card__tag--sku {
+  .pkg-wh__card--featured .pkg-wh__tag--skus {
     background-color: #92400e;
     color: #fffbeb;
   }
 
-  .pkg-card--featured .pkg-card__tag--discount {
+  .pkg-wh__card--featured .pkg-wh__tag--discount {
     background-color: #ffffff;
-    color: #92400e;
+    color: #78350f;
   }
 
-  /* High contrast tags — all variants */
-  .packages-ws--high-contrast .pkg-card__tag--sku,
-  .packages-ws--high-contrast .pkg-card__tag--discount,
-  .packages-ws--high-contrast .pkg-card--featured .pkg-card__tag--sku,
-  .packages-ws--high-contrast .pkg-card--featured .pkg-card__tag--discount {
-    background-color: transparent;
-    color: #000000;
-    border: 2px solid #000000;
+  html.a11y-high-contrast .pkg-wh__tag {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border: 2px solid #000000 !important;
   }
 
-  /* ── Description ───────────────────────────── */
-
-  .pkg-card__description {
+  /* ── Card description ─────────────────────────────── */
+  .pkg-wh__card-desc {
+    flex-grow: 1;
     font-family: var(--font-body-family);
     font-size: 1rem;
-    line-height: 1.65;
+    line-height: 1.7;
     color: #a8a29e;
-    flex-grow: 1;
-    margin-bottom: 2.5rem;
+    margin: 0 0 2.5rem;
   }
 
-  .pkg-card--featured .pkg-card__description {
+  .pkg-wh__card--featured .pkg-wh__card-desc {
     color: #fef3c7;
   }
 
-  .packages-ws--high-contrast .pkg-card__description,
-  .packages-ws--high-contrast .pkg-card--featured .pkg-card__description {
-    color: #000000;
+  html.a11y-high-contrast .pkg-wh__card-desc {
+    color: #000000 !important;
     font-weight: 500;
   }
 
-  .pkg-card__description p {
-    margin: 0;
-  }
-
-  /* ── Footer (price + button) ───────────────── */
-
-  .pkg-card__footer {
-    border-top: 1px solid #44403c;
-    padding-top: 2rem;
-    margin-top: auto;
+  /* ── Card footer ──────────────────────────────────── */
+  .pkg-wh__card-foot {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
     align-items: stretch;
+    gap: 1.5rem;
+    padding-top: 2rem;
+    margin-top: auto;
+    border-top: 1px solid #44403c;
   }
 
   @media screen and (min-width: 600px) {
-    .pkg-card__footer {
+    .pkg-wh__card-foot {
       flex-direction: row;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
     }
   }
 
-  .pkg-card--featured .pkg-card__footer {
+  .pkg-wh__card--featured .pkg-wh__card-foot {
     border-top-color: #d97706;
   }
 
-  .packages-ws--high-contrast .pkg-card__footer,
-  .packages-ws--high-contrast .pkg-card--featured .pkg-card__footer {
-    border-top-color: #000000;
+  html.a11y-high-contrast .pkg-wh__card-foot {
+    border-top-color: #000000 !important;
   }
 
-  .pkg-card__price-label {
+  .pkg-wh__price-label {
     font-family: var(--font-body-family);
-    font-size: 0.75rem;
+    font-size: 0.8125rem;
     font-weight: 700;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
     color: #78716c;
     margin: 0 0 0.25rem;
   }
 
-  .pkg-card--featured .pkg-card__price-label {
-    color: #fde68a;
+  .pkg-wh__card--featured .pkg-wh__price-label {
+    color: #fcd34d;
   }
 
-  .packages-ws--high-contrast .pkg-card__price-label,
-  .packages-ws--high-contrast .pkg-card--featured .pkg-card__price-label {
-    color: #78716c;
+  html.a11y-high-contrast .pkg-wh__price-label {
+    color: #000000 !important;
   }
 
-  .pkg-card__price {
+  .pkg-wh__price-value {
     font-family: var(--font-heading-family);
     font-weight: var(--font-heading-weight);
-    font-size: 1.5rem;
-    line-height: 1.2;
+    font-size: clamp(1.5rem, 2.5vw, 1.875rem);
+    color: inherit;
     margin: 0;
-    color: #ffffff;
   }
 
-  .packages-ws--high-contrast .pkg-card__price,
-  .packages-ws--high-contrast .pkg-card--featured .pkg-card__price {
-    color: #000000;
-  }
-
-  /* ── Card button ───────────────────────────── */
-
-  .pkg-card__btn {
+  /* ── Card CTA button ──────────────────────────────── */
+  .pkg-wh__btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     width: 100%;
     padding: 1rem 2rem;
-    border-radius: 0.75rem;
     font-family: var(--font-body-family);
+    font-size: 1.0625rem;
     font-weight: 700;
-    font-size: 1.125rem;
-    line-height: 1;
     text-decoration: none;
-    border: none;
+    border-radius: 0.75rem;
     cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    border: 2px solid transparent;
     white-space: nowrap;
-    transition: background-color 0.2s ease;
-    background-color: #ffffff;
-    color: #1c1917;
   }
 
   @media screen and (min-width: 600px) {
-    .pkg-card__btn {
-      width: auto;
-    }
+    .pkg-wh__btn { width: auto; }
   }
 
-  .pkg-card__btn:hover {
+  /* Standard card button */
+  .pkg-wh__btn--light {
+    background-color: #ffffff;
+    color: #1c1917;
+    border-color: #ffffff;
+  }
+
+  .pkg-wh__btn--light:hover {
     background-color: #e7e5e4;
+    border-color: #e7e5e4;
+    color: #1c1917;
   }
 
-  .pkg-card--featured .pkg-card__btn {
+  /* Featured card button */
+  .pkg-wh__btn--dark {
     background-color: #1c1917;
     color: #ffffff;
+    border-color: #1c1917;
   }
 
-  .pkg-card--featured .pkg-card__btn:hover {
-    background-color: #000000;
-  }
-
-  .packages-ws--high-contrast .pkg-card .pkg-card__btn,
-  .packages-ws--high-contrast .pkg-card--featured .pkg-card__btn {
-    background-color: #000000;
+  .pkg-wh__btn--dark:hover {
+    background-color: #292524;
+    border-color: #292524;
     color: #ffffff;
   }
 
-  .packages-ws--high-contrast .pkg-card .pkg-card__btn:hover,
-  .packages-ws--high-contrast .pkg-card--featured .pkg-card__btn:hover {
-    background-color: #292524;
+  html.a11y-high-contrast .pkg-wh__btn {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border-color: #000000 !important;
   }
 
-  /* ── More packages CTA ─────────────────────── */
+  html.a11y-high-contrast .pkg-wh__btn:hover {
+    background-color: #292524 !important;
+    border-color: #292524 !important;
+  }
 
-  .packages-ws__more {
+  /* ── "View more" button ──────────────────────────── */
+  .pkg-wh__more-wrap {
     text-align: center;
   }
 
-  .packages-ws__more-btn {
+  .pkg-wh__more {
     display: inline-flex;
     align-items: center;
     gap: 0.75rem;
     padding: 1.25rem 2.5rem;
-    border-radius: 0.75rem;
     font-family: var(--font-body-family);
+    font-size: 1.0625rem;
     font-weight: 700;
-    font-size: 1.125rem;
-    line-height: 1;
-    text-decoration: none;
-    border: 1px solid #57534e;
     color: #ffffff;
     background-color: transparent;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    border: 1px solid #57534e;
+    border-radius: 0.75rem;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
   }
 
-  .packages-ws__more-btn:hover {
+  .pkg-wh__more:hover {
     background-color: #292524;
     color: #ffffff;
+    border-color: #57534e;
   }
 
-  .packages-ws--high-contrast .packages-ws__more-btn {
-    border: 4px solid #000000;
-    color: #000000;
+  html.a11y-high-contrast .pkg-wh__more {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border: 4px solid #000000 !important;
   }
 
-  .packages-ws--high-contrast .packages-ws__more-btn:hover {
-    background-color: #000000;
-    color: #ffffff;
+  html.a11y-high-contrast .pkg-wh__more:hover {
+    background-color: #000000 !important;
+    color: #ffffff !important;
   }
 
-  .packages-ws__more-btn-icon {
+  .pkg-wh__more-arrow {
     width: 1.25rem;
     height: 1.25rem;
     flex-shrink: 0;
+    transition: transform 0.2s ease;
+  }
+
+  .pkg-wh__more:hover .pkg-wh__more-arrow {
+    transform: translateX(4px);
   }
 </style>
 
-<section
-  class="packages-ws{{ section_mod }}"
-  id="PackagesWholesale-{{ section.id }}"
->
-  <div class="packages-ws__container">
+<section class="pkg-wh" id="PackagesWholesale-{{ section.id }}">
+  <div class="pkg-wh__inner">
 
-    {%- comment -%} ── Section header ── {%- endcomment -%}
-    <header class="packages-ws__header">
-      {%- if section.settings.eyebrow != blank -%}
-        <span class="packages-ws__eyebrow">{{ section.settings.eyebrow | escape }}</span>
+    <!-- Header -->
+    <div class="pkg-wh__header">
+      <span class="pkg-wh__eyebrow">{{ getting_started }}</span>
+      <h2 class="pkg-wh__heading">{{ heading }}</h2>
+      {%- if subheading != blank -%}
+        <p class="pkg-wh__subheading">{{ subheading }}</p>
       {%- endif -%}
-      {%- if section.settings.heading != blank -%}
-        <h2 class="packages-ws__heading">{{ section.settings.heading }}</h2>
-      {%- endif -%}
-      {%- if section.settings.subheading != blank -%}
-        <div class="packages-ws__subheading">{{ section.settings.subheading }}</div>
-      {%- endif -%}
-    </header>
+    </div>
 
-    {%- comment -%} ── Package cards ── {%- endcomment -%}
-    {%- if section.blocks.size > 0 -%}
-      <div class="packages-ws__grid">
+    <!-- Cards grid -->
+    <div class="pkg-wh__grid">
 
-        {%- for block in section.blocks -%}
-          {%- liquid
-            assign card_mod = ''
-            if block.settings.is_featured
-              assign card_mod = ' pkg-card--featured'
-            endif
-          -%}
-
-          <article class="pkg-card{{ card_mod }}" {{ block.shopify_attributes }}>
-
-            {%- if block.settings.badge_label != blank -%}
-              <div class="pkg-card__top-badge">
-                {{- block.settings.badge_label | escape -}}
-              </div>
+      <!-- Card 1: Fragrance Corner -->
+      <article class="pkg-wh__card">
+        <header class="pkg-wh__card-head">
+          <h3 class="pkg-wh__card-title">{{ p1_name }}</h3>
+          <div class="pkg-wh__tags">
+            {%- if p1_skus != blank -%}
+              <span class="pkg-wh__tag pkg-wh__tag--skus">{{ p1_skus }}</span>
             {%- endif -%}
-
-            <div class="pkg-card__header">
-              {%- if block.settings.heading != blank -%}
-                <h3 class="pkg-card__heading">{{ block.settings.heading | escape }}</h3>
-              {%- endif -%}
-
-              <div class="pkg-card__badges">
-                {%- if block.settings.tag_sku != blank -%}
-                  <span class="pkg-card__tag pkg-card__tag--sku">
-                    {{- block.settings.tag_sku | escape -}}
-                  </span>
-                {%- endif -%}
-                {%- if block.settings.tag_discount != blank -%}
-                  <span class="pkg-card__tag pkg-card__tag--discount">
-                    {{- block.settings.tag_discount | escape -}}
-                  </span>
-                {%- endif -%}
-              </div>
-            </div>
-
-            {%- if block.settings.description != blank -%}
-              <div class="pkg-card__description">{{ block.settings.description }}</div>
+            {%- if p1_discount != blank -%}
+              <span class="pkg-wh__tag pkg-wh__tag--discount">{{ p1_discount }}</span>
             {%- endif -%}
+          </div>
+        </header>
 
-            <div class="pkg-card__footer">
-              <div class="pkg-card__price-block">
-                {%- if block.settings.price_label != blank -%}
-                  <p class="pkg-card__price-label">{{ block.settings.price_label | escape }}</p>
-                {%- endif -%}
-                {%- if block.settings.price != blank -%}
-                  <p class="pkg-card__price">{{ block.settings.price | escape }}</p>
-                {%- endif -%}
-              </div>
+        {%- if p1_desc != blank -%}
+          <p class="pkg-wh__card-desc">{{ p1_desc }}</p>
+        {%- endif -%}
 
-              {%- if block.settings.button_label != blank -%}
-                <a
-                  href="{{ block.settings.button_link | default: '#' }}"
-                  class="pkg-card__btn"
-                >
-                  {{- block.settings.button_label | escape -}}
-                </a>
-              {%- endif -%}
-            </div>
+        <footer class="pkg-wh__card-foot">
+          <div>
+            <p class="pkg-wh__price-label">Investment</p>
+            <p class="pkg-wh__price-value">{{ p1_price }}</p>
+          </div>
+          <a href="{{ p1_link | default: '#' }}" class="pkg-wh__btn pkg-wh__btn--light">
+            {{ p1_btn }}
+          </a>
+        </footer>
+      </article>
 
-          </article>
-        {%- endfor -%}
+      <!-- Card 2: Boutique Launch (featured) -->
+      <article class="pkg-wh__card pkg-wh__card--featured">
+        {%- if p2_badge != blank -%}
+          <span class="pkg-wh__badge">{{ p2_badge }}</span>
+        {%- endif -%}
 
-      </div>
-    {%- endif -%}
+        <header class="pkg-wh__card-head">
+          <h3 class="pkg-wh__card-title">{{ p2_name }}</h3>
+          <div class="pkg-wh__tags">
+            {%- if p2_skus != blank -%}
+              <span class="pkg-wh__tag pkg-wh__tag--skus">{{ p2_skus }}</span>
+            {%- endif -%}
+            {%- if p2_discount != blank -%}
+              <span class="pkg-wh__tag pkg-wh__tag--discount">{{ p2_discount }}</span>
+            {%- endif -%}
+          </div>
+        </header>
 
-    {%- comment -%} ── More packages CTA ── {%- endcomment -%}
-    {%- if section.settings.more_label != blank -%}
-      <div class="packages-ws__more">
-        <a
-          href="{{ section.settings.more_link | default: '#' }}"
-          class="packages-ws__more-btn"
-        >
-          {{- section.settings.more_label | escape -}}
-          <svg class="packages-ws__more-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+        {%- if p2_desc != blank -%}
+          <p class="pkg-wh__card-desc">{{ p2_desc }}</p>
+        {%- endif -%}
+
+        <footer class="pkg-wh__card-foot">
+          <div>
+            <p class="pkg-wh__price-label">Investment</p>
+            <p class="pkg-wh__price-value">{{ p2_price }}</p>
+          </div>
+          <a href="{{ p2_link | default: '#' }}" class="pkg-wh__btn pkg-wh__btn--dark">
+            {{ p2_btn }}
+          </a>
+        </footer>
+      </article>
+
+    </div><!-- /.pkg-wh__grid -->
+
+    <!-- More packages button -->
+    {%- if more_label != blank -%}
+      <div class="pkg-wh__more-wrap">
+        <a href="{{ more_link | default: '#' }}" class="pkg-wh__more">
+          {{ more_label }}
+          <svg class="pkg-wh__more-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
             <line x1="5" y1="12" x2="19" y2="12"/>
             <polyline points="12 5 19 12 12 19"/>
           </svg>
@@ -525,14 +511,12 @@
       </div>
     {%- endif -%}
 
-  </div>
+  </div><!-- /.pkg-wh__inner -->
 </section>
-
-{% render 'accessibility-panel' %}
 
 {% schema %}
 {
-  "name": "Wholesale Packages",
+  "name": "Packages Wholesale",
   "tag": "section",
   "class": "section",
   "disabled_on": {
@@ -541,40 +525,128 @@
   "settings": [
     {
       "type": "header",
-      "content": "Appearance"
-    },
-    {
-      "type": "checkbox",
-      "id": "high_contrast",
-      "label": "High contrast mode",
-      "info": "White background with black borders.",
-      "default": false
-    },
-    {
-      "type": "header",
-      "content": "Section header"
+      "content": "Section Header"
     },
     {
       "type": "text",
-      "id": "eyebrow",
-      "label": "Eyebrow label",
+      "id": "getting_started_text",
+      "label": "Eyebrow text",
       "default": "Getting Started"
     },
     {
-      "type": "inline_richtext",
+      "type": "text",
       "id": "heading",
       "label": "Heading",
       "default": "Ready-Made Solutions"
     },
     {
-      "type": "richtext",
+      "type": "textarea",
       "id": "subheading",
       "label": "Subheading",
-      "default": "<p>We've designed optimal packages for a quick sales launch. Choose the one that best fits your retail format.</p>"
+      "default": "We've designed optimal packages for a quick sales launch. Choose the one that best fits your retail format."
     },
+
     {
       "type": "header",
-      "content": "More packages button"
+      "content": "Card 1 — Standard"
+    },
+    {
+      "type": "text",
+      "id": "p1_name",
+      "label": "Card name",
+      "default": "Fragrance Corner"
+    },
+    {
+      "type": "text",
+      "id": "p1_skus",
+      "label": "SKU count (tag)",
+      "default": "20 SKUs"
+    },
+    {
+      "type": "text",
+      "id": "p1_discount",
+      "label": "Discount (tag)",
+      "default": "10% Discount"
+    },
+    {
+      "type": "textarea",
+      "id": "p1_desc",
+      "label": "Description",
+      "default": "Ideal for existing clothing or shoe boutiques. A compact display featuring the most popular fragrances for cross-selling. Includes a basic tester set."
+    },
+    {
+      "type": "text",
+      "id": "p1_price",
+      "label": "Investment (price)",
+      "default": "from 25,000 CZK"
+    },
+    {
+      "type": "text",
+      "id": "p1_btn_label",
+      "label": "Button label",
+      "default": "Learn More"
+    },
+    {
+      "type": "url",
+      "id": "p1_btn_link",
+      "label": "Button link"
+    },
+
+    {
+      "type": "header",
+      "content": "Card 2 — Featured (Best Value)"
+    },
+    {
+      "type": "text",
+      "id": "p2_badge",
+      "label": "Badge text",
+      "default": "Best Value"
+    },
+    {
+      "type": "text",
+      "id": "p2_name",
+      "label": "Card name",
+      "default": "Boutique Launch"
+    },
+    {
+      "type": "text",
+      "id": "p2_skus",
+      "label": "SKU count (tag)",
+      "default": "60 SKUs"
+    },
+    {
+      "type": "text",
+      "id": "p2_discount",
+      "label": "Discount (tag)",
+      "default": "15% Discount"
+    },
+    {
+      "type": "textarea",
+      "id": "p2_desc",
+      "label": "Description",
+      "default": "Full inventory for a new store. Includes the entire fragrance line, leather accessories, gift sets, and extensive marketing support with a dedicated manager."
+    },
+    {
+      "type": "text",
+      "id": "p2_price",
+      "label": "Investment (price)",
+      "default": "from 50,000 CZK"
+    },
+    {
+      "type": "text",
+      "id": "p2_btn_label",
+      "label": "Button label",
+      "default": "Apply Now"
+    },
+    {
+      "type": "url",
+      "id": "p2_btn_link",
+      "label": "Button link"
+    },
+
+    {
+      "type": "header",
+      "content": "\"View More\" Button"
     },
     {
       "type": "text",
@@ -588,124 +660,9 @@
       "label": "Button link"
     }
   ],
-  "blocks": [
-    {
-      "type": "package",
-      "name": "Package",
-      "settings": [
-        {
-          "type": "header",
-          "content": "Style"
-        },
-        {
-          "type": "checkbox",
-          "id": "is_featured",
-          "label": "Featured card (amber highlight)",
-          "default": false
-        },
-        {
-          "type": "text",
-          "id": "badge_label",
-          "label": "Top badge text",
-          "info": "e.g. \"Best Value\". Leave blank to hide.",
-          "default": ""
-        },
-        {
-          "type": "header",
-          "content": "Content"
-        },
-        {
-          "type": "text",
-          "id": "heading",
-          "label": "Package name",
-          "default": "Package Name"
-        },
-        {
-          "type": "text",
-          "id": "tag_sku",
-          "label": "SKU count tag",
-          "default": "20 SKUs"
-        },
-        {
-          "type": "text",
-          "id": "tag_discount",
-          "label": "Discount tag",
-          "default": "10% Discount"
-        },
-        {
-          "type": "richtext",
-          "id": "description",
-          "label": "Description",
-          "default": "<p>Description of what this package includes and who it is for.</p>"
-        },
-        {
-          "type": "header",
-          "content": "Pricing"
-        },
-        {
-          "type": "text",
-          "id": "price_label",
-          "label": "Price label",
-          "default": "Investment"
-        },
-        {
-          "type": "text",
-          "id": "price",
-          "label": "Price",
-          "default": "from 25,000 CZK"
-        },
-        {
-          "type": "header",
-          "content": "Button"
-        },
-        {
-          "type": "text",
-          "id": "button_label",
-          "label": "Label",
-          "default": "Learn More"
-        },
-        {
-          "type": "url",
-          "id": "button_link",
-          "label": "Link"
-        }
-      ]
-    }
-  ],
-  "max_blocks": 4,
   "presets": [
     {
-      "name": "Wholesale Packages",
-      "blocks": [
-        {
-          "type": "package",
-          "settings": {
-            "is_featured": false,
-            "badge_label": "",
-            "heading": "Fragrance Corner",
-            "tag_sku": "20 SKUs",
-            "tag_discount": "10% Discount",
-            "description": "<p>Ideal for existing clothing or shoe boutiques. A compact display featuring the most popular fragrances for cross-selling. Includes a basic tester set.</p>",
-            "price_label": "Investment",
-            "price": "from 25,000 CZK",
-            "button_label": "Learn More"
-          }
-        },
-        {
-          "type": "package",
-          "settings": {
-            "is_featured": true,
-            "badge_label": "Best Value",
-            "heading": "Boutique Launch",
-            "tag_sku": "60 SKUs",
-            "tag_discount": "15% Discount",
-            "description": "<p>Full inventory for a new store. Includes the entire fragrance line, leather accessories, gift sets, and extensive marketing support with a dedicated manager.</p>",
-            "price_label": "Investment",
-            "price": "from 50,000 CZK",
-            "button_label": "Apply Now"
-          }
-        }
-      ]
+      "name": "Packages Wholesale"
     }
   ]
 }

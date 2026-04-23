@@ -11,6 +11,14 @@
   "name": "t:sections.header.name",
   "type": "header",
   "sections": {
+    "lp_top_bar_Ha68Xe": {
+      "type": "lp-top-bar",
+      "name": "LP Top Bar",
+      "settings": {
+        "high_contrast": false,
+        "text": "For verified wholesale partners only"
+      }
+    },
     "header": {
       "type": "header",
       "settings": {
@@ -21,20 +29,12 @@
         "sticky_header_type": "on-scroll-up",
         "show_line_separator": true,
         "color_scheme": "scheme-1",
-        "enable_country_selector": true,
-        "enable_language_selector": true,
-        "enable_customer_avatar": true,
+        "enable_country_selector": false,
+        "enable_language_selector": false,
+        "enable_customer_avatar": false,
         "margin_bottom": 0,
         "padding_top": 20,
         "padding_bottom": 20
-      }
-    },
-    "lp_top_bar_Ha68Xe": {
-      "type": "lp-top-bar",
-      "name": "LP Top Bar",
-      "settings": {
-        "high_contrast": false,
-        "text": "For verified wholesale partners only"
       }
     }
   },

@@ -1,0 +1,763 @@
+{%- liquid
+  assign heading    = section.settings.heading    | default: 'Quick Reorder'
+  assign btn_label  = section.settings.btn_label  | default: 'Reorder All'
+  assign empty_text = section.settings.empty_text | default: 'No past orders found. Once you place your first wholesale order it will appear here.'
+  assign max_orders = section.settings.max_orders | default: 10
+-%}
+
+<style>
+  /* ── layout ─────────────────────────────────────────────── */
+  .qro {
+    background-color: #f5f5f4;
+    min-height: 60vh;
+  }
+
+  html.a11y-high-contrast .qro { background-color: #ffffff !important; }
+
+  /* ── page header ─────────────────────────────────────────── */
+  .qro__header {
+    background: #ffffff;
+    border-bottom: 1px solid #e7e5e4;
+    padding: 3rem 1.5rem;
+    text-align: center;
+  }
+
+  html.a11y-high-contrast .qro__header {
+    border-bottom: 4px solid #000000 !important;
+  }
+
+  .qro__icon-wrap {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 1rem;
+    background-color: #fef3c7;
+    color: #b45309;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+  }
+
+  html.a11y-high-contrast .qro__icon-wrap {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border: 4px solid #000000 !important;
+  }
+
+  .qro__icon-wrap svg {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .qro__heading {
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight);
+    font-size: clamp(2rem, 5vw, 3rem);
+    color: #1c1917;
+    margin: 0 0 0.75rem;
+    line-height: 1.15;
+  }
+
+  html.a11y-high-contrast .qro__heading { color: #000000 !important; }
+
+  .qro__desc {
+    font-family: var(--font-body-family);
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #57534e;
+    max-width: 36rem;
+    margin: 0 auto;
+  }
+
+  html.a11y-high-contrast .qro__desc { color: #000000 !important; font-weight: 500; }
+
+  .qro__desc p { margin: 0; }
+
+  /* ── orders list ─────────────────────────────────────────── */
+  .qro__list {
+    max-width: 56rem;
+    margin: 0 auto;
+    padding: 3rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  /* ── card ────────────────────────────────────────────────── */
+  .qro__card {
+    background: #ffffff;
+    border: 1px solid #e7e5e4;
+    border-radius: 1.5rem;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    transition: box-shadow 0.2s ease;
+  }
+
+  .qro__card:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  }
+
+  @media screen and (min-width: 700px) {
+    .qro__card {
+      flex-direction: row;
+      gap: 2rem;
+      padding: 2.5rem;
+    }
+  }
+
+  html.a11y-high-contrast .qro__card {
+    border: 4px solid #000000 !important;
+    box-shadow: none !important;
+  }
+
+  /* card left */
+  .qro__card-left {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .qro__card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .qro__order-name {
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight);
+    font-size: 1.375rem;
+    color: #1c1917;
+    margin: 0;
+  }
+
+  html.a11y-high-contrast .qro__order-name { color: #000000 !important; }
+
+  .qro__date-badge {
+    display: inline-block;
+    padding: 0.2rem 0.65rem;
+    border-radius: 0.5rem;
+    background-color: #f5f5f4;
+    color: #57534e;
+    font-family: var(--font-body-family);
+    font-size: 0.8125rem;
+    font-weight: 600;
+  }
+
+  html.a11y-high-contrast .qro__date-badge {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border: 1px solid #000000 !important;
+  }
+
+  .qro__po {
+    font-family: var(--font-body-family);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #78716c;
+    margin: 0 0 0.875rem;
+  }
+
+  html.a11y-high-contrast .qro__po { color: #000000 !important; }
+  .qro__po strong { color: #1c1917; }
+  html.a11y-high-contrast .qro__po strong { color: #000000 !important; }
+
+  /* items preview box */
+  .qro__items {
+    background-color: #f5f5f4;
+    border: 1px solid #e7e5e4;
+    border-radius: 0.875rem;
+    padding: 1rem 1.25rem;
+  }
+
+  html.a11y-high-contrast .qro__items {
+    background-color: #ffffff !important;
+    border: 2px solid #000000 !important;
+  }
+
+  .qro__items-label {
+    font-family: var(--font-body-family);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #78716c;
+    margin: 0 0 0.625rem;
+  }
+
+  html.a11y-high-contrast .qro__items-label { color: #000000 !important; }
+
+  .qro__items-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+
+  .qro__items-list li {
+    font-family: var(--font-body-family);
+    font-size: 0.875rem;
+    color: #57534e;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    line-height: 1.5;
+  }
+
+  html.a11y-high-contrast .qro__items-list li { color: #000000 !important; }
+
+  .qro__bullet {
+    flex-shrink: 0;
+    width: 0.375rem;
+    height: 0.375rem;
+    border-radius: 50%;
+    background-color: #d97706;
+    margin-top: 0.5rem;
+  }
+
+  html.a11y-high-contrast .qro__bullet { background-color: #000000 !important; }
+
+  .qro__items-more {
+    font-family: var(--font-body-family);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #78716c;
+    margin: 0.5rem 0 0;
+  }
+
+  html.a11y-high-contrast .qro__items-more { color: #000000 !important; }
+
+  /* card right */
+  .qro__card-right {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1.25rem;
+  }
+
+  @media screen and (min-width: 700px) {
+    .qro__card-right {
+      width: 13rem;
+      border-left: 1px solid #e7e5e4;
+      padding-left: 2rem;
+    }
+    html.a11y-high-contrast .qro__card-right { border-left: 2px solid #000000 !important; }
+  }
+
+  .qro__total-label {
+    font-family: var(--font-body-family);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #78716c;
+    margin: 0 0 0.25rem;
+  }
+
+  html.a11y-high-contrast .qro__total-label { color: #000000 !important; }
+
+  .qro__total-amount {
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight);
+    font-size: 2rem;
+    color: #1c1917;
+    margin: 0;
+    line-height: 1.15;
+  }
+
+  html.a11y-high-contrast .qro__total-amount { color: #000000 !important; }
+
+  /* reorder button */
+  .qro__btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.875rem 1.25rem;
+    font-family: var(--font-body-family);
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: #ffffff;
+    background-color: #1c1917;
+    border: none;
+    border-radius: 0.875rem;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+    text-align: center;
+  }
+
+  .qro__btn:hover:not(:disabled) { background-color: #b45309; }
+  .qro__btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  html.a11y-high-contrast .qro__btn {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border: 2px solid #000000 !important;
+  }
+
+  .qro__btn svg { width: 1.125rem; height: 1.125rem; flex-shrink: 0; }
+
+  /* spinner */
+  .qro__spinner {
+    width: 1.125rem;
+    height: 1.125rem;
+    border: 2px solid rgba(255,255,255,0.35);
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: qro-spin 0.7s linear infinite;
+    flex-shrink: 0;
+  }
+
+  @keyframes qro-spin { to { transform: rotate(360deg); } }
+
+  /* success state */
+  .qro__btn.is-success {
+    background-color: #059669;
+    pointer-events: none;
+  }
+  html.a11y-high-contrast .qro__btn.is-success { background-color: #000000 !important; }
+
+  .qro__btn.is-success svg { color: #ffffff; }
+
+  /* ── empty state ─────────────────────────────────────────── */
+  .qro__empty {
+    background: #ffffff;
+    border: 1px solid #e7e5e4;
+    border-radius: 1.25rem;
+    padding: 4rem 2rem;
+    text-align: center;
+  }
+
+  html.a11y-high-contrast .qro__empty { border: 4px solid #000000 !important; }
+
+  .qro__empty svg {
+    width: 3rem;
+    height: 3rem;
+    color: #d6d3d1;
+    margin: 0 auto 1rem;
+    display: block;
+  }
+
+  html.a11y-high-contrast .qro__empty svg { color: #000000 !important; }
+
+  .qro__empty-heading {
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight);
+    font-size: 1.25rem;
+    color: #1c1917;
+    margin: 0 0 0.5rem;
+  }
+
+  html.a11y-high-contrast .qro__empty-heading { color: #000000 !important; }
+
+  .qro__empty-text {
+    font-family: var(--font-body-family);
+    font-size: 0.9375rem;
+    color: #78716c;
+    margin: 0 0 1.5rem;
+    max-width: 28rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  html.a11y-high-contrast .qro__empty-text { color: #000000 !important; }
+
+  .qro__empty-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.75rem;
+    background-color: #1c1917;
+    color: #ffffff;
+    font-family: var(--font-body-family);
+    font-size: 0.9375rem;
+    font-weight: 700;
+    border-radius: 0.75rem;
+    text-decoration: none;
+    transition: background-color 0.15s ease;
+  }
+
+  .qro__empty-cta:hover { background-color: #b45309; }
+
+  html.a11y-high-contrast .qro__empty-cta {
+    background-color: #000000 !important;
+    border: 2px solid #000000 !important;
+  }
+
+  /* ── auth gate ───────────────────────────────────────────── */
+  .qro__auth {
+    max-width: 30rem;
+    margin: 4rem auto;
+    background: #ffffff;
+    border: 1px solid #e7e5e4;
+    border-radius: 1.25rem;
+    padding: 3.5rem 2rem;
+    text-align: center;
+  }
+
+  html.a11y-high-contrast .qro__auth { border: 4px solid #000000 !important; }
+
+  .qro__auth svg {
+    width: 3rem;
+    height: 3rem;
+    color: #d6d3d1;
+    margin: 0 auto 1rem;
+    display: block;
+  }
+
+  html.a11y-high-contrast .qro__auth svg { color: #000000 !important; }
+
+  .qro__auth h2 {
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight);
+    font-size: 1.5rem;
+    color: #1c1917;
+    margin: 0 0 0.625rem;
+  }
+
+  html.a11y-high-contrast .qro__auth h2 { color: #000000 !important; }
+
+  .qro__auth p {
+    font-family: var(--font-body-family);
+    font-size: 0.9375rem;
+    color: #57534e;
+    margin: 0 0 1.75rem;
+  }
+
+  html.a11y-high-contrast .qro__auth p { color: #000000 !important; }
+
+  .qro__auth a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.875rem 2rem;
+    background-color: #1c1917;
+    color: #ffffff;
+    font-family: var(--font-body-family);
+    font-size: 0.9375rem;
+    font-weight: 700;
+    border-radius: 0.75rem;
+    text-decoration: none;
+    transition: background-color 0.15s ease;
+  }
+
+  .qro__auth a:hover { background-color: #b45309; }
+  html.a11y-high-contrast .qro__auth a { background-color: #000000 !important; border: 2px solid #000000 !important; }
+</style>
+
+<div class="qro" id="QuickReorder-{{ section.id }}" data-section-id="{{ section.id }}">
+
+  <!-- ── page header ──────────────────────────────────────── -->
+  <div class="qro__header">
+    <div class="qro__icon-wrap" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="1 4 1 10 7 10"/>
+        <polyline points="23 20 23 14 17 14"/>
+        <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10M23 14l-4.64 4.36A9 9 0 0 1 3.51 15"/>
+      </svg>
+    </div>
+    <h1 class="qro__heading">{{ heading }}</h1>
+    {%- if section.settings.description != blank -%}
+      <div class="qro__desc">{{ section.settings.description }}</div>
+    {%- else -%}
+      <p class="qro__desc">Save time by repeating your previous wholesale purchases. Click "Reorder All" to instantly add every item back to your cart.</p>
+    {%- endif -%}
+  </div>
+
+  <!-- ── body ────────────────────────────────────────────── -->
+  {%- unless customer -%}
+
+    <div class="qro__list">
+      <div class="qro__auth">
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+        <h2>{{ section.settings.auth_heading | default: 'Sign in to view past orders' }}</h2>
+        <p>{{ section.settings.auth_text | default: 'Please log in with your wholesale account to access quick reorder.' }}</p>
+        <a href="/account/login?return_url={{ request.path | url_encode }}">
+          <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+          {{ section.settings.auth_btn | default: 'Sign in' }}
+        </a>
+      </div>
+    </div>
+
+  {%- else -%}
+
+    <div class="qro__list">
+
+      {%- assign orders_shown = customer.orders | limit: max_orders -%}
+
+      {%- if orders_shown.size == 0 -%}
+
+        <div class="qro__empty">
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+          </svg>
+          <h2 class="qro__empty-heading">{{ section.settings.empty_heading | default: 'No past orders yet' }}</h2>
+          <p class="qro__empty-text">{{ empty_text }}</p>
+          <a class="qro__empty-cta" href="{{ section.settings.catalog_link | default: '/collections/wholesale' }}">
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            {{ section.settings.catalog_btn | default: 'Browse Catalog' }}
+          </a>
+        </div>
+
+      {%- else -%}
+
+        {%- for order in orders_shown -%}
+          {%- liquid
+            assign po_num = order.attributes.po_number | default: ''
+            if po_num == blank
+              assign po_num = order.metafields.custom.po_number | default: ''
+            endif
+            assign preview_limit = 3
+          -%}
+
+          <div
+            class="qro__card"
+            data-order-card="{{ order.name | handle }}"
+          >
+
+            <!-- left -->
+            <div class="qro__card-left">
+              <div class="qro__card-meta">
+                <h2 class="qro__order-name">{{ order.name }}</h2>
+                <span class="qro__date-badge">{{ order.created_at | date: '%B %d, %Y' }}</span>
+              </div>
+
+              {%- if po_num != blank -%}
+                <p class="qro__po">PO Reference: <strong>{{ po_num }}</strong></p>
+              {%- endif -%}
+
+              <div class="qro__items">
+                <p class="qro__items-label">Items in this order ({{ order.line_items.size }})</p>
+                <ul class="qro__items-list" aria-label="Order contents">
+                  {%- for item in order.line_items limit: preview_limit -%}
+                    <li>
+                      <span class="qro__bullet" aria-hidden="true"></span>
+                      {{ item.title }} (×{{ item.quantity }})
+                    </li>
+                  {%- endfor -%}
+                </ul>
+                {%- assign remaining = order.line_items.size | minus: preview_limit -%}
+                {%- if remaining > 0 -%}
+                  <p class="qro__items-more">+ {{ remaining }} more item{%- if remaining != 1 -%}s{%- endif -%}</p>
+                {%- endif -%}
+              </div>
+            </div>
+
+            <!-- right -->
+            <div class="qro__card-right">
+              <div>
+                <p class="qro__total-label">{{ section.settings.total_label | default: 'Total Amount' }}</p>
+                <p class="qro__total-amount">{{ order.total_price | money }}</p>
+              </div>
+
+              <!-- build JSON payload for AJAX reorder -->
+              {%- capture items_json -%}
+                [
+                  {%- for item in order.line_items -%}
+                    {"id": {{ item.variant_id }}, "quantity": {{ item.quantity }}}{%- unless forloop.last -%},{%- endunless -%}
+                  {%- endfor -%}
+                ]
+              {%- endcapture -%}
+
+              <button
+                class="qro__btn"
+                type="button"
+                data-qro-reorder
+                data-items='{{ items_json | strip_newlines }}'
+                data-order="{{ order.name | escape }}"
+                aria-label="{{ btn_label }} — {{ order.name }}"
+              >
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                  <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                </svg>
+                <span data-qro-label>{{ btn_label }}</span>
+              </button>
+            </div>
+
+          </div>
+        {%- endfor -%}
+
+      {%- endif -%}
+    </div>
+
+  {%- endunless -%}
+
+</div>
+
+<script>
+(function () {
+  if (window.lpQroReady) return;
+  window.lpQroReady = true;
+
+  function formatMoney(cents, fmt) {
+    if (!fmt) fmt = '{{amount}}';
+    var amount = (cents / 100).toFixed(2);
+    return fmt.replace(/\{\{\s*amount\s*\}\}/, amount)
+              .replace(/\{\{\s*amount_no_decimals\s*\}\}/, Math.round(cents / 100))
+              .replace(/\{\{\s*amount_with_comma_separator\s*\}\}/, amount.replace('.', ','))
+              .replace(/\{\{\s*amount_no_decimals_with_comma_separator\s*\}\}/, Math.round(cents / 100));
+  }
+
+  var btns = document.querySelectorAll('[data-qro-reorder]');
+
+  btns.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var items;
+      try { items = JSON.parse(btn.dataset.items); } catch (e) { return; }
+      if (!items || !items.length) return;
+
+      var label = btn.querySelector('[data-qro-label]');
+      var originalLabel = label ? label.textContent : '';
+
+      /* loading state */
+      btn.disabled = true;
+      btn.innerHTML = '<span class="qro__spinner" aria-hidden="true"></span><span>Adding…</span>';
+
+      fetch('/cart/add.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+        body: JSON.stringify({ items: items })
+      })
+        .then(function (res) {
+          if (!res.ok) throw new Error('Cart error');
+          return res.json();
+        })
+        .then(function (cart) {
+          /* success state */
+          btn.classList.add('is-success');
+          btn.innerHTML = '<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Added!</span>';
+
+          /* update cart count bubble if present */
+          var bubbles = document.querySelectorAll('.cart-count-bubble span, [data-cart-count]');
+          if (bubbles.length) {
+            fetch('/cart.js')
+              .then(function (r) { return r.json(); })
+              .then(function (c) {
+                bubbles.forEach(function (el) { el.textContent = c.item_count; });
+              });
+          }
+
+          /* restore after 3s */
+          setTimeout(function () {
+            btn.disabled = false;
+            btn.classList.remove('is-success');
+            btn.innerHTML = '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg><span data-qro-label>' + originalLabel + '</span>';
+          }, 3000);
+        })
+        .catch(function () {
+          btn.disabled = false;
+          btn.innerHTML = '<span data-qro-label>' + originalLabel + '</span>';
+          alert('Some items could not be added to cart. They may be out of stock or unavailable.');
+        });
+    });
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Quick Reorder B2B",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Quick Reorder"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "info": "Leave blank to use the default text."
+    },
+    {
+      "type": "text",
+      "id": "btn_label",
+      "label": "Reorder button label",
+      "default": "Reorder All"
+    },
+    {
+      "type": "text",
+      "id": "total_label",
+      "label": "Total label",
+      "default": "Total Amount"
+    },
+    {
+      "type": "text",
+      "id": "empty_heading",
+      "label": "Empty state heading",
+      "default": "No past orders yet"
+    },
+    {
+      "type": "textarea",
+      "id": "empty_text",
+      "label": "Empty state text",
+      "default": "No past orders found. Once you place your first wholesale order it will appear here."
+    },
+    {
+      "type": "text",
+      "id": "catalog_btn",
+      "label": "Empty state button label",
+      "default": "Browse Catalog"
+    },
+    {
+      "type": "url",
+      "id": "catalog_link",
+      "label": "Empty state button link"
+    },
+    {
+      "type": "number",
+      "id": "max_orders",
+      "label": "Max orders to show",
+      "default": 10
+    },
+    {
+      "type": "header",
+      "content": "Auth gate"
+    },
+    {
+      "type": "text",
+      "id": "auth_heading",
+      "label": "Auth gate heading",
+      "default": "Sign in to view past orders"
+    },
+    {
+      "type": "textarea",
+      "id": "auth_text",
+      "label": "Auth gate body text",
+      "default": "Please log in with your wholesale account to access quick reorder."
+    },
+    {
+      "type": "text",
+      "id": "auth_btn",
+      "label": "Auth gate button label",
+      "default": "Sign in"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Quick Reorder B2B"
+    }
+  ]
+}
+{% endschema %}

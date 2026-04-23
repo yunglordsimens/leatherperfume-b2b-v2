@@ -6,6 +6,13 @@
   endif
 -%}
 
+{%- if customer -%}
+  <script>window.location.replace('/pages/partner-dashboard');</script>
+  <noscript>
+    <meta http-equiv="refresh" content="0;url=/pages/partner-dashboard">
+  </noscript>
+{%- endif -%}
+
 <style>
   /* ================================================
      Wholesale Login — inline section styles

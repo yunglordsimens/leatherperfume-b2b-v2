@@ -296,6 +296,22 @@
         document.documentElement.classList.add('shopify-design-mode');
       }
     </script>
+
+    {%- if customer and customer.tags contains 'wholesale' -%}
+      <script>
+        (function () {
+          var p = window.location.pathname;
+          /* redirect wholesale customers away from the default /account pages
+             straight to the custom Partner Dashboard — except for logout
+             and addresses (Shopify-only flows that we can't recreate) */
+          if (p.indexOf('/account') === 0
+              && p.indexOf('/account/logout')   !== 0
+              && p.indexOf('/account/addresses') !== 0) {
+            window.location.replace('/pages/partner-dashboard');
+          }
+        })();
+      </script>
+    {%- endif -%}
   </head>
 
   <body class="gradient{% if settings.animations_hover_elements != 'none' %} animate--hover-{{ settings.animations_hover_elements }}{% endif %}">

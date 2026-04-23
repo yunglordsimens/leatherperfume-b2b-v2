@@ -1,0 +1,181 @@
+{%- liquid
+  assign heading     = section.settings.heading     | default: 'Create Order'
+  assign description = section.settings.description
+  assign filter_btn  = section.settings.filter_button_text | default: 'Filters'
+-%}
+
+<style>
+  .chb {
+    background-color: #f5f5f4;
+    border-bottom: 1px solid #e7e5e4;
+    padding: 3rem 1.5rem 2rem;
+  }
+
+  html.a11y-high-contrast .chb {
+    background-color: #ffffff !important;
+    border-bottom: 4px solid #000000 !important;
+  }
+
+  .chb__inner {
+    max-width: var(--page-width, 1440px);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  @media screen and (min-width: 750px) {
+    .chb__inner {
+      flex-direction: row;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+  }
+
+  .chb__heading {
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight);
+    font-size: clamp(2rem, 4vw, 3.25rem);
+    color: #1c1917;
+    margin: 0 0 0.75rem;
+    line-height: 1.15;
+  }
+
+  html.a11y-high-contrast .chb__heading { color: #000000 !important; }
+
+  .chb__desc {
+    font-family: var(--font-body-family);
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #57534e;
+    max-width: 42rem;
+    margin: 0;
+  }
+
+  html.a11y-high-contrast .chb__desc {
+    color: #000000 !important;
+    font-weight: 500;
+  }
+
+  .chb__desc p { margin: 0; }
+
+  /* Mobile filter toggle — hidden on desktop */
+  .chb__filter-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.625rem;
+    padding: 0.875rem 1.5rem;
+    font-family: var(--font-body-family);
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: #1c1917;
+    background-color: #ffffff;
+    border: 1px solid #d6d3d1;
+    border-radius: 0.75rem;
+    cursor: pointer;
+    flex-shrink: 0;
+    width: 100%;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+
+  @media screen and (min-width: 600px) { .chb__filter-btn { width: auto; } }
+
+  .chb__filter-btn:hover {
+    background-color: #f5f5f4;
+    border-color: #a8a29e;
+  }
+
+  html.a11y-high-contrast .chb__filter-btn {
+    background-color: #ffffff !important;
+    border: 2px solid #000000 !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+  }
+
+  .chb__filter-icon {
+    width: 1.125rem;
+    height: 1.125rem;
+    flex-shrink: 0;
+  }
+
+  @media screen and (min-width: 990px) { .chb__filter-btn { display: none; } }
+</style>
+
+<section class="chb" id="CatalogHeaderB2B-{{ section.id }}">
+  <div class="chb__inner">
+    <div class="chb__text">
+      <h1 class="chb__heading">{{ heading }}</h1>
+      {%- if description != blank -%}
+        <div class="chb__desc">{{ description }}</div>
+      {%- else -%}
+        <p class="chb__desc">Add products to your wholesale cart. All prices below reflect your active partnership discount.</p>
+      {%- endif -%}
+    </div>
+
+    <button
+      class="chb__filter-btn"
+      type="button"
+      aria-expanded="false"
+      aria-controls="CatalogSidebar"
+      data-catalog-filter-toggle
+    >
+      <svg class="chb__filter-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="4" y1="6" x2="20" y2="6"/>
+        <line x1="8" y1="12" x2="16" y2="12"/>
+        <line x1="11" y1="18" x2="13" y2="18"/>
+      </svg>
+      {{ filter_btn }}
+    </button>
+  </div>
+</section>
+
+<script>
+(function () {
+  var btn = document.querySelector('[data-catalog-filter-toggle]');
+  if (!btn) return;
+  btn.addEventListener('click', function () {
+    var sidebar = document.getElementById('CatalogSidebar');
+    if (!sidebar) return;
+    var isOpen = sidebar.classList.toggle('is-open');
+    btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Catalog Header B2B",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Create Order"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "info": "Leave blank to use the default text."
+    },
+    {
+      "type": "text",
+      "id": "filter_button_text",
+      "label": "Filter button label",
+      "default": "Filters"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Catalog Header B2B"
+    }
+  ]
+}
+{% endschema %}

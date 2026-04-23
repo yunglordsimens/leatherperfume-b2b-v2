@@ -1,0 +1,26 @@
+{
+  "sections": {
+    "packages-grid": {
+      "type": "packages-grid",
+      "settings": {}
+    },
+    "custom-mix-banner": {
+      "type": "custom-mix-banner",
+      "settings": {}
+    },
+    "how-it-works": {
+      "type": "how-it-works",
+      "settings": {}
+    },
+    "bottom-cta": {
+      "type": "bottom-cta",
+      "settings": {}
+    }
+  },
+  "order": [
+    "packages-grid",
+    "custom-mix-banner",
+    "how-it-works",
+    "bottom-cta"
+  ]
+}

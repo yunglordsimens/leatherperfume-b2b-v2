@@ -30,22 +30,6 @@
         "high_contrast": false
       }
     },
-    "application_info_LEPMYK": {
-      "type": "application-info",
-      "name": "Application Info",
-      "settings": {
-        "high_contrast": false,
-        "heading": "Wholesale Application",
-        "description": "<p>Become an official distributor of Leather Parfum. Please provide your business details below, and we will get back to you with a personalized offer.</p>",
-        "step_1_title": "1. Submit Application",
-        "step_1_desc": "Fill in your business and contact information.",
-        "step_2_title": "2. Verification (1 day)",
-        "step_2_desc": "Our manager will verify your VAT/IČO and confirm your partner status.",
-        "step_3_title": "3. Access Granted",
-        "step_3_desc": "Gain full access to the B2B catalog with up to 40% discount from RRP.",
-        "security_text": "<p>Your data is securely encrypted. We never share our partners' business information with third parties.</p>"
-      }
-    },
     "177693100865e86eca": {
       "type": "apps",
       "blocks": {
@@ -62,12 +46,22 @@
       "settings": {
         "include_margins": true
       }
+    },
+    "application_form_4wccGw": {
+      "type": "application-form",
+      "name": "Application Form",
+      "settings": {
+        "high_contrast": false,
+        "section_1_heading": "Representative Details",
+        "section_2_heading": "Company Details",
+        "button_label": "Submit Application"
+      }
     }
   },
   "order": [
     "application-info",
     "massy-form-wrapper",
-    "application_info_LEPMYK",
-    "177693100865e86eca"
+    "177693100865e86eca",
+    "application_form_4wccGw"
   ]
 }

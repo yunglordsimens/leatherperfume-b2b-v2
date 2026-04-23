@@ -11,13 +11,29 @@
   "sections": {
     "main": {
       "type": "main-page",
+      "disabled": true,
       "settings": {
         "padding_top": 28,
         "padding_bottom": 28
       }
+    },
+    "wholesale_login_KdKVdV": {
+      "type": "wholesale-login",
+      "name": "Wholesale Login",
+      "settings": {
+        "high_contrast": false,
+        "left_heading": "Exclusive access for our partners.",
+        "left_desc": "<p>Manage your wholesale orders, track shipments, and get early access to new collections and seasonal refresh packages.</p>",
+        "benefit_1": "Up to 40% Margin",
+        "benefit_2": "Priority 24h Shipping",
+        "benefit_3": "Dedicated B2B Support",
+        "form_heading": "Partner Login",
+        "form_subheading": "Enter your credentials to access the wholesale portal."
+      }
     }
   },
   "order": [
-    "main"
+    "main",
+    "wholesale_login_KdKVdV"
   ]
 }

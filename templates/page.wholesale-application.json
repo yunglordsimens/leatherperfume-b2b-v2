@@ -46,22 +46,11 @@
       "settings": {
         "include_margins": true
       }
-    },
-    "application_form_qTKUna": {
-      "type": "application-form",
-      "name": "Application Form",
-      "settings": {
-        "high_contrast": false,
-        "section_1_heading": "Representative Details",
-        "section_2_heading": "Company Details",
-        "button_label": "Submit Application"
-      }
     }
   },
   "order": [
     "application-info",
     "massy-form-wrapper",
-    "177693100865e86eca",
-    "application_form_qTKUna"
+    "177693100865e86eca"
   ]
 }

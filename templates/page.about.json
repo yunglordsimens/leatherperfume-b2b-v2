@@ -68,13 +68,13 @@
         "stat_2_label": "Active Partners"
       }
     },
-    "bottom_cta_CDxEDa": {
-      "type": "bottom-cta",
-      "name": "Bottom CTA",
+    "cta_bottom_iLyPzy": {
+      "type": "cta-bottom",
+      "name": "CTA Bottom",
       "settings": {
         "high_contrast": false,
         "heading": "Ready to elevate your retail space?",
-        "subheading": "<p>Join our network of premium retail partners and get access to exclusive wholesale pricing, priority shipping, and dedicated support.</p>",
+        "description": "<p>Join our network of premium retail partners and get access to exclusive wholesale pricing, priority shipping, and dedicated support.</p>",
         "button_label": "Apply for Partnership",
         "button_link": ""
       }
@@ -86,6 +86,6 @@
     "about_image_4HrG3j",
     "about_craft_grid_dUQCn4",
     "about_manifesto_xWEMmR",
-    "bottom_cta_CDxEDa"
+    "cta_bottom_iLyPzy"
   ]
 }

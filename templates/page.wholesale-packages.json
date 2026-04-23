@@ -126,6 +126,17 @@
         "high_contrast": false
       }
     },
+    "custom_mix_banner_KhtNQk": {
+      "type": "custom-mix-banner",
+      "name": "Custom Mix Banner",
+      "settings": {
+        "high_contrast": false,
+        "heading": "Custom Mix",
+        "description": "Build your own order directly from our full catalog. No minimum package required — just meet the standard MOQ (Minimum Order Quantity) of 5,000 CZK to qualify for wholesale pricing. Best for experienced retailers who know exactly what they need.",
+        "button_label": "Go to Catalog",
+        "button_link": ""
+      }
+    },
     "how_it_works_NPXmcV": {
       "type": "how-it-works",
       "name": "How It Works",
@@ -151,6 +162,7 @@
     "main",
     "page_header_b2b_7Yp3qd",
     "packages_grid_UVNJCW",
+    "custom_mix_banner_KhtNQk",
     "how_it_works_NPXmcV",
     "bottom_cta_rnAw4C"
   ]

@@ -1,10 +1,11 @@
 {
   "sections": {
-    "main": {
-      "type": "main-404"
+    "main-404-b2b": {
+      "type": "main-404-b2b",
+      "settings": {}
     }
   },
   "order": [
-    "main"
+    "main-404-b2b"
   ]
 }

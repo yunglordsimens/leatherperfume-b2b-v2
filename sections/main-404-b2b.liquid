@@ -1,0 +1,381 @@
+{%- liquid
+  assign heading     = section.settings.heading     | default: '404'
+  assign subheading  = section.settings.subheading  | default: 'Page not found'
+  assign description = section.settings.description
+-%}
+
+<style>
+  /* ── wrapper ────────────────────────────────────────────── */
+  .p404 {
+    background-color: #f5f5f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 70vh;
+    padding: 5rem 1.5rem;
+  }
+  html.a11y-high-contrast .p404 { background-color: #ffffff !important; }
+
+  /* ── card ───────────────────────────────────────────────── */
+  .p404__card {
+    max-width: 48rem;
+    width: 100%;
+    text-align: center;
+  }
+
+  /* ── icon circle ────────────────────────────────────────── */
+  .p404__icon {
+    width: 6rem;
+    height: 6rem;
+    border-radius: 50%;
+    background-color: #e7e5e4;
+    color: #78716c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 2rem;
+  }
+  html.a11y-high-contrast .p404__icon {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border: 4px solid #000000 !important;
+  }
+  .p404__icon svg { width: 2.5rem; height: 2.5rem; }
+
+  /* ── big 404 number ─────────────────────────────────────── */
+  .p404__num {
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight);
+    font-size: clamp(6rem, 20vw, 9rem);
+    color: #1c1917;
+    line-height: 1;
+    margin: 0 0 1rem;
+    letter-spacing: -0.02em;
+  }
+  html.a11y-high-contrast .p404__num { color: #000000 !important; }
+
+  /* ── subheading ─────────────────────────────────────────── */
+  .p404__sub {
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight);
+    font-size: clamp(1.5rem, 4vw, 2.25rem);
+    color: #1c1917;
+    margin: 0 0 1.25rem;
+    line-height: 1.2;
+  }
+  html.a11y-high-contrast .p404__sub { color: #000000 !important; }
+
+  /* ── description ────────────────────────────────────────── */
+  .p404__desc {
+    font-family: var(--font-body-family);
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #57534e;
+    max-width: 36rem;
+    margin: 0 auto 3rem;
+  }
+  html.a11y-high-contrast .p404__desc { color: #000000 !important; font-weight: 500; }
+  .p404__desc p { margin: 0; }
+
+  /* ── primary buttons ────────────────────────────────────── */
+  .p404__btns {
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+    align-items: center;
+    margin-bottom: 4rem;
+  }
+  @media screen and (min-width: 480px) {
+    .p404__btns { flex-direction: row; justify-content: center; }
+  }
+
+  .p404__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.875rem 2rem;
+    font-family: var(--font-body-family);
+    font-size: 0.9375rem;
+    font-weight: 700;
+    border-radius: 0.875rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+    width: 100%;
+    border: none;
+  }
+  @media screen and (min-width: 480px) { .p404__btn { width: auto; } }
+  .p404__btn svg { width: 1.125rem; height: 1.125rem; flex-shrink: 0; }
+
+  .p404__btn--dark {
+    background-color: #1c1917;
+    color: #ffffff;
+  }
+  .p404__btn--dark:hover { background-color: #b45309; }
+
+  .p404__btn--outline {
+    background-color: #ffffff;
+    color: #1c1917;
+    border: 1px solid #d6d3d1;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  }
+  .p404__btn--outline:hover { background-color: #f5f5f4; border-color: #a8a29e; }
+
+  html.a11y-high-contrast .p404__btn--dark {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border: 2px solid #000000 !important;
+  }
+  html.a11y-high-contrast .p404__btn--outline {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border: 2px solid #000000 !important;
+  }
+
+  /* ── popular destinations ───────────────────────────────── */
+  .p404__links-head {
+    font-family: var(--font-body-family);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #78716c;
+    margin: 0 0 1.25rem;
+    padding-top: 3rem;
+    border-top: 1px solid #e7e5e4;
+  }
+  html.a11y-high-contrast .p404__links-head { color: #000000 !important; border-top: 2px solid #000000 !important; }
+
+  .p404__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+  }
+
+  .p404__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.125rem;
+    font-family: var(--font-body-family);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #44403c;
+    background-color: #ffffff;
+    border: 1px solid #e7e5e4;
+    border-radius: 0.75rem;
+    text-decoration: none;
+    transition: border-color 0.12s ease, color 0.12s ease;
+  }
+  .p404__link:hover { border-color: #d97706; color: #b45309; }
+  .p404__link svg { width: 1rem; height: 1rem; flex-shrink: 0; }
+
+  html.a11y-high-contrast .p404__link {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border: 2px solid #000000 !important;
+  }
+  html.a11y-high-contrast .p404__link:hover {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+  }
+</style>
+
+<div class="p404" id="Main404B2B-{{ section.id }}">
+  <div class="p404__card">
+
+    <!-- icon -->
+    <div class="p404__icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        <line x1="8" y1="11" x2="14" y2="11"/>
+      </svg>
+    </div>
+
+    <!-- 404 number -->
+    <h1 class="p404__num">{{ heading }}</h1>
+
+    <!-- subheading -->
+    <h2 class="p404__sub">{{ subheading }}</h2>
+
+    <!-- description -->
+    <div class="p404__desc">
+      {%- if description != blank -%}
+        {{ description }}
+      {%- else -%}
+        <p>The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.</p>
+      {%- endif -%}
+    </div>
+
+    <!-- CTAs -->
+    <div class="p404__btns">
+      <button
+        class="p404__btn p404__btn--dark"
+        type="button"
+        onclick="history.back()"
+        aria-label="{{ section.settings.back_btn | default: 'Go Back' }}"
+      >
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"/>
+          <polyline points="12 19 5 12 12 5"/>
+        </svg>
+        {{ section.settings.back_btn | default: 'Go Back' }}
+      </button>
+
+      <a
+        class="p404__btn p404__btn--outline"
+        href="{{ routes.root_url }}"
+        aria-label="{{ section.settings.home_btn | default: 'Home Page' }}"
+      >
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+        {{ section.settings.home_btn | default: 'Home Page' }}
+      </a>
+    </div>
+
+    <!-- popular destinations -->
+    <h3 class="p404__links-head">{{ section.settings.links_heading | default: 'Popular Destinations' }}</h3>
+    <nav class="p404__links" aria-label="Suggested pages">
+
+      {%- if section.settings.link1_url != blank -%}
+        <a class="p404__link" href="{{ section.settings.link1_url }}">
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+          {{ section.settings.link1_label | default: 'Perfume Catalog' }}
+        </a>
+      {%- endif -%}
+
+      {%- if section.settings.link2_url != blank -%}
+        <a class="p404__link" href="{{ section.settings.link2_url }}">
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          {{ section.settings.link2_label | default: 'Wholesale Packages' }}
+        </a>
+      {%- endif -%}
+
+      {%- if section.settings.link3_url != blank -%}
+        <a class="p404__link" href="{{ section.settings.link3_url }}">
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          {{ section.settings.link3_label | default: 'Partner Login' }}
+        </a>
+      {%- endif -%}
+
+      {%- if section.settings.link4_url != blank -%}
+        <a class="p404__link" href="{{ section.settings.link4_url }}">
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.47 2 2 0 0 1 3.6 1.29h3a2 2 0 0 1 2 1.72c.13 1 .37 1.97.71 2.91a2 2 0 0 1-.45 2.11L7.91 9.03a16 16 0 0 0 6 6l.96-.95a2 2 0 0 1 2.11-.45c.94.34 1.91.58 2.91.71A2 2 0 0 1 21.73 16.92z"/></svg>
+          {{ section.settings.link4_label | default: 'Contact Support' }}
+        </a>
+      {%- endif -%}
+
+    </nav>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "404 Page B2B",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Large number heading",
+      "default": "404"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Page not found"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "info": "Leave blank for default text."
+    },
+    {
+      "type": "header",
+      "content": "Buttons"
+    },
+    {
+      "type": "text",
+      "id": "back_btn",
+      "label": "Go Back button label",
+      "default": "Go Back"
+    },
+    {
+      "type": "text",
+      "id": "home_btn",
+      "label": "Home Page button label",
+      "default": "Home Page"
+    },
+    {
+      "type": "header",
+      "content": "Popular destinations"
+    },
+    {
+      "type": "text",
+      "id": "links_heading",
+      "label": "Section heading",
+      "default": "Popular Destinations"
+    },
+    {
+      "type": "text",
+      "id": "link1_label",
+      "label": "Link 1 label",
+      "default": "Perfume Catalog"
+    },
+    {
+      "type": "url",
+      "id": "link1_url",
+      "label": "Link 1 URL"
+    },
+    {
+      "type": "text",
+      "id": "link2_label",
+      "label": "Link 2 label",
+      "default": "Wholesale Packages"
+    },
+    {
+      "type": "url",
+      "id": "link2_url",
+      "label": "Link 2 URL"
+    },
+    {
+      "type": "text",
+      "id": "link3_label",
+      "label": "Link 3 label",
+      "default": "Partner Login"
+    },
+    {
+      "type": "url",
+      "id": "link3_url",
+      "label": "Link 3 URL"
+    },
+    {
+      "type": "text",
+      "id": "link4_label",
+      "label": "Link 4 label",
+      "default": "Contact Support"
+    },
+    {
+      "type": "url",
+      "id": "link4_url",
+      "label": "Link 4 URL"
+    }
+  ],
+  "presets": [
+    {
+      "name": "404 Page B2B"
+    }
+  ]
+}
+{% endschema %}

@@ -480,6 +480,190 @@
     background-color: #000000 !important;
     border: 2px solid #000000 !important;
   }
+
+  /* ── Order actions ──────────────── */
+  .pdp-order { margin-bottom: 2.5rem; }
+
+  .pdp-order__row {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  @media screen and (min-width: 640px) { .pdp-order__row { flex-direction: row; } }
+
+  .pdp-qty {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem;
+    background-color: #ffffff;
+    border: 1px solid #e7e5e4;
+    border-radius: 0.875rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+
+  @media screen and (min-width: 640px) {
+    .pdp-qty { width: 33.333%; flex-shrink: 0; }
+  }
+
+  html.a11y-high-contrast .pdp-qty {
+    border: 4px solid #000000 !important;
+    box-shadow: none !important;
+  }
+
+  .pdp-qty__btn {
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.625rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #57534e;
+    transition: background-color 0.15s, color 0.15s;
+    flex-shrink: 0;
+  }
+
+  .pdp-qty__btn:hover { background-color: #f5f5f4; color: #1c1917; }
+  .pdp-qty__btn svg { width: 1.25rem; height: 1.25rem; pointer-events: none; }
+
+  html.a11y-high-contrast .pdp-qty__btn:hover {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+  }
+
+  .pdp-qty__input {
+    width: 4rem;
+    text-align: center;
+    font-family: var(--font-body-family);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1c1917;
+    background: transparent;
+    border: none;
+    outline: none;
+    -moz-appearance: textfield;
+    padding: 0;
+  }
+
+  .pdp-qty__input::-webkit-outer-spin-button,
+  .pdp-qty__input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  html.a11y-high-contrast .pdp-qty__input { color: #000000 !important; }
+
+  .pdp-add-btn {
+    flex: 1;
+    padding: 1.25rem 1.5rem;
+    background-color: #1c1917;
+    color: #ffffff;
+    border: 2px solid #1c1917;
+    border-radius: 0.875rem;
+    font-family: var(--font-body-family);
+    font-size: 1.0625rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    transition: background-color 0.2s, border-color 0.2s;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .pdp-add-btn:hover { background-color: #b45309; border-color: #b45309; }
+  .pdp-add-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .pdp-add-btn svg { width: 1.25rem; height: 1.25rem; flex-shrink: 0; }
+
+  html.a11y-high-contrast .pdp-add-btn {
+    background-color: #000000 !important;
+    border-color: #000000 !important;
+    color: #ffffff !important;
+  }
+
+  .pdp-spinner {
+    display: none;
+    width: 1.125rem;
+    height: 1.125rem;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: pdpSpin 0.7s linear infinite;
+    flex-shrink: 0;
+  }
+
+  @keyframes pdpSpin { to { transform: rotate(360deg); } }
+
+  .pdp-add-btn.is-loading .pdp-spinner { display: block; }
+  .pdp-add-btn.is-loading .pdp-add-label,
+  .pdp-add-btn.is-loading .pdp-add-icon { display: none; }
+
+  .pdp-subtotal {
+    font-family: var(--font-body-family);
+    font-size: 0.9375rem;
+    color: #78716c;
+    margin-top: 1rem;
+    text-align: center;
+  }
+
+  @media screen and (min-width: 640px) { .pdp-subtotal { text-align: left; } }
+
+  html.a11y-high-contrast .pdp-subtotal {
+    color: #000000 !important;
+    font-weight: 500 !important;
+  }
+
+  .pdp-subtotal strong { color: #1c1917; }
+  html.a11y-high-contrast .pdp-subtotal strong { color: #000000 !important; }
+
+  /* ── Toast ──────────────────────── */
+  .pdp-toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(4rem);
+    background-color: #1c1917;
+    color: #ffffff;
+    padding: 1rem 1.5rem;
+    border-radius: 1rem;
+    font-family: var(--font-body-family);
+    font-size: 0.9375rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    z-index: 80;
+    pointer-events: none;
+    max-width: calc(100% - 2rem);
+  }
+
+  .pdp-toast.is-visible {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+
+  .pdp-toast svg {
+    width: 1.125rem;
+    height: 1.125rem;
+    flex-shrink: 0;
+    color: #4ade80;
+  }
+
+  html.a11y-high-contrast .pdp-toast {
+    background-color: #000000 !important;
+    border: 2px solid #ffffff !important;
+  }
 </style>
 
 {%- comment -%}── Breadcrumb ──{%- endcomment -%}
@@ -641,12 +825,72 @@
           {%- endif -%}
         </div>
 
-        {%- comment -%}── Quantity + cart added in next prompt ──{%- endcomment -%}
+        {%- comment -%}── Quantity + Add to Order ──{%- endcomment -%}
+        {%- if is_wholesale -%}
+          <div class="pdp-order">
+            <div class="pdp-order__row">
+
+              <div class="pdp-qty">
+                <button class="pdp-qty__btn" type="button" id="PdpQtyDec-{{ section.id }}" aria-label="Decrease quantity">
+                  <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                  </svg>
+                </button>
+                <input
+                  class="pdp-qty__input"
+                  type="number"
+                  value="5"
+                  min="1"
+                  id="PdpQtyInput-{{ section.id }}"
+                  name="quantity"
+                  aria-label="Quantity"
+                >
+                <button class="pdp-qty__btn" type="button" id="PdpQtyInc-{{ section.id }}" aria-label="Increase quantity">
+                  <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"/>
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                  </svg>
+                </button>
+              </div>
+
+              <button
+                class="pdp-add-btn"
+                type="button"
+                id="PdpAddBtn-{{ section.id }}"
+                data-variant-id="{{ current_variant.id }}"
+              >
+                <div class="pdp-spinner" aria-hidden="true"></div>
+                <span class="pdp-add-label">Add to Order</span>
+                <svg class="pdp-add-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="9" cy="21" r="1"/>
+                  <circle cx="20" cy="21" r="1"/>
+                  <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                </svg>
+              </button>
+
+            </div>
+
+            <p class="pdp-subtotal" aria-live="polite">
+              Subtotal for <span id="PdpSubQty-{{ section.id }}">5</span> units:
+              <strong id="PdpSubPrice-{{ section.id }}">{{ wsp | times: 5 | money_without_trailing_zeros }}</strong>
+            </p>
+          </div>
+        {%- endif -%}
+
+        {%- comment -%}── Features added in next prompt ──{%- endcomment -%}
 
       </div>
 
     </div>
   </div>
+</div>
+
+<div class="pdp-toast" id="PdpToast-{{ section.id }}" role="status" aria-live="polite" aria-atomic="true">
+  <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+    <polyline points="22 4 12 14.01 9 11.01"/>
+  </svg>
+  <span id="PdpToastMsg-{{ section.id }}"></span>
 </div>
 
 <script>
@@ -655,6 +899,7 @@
   var mainImg = document.getElementById('PdpMainImg-' + sid);
   var thumbs  = document.querySelectorAll('#PdpThumbs-' + sid + ' .pdp-gallery__thumb');
 
+  /* Gallery */
   thumbs.forEach(function (thumb) {
     thumb.addEventListener('click', function () {
       var src = this.dataset.mainSrc;
@@ -669,6 +914,126 @@
       this.classList.add('is-active');
     });
   });
+
+  /* Quantity + subtotal */
+  var qtyInput = document.getElementById('PdpQtyInput-' + sid);
+  var qtyDec   = document.getElementById('PdpQtyDec-' + sid);
+  var qtyInc   = document.getElementById('PdpQtyInc-' + sid);
+  var subQty   = document.getElementById('PdpSubQty-' + sid);
+  var subPrice = document.getElementById('PdpSubPrice-' + sid);
+  var unitCents = {{ wsp | default: 0 | json }};
+  var moneyFmt  = {{ shop.money_format | json }};
+
+  function fmtMoney(cents) {
+    if (window.Shopify && window.Shopify.formatMoney) {
+      return window.Shopify.formatMoney(cents, moneyFmt);
+    }
+    return (cents / 100).toLocaleString();
+  }
+
+  function updateSubtotal() {
+    if (!qtyInput) return;
+    var q = parseInt(qtyInput.value, 10) || 1;
+    if (subQty)   subQty.textContent  = q;
+    if (subPrice) subPrice.textContent = fmtMoney(unitCents * q);
+  }
+
+  if (qtyDec && qtyInc && qtyInput) {
+    qtyDec.addEventListener('click', function () {
+      var v = parseInt(qtyInput.value, 10) || 1;
+      qtyInput.value = Math.max(1, v - 1);
+      updateSubtotal();
+    });
+    qtyInc.addEventListener('click', function () {
+      var v = parseInt(qtyInput.value, 10) || 1;
+      qtyInput.value = v + 1;
+      updateSubtotal();
+    });
+    qtyInput.addEventListener('input', function () {
+      var v = parseInt(this.value, 10);
+      if (isNaN(v) || v < 1) this.value = 1;
+      updateSubtotal();
+    });
+  }
+
+  /* Toast */
+  var toast     = document.getElementById('PdpToast-' + sid);
+  var toastMsg  = document.getElementById('PdpToastMsg-' + sid);
+  var toastTimer;
+
+  function showToast(msg) {
+    if (!toast || !toastMsg) return;
+    toastMsg.textContent = msg;
+    toast.classList.add('is-visible');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () {
+      toast.classList.remove('is-visible');
+    }, 3500);
+  }
+
+  /* Update cart count bubble */
+  function updateCartBubble(count) {
+    var bubble = document.getElementById('cart-icon-bubble');
+    if (!bubble) return;
+    var existing = bubble.querySelector('.cart-count-bubble');
+    if (count > 0) {
+      if (existing) {
+        var span = existing.querySelector('span[aria-hidden="true"]');
+        if (span) span.textContent = count;
+      } else {
+        var div = document.createElement('div');
+        div.className = 'cart-count-bubble';
+        div.innerHTML = '<span aria-hidden="true">' + count + '</span><span class="visually-hidden">' + count + '</span>';
+        bubble.appendChild(div);
+      }
+    } else if (existing) {
+      existing.remove();
+    }
+  }
+
+  /* Add to cart AJAX */
+  var addBtn    = document.getElementById('PdpAddBtn-' + sid);
+  var variantId = addBtn ? addBtn.dataset.variantId : null;
+
+  if (addBtn && variantId) {
+    addBtn.addEventListener('click', function () {
+      var qty = qtyInput ? (parseInt(qtyInput.value, 10) || 1) : 1;
+      addBtn.disabled = true;
+      addBtn.classList.add('is-loading');
+
+      fetch('/cart/add.js', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({ id: parseInt(variantId, 10), quantity: qty })
+      })
+        .then(function (res) {
+          if (!res.ok) throw new Error('Add failed');
+          return res.json();
+        })
+        .then(function () {
+          return fetch('/cart.js', {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+          });
+        })
+        .then(function (res) { return res.json(); })
+        .then(function (cart) {
+          updateCartBubble(cart.item_count);
+          showToast('Added ' + qty + ' unit' + (qty !== 1 ? 's' : '') + ' to your order');
+          document.dispatchEvent(new CustomEvent('cart:refresh', { bubbles: true }));
+        })
+        .catch(function (err) {
+          console.error('Add to cart error:', err);
+          showToast('Something went wrong. Please try again.');
+        })
+        .then(function () {
+          addBtn.disabled = false;
+          addBtn.classList.remove('is-loading');
+        });
+    });
+  }
 })();
 </script>
 

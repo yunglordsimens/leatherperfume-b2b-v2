@@ -7,19 +7,50 @@
 -%}
 
 <style>
-  /* ================================================
-     Massy Form Wrapper — inline section styles
-     ================================================ */
+  /* ════════════════════════════════════════════════════════
+     Two-column page layout
+     Left 40 %  → application-info
+     Right 60 % → massy-form-wrapper + Massy App Block
+     ════════════════════════════════════════════════════════ */
+
+  @media screen and (min-width: 990px) {
+    #MainContent:has(.app-info) {
+      display: grid;
+      grid-template-columns: 2fr 3fr;
+      align-items: start;
+    }
+
+    /* Left column — sticky info panel */
+    #MainContent:has(.app-info) .shopify-section:has(.app-info) {
+      grid-column: 1;
+      grid-row: 1 / 10;
+      position: sticky;
+      top: 9rem;
+    }
+
+    /* Right column — form wrapper + App Block stack vertically */
+    #MainContent:has(.app-info) .shopify-section:has(.massy-wrap),
+    #MainContent:has(.app-info) .shopify-section:has(.shopify-app-block) {
+      grid-column: 2;
+    }
+  }
+
+  /* ════════════════════════════════════════════════════════
+     Section padding
+     ════════════════════════════════════════════════════════ */
 
   .massy-wrap {
-    padding: 3rem 1.5rem;
+    padding: 3rem 1.5rem 0;
   }
 
   @media screen and (min-width: 990px) {
-    .massy-wrap { padding: 4rem 1.5rem; }
+    .massy-wrap { padding: 4rem 1.5rem 0; }
   }
 
-  /* ── Card shell ─────────────────────────────────── */
+  /* ════════════════════════════════════════════════════════
+     Card shell — applied to our wrapper card AND to the
+     Massy App Block section so they look unified
+     ════════════════════════════════════════════════════════ */
 
   .massy-wrap__card {
     background-color: #ffffff;
@@ -30,27 +61,97 @@
     overflow: hidden;
   }
 
-  @media screen and (min-width: 600px) { .massy-wrap__card { padding: 2.5rem; } }
-  @media screen and (min-width: 990px) { .massy-wrap__card { padding: 3rem; } }
+  /* Massy App Block container — card look (bottom half) */
+  #MainContent:has(.app-info) .shopify-section:has(.shopify-app-block) {
+    padding: 0 1.5rem 4rem;
+  }
+
+  #MainContent:has(.app-info) .shopify-app-block {
+    background-color: #ffffff;
+    border: 1px solid #e7e5e4;
+    border-radius: 1.5rem;
+    padding: 1.5rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+  }
+
+  @media screen and (min-width: 600px) {
+    .massy-wrap__card,
+    #MainContent:has(.app-info) .shopify-app-block {
+      padding: 2.5rem;
+    }
+  }
+
+  @media screen and (min-width: 990px) {
+    .massy-wrap__card,
+    #MainContent:has(.app-info) .shopify-app-block {
+      padding: 3rem;
+    }
+  }
 
   .massy-wrap--high-contrast .massy-wrap__card,
-  html.a11y-high-contrast .massy-wrap__card {
+  html.a11y-high-contrast .massy-wrap__card,
+  html.a11y-high-contrast #MainContent:has(.app-info) .shopify-app-block {
     border: 4px solid #000000 !important;
     box-shadow: none !important;
   }
 
-  /* ── Massy field overrides ──────────────────────── */
-  /*
-     These selectors cover the most common class names Massy uses.
-     If the actual classes differ, inspect the rendered HTML and
-     update the selectors below to match.
-  */
+  /* ════════════════════════════════════════════════════════
+     Massy field overrides
+     Covers: .massy-wrap__card (page.content path)
+             .shopify-app-block (App Block path)
+     ════════════════════════════════════════════════════════ */
 
-  /* Labels */
+  /* ── Section headings ("Representative Details" etc.) ── */
+
+  .massy-wrap__card h2,
+  .massy-wrap__card h3,
+  .shopify-app-block h2,
+  .shopify-app-block h3,
+  .shopify-app-block [class*="title"],
+  .shopify-app-block [class*="heading"],
+  .shopify-app-block [class*="section-header"] {
+    font-family: var(--font-heading-family) !important;
+    font-weight: var(--font-heading-weight) !important;
+    font-style: var(--font-heading-style) !important;
+    font-size: clamp(1.375rem, 3vw, 1.75rem) !important;
+    line-height: 1.2 !important;
+    color: #1c1917 !important;
+    margin: 0 0 1.5rem !important;
+    padding-bottom: 1rem !important;
+    border-bottom: 1px solid #e7e5e4 !important;
+  }
+
+  html.a11y-high-contrast .massy-wrap__card h2,
+  html.a11y-high-contrast .massy-wrap__card h3,
+  html.a11y-high-contrast .shopify-app-block h2,
+  html.a11y-high-contrast .shopify-app-block h3 {
+    color: #000000 !important;
+    border-bottom-color: #000000 !important;
+  }
+
+  /* Second heading — top separator for "Company Details" section */
+  .massy-wrap__card h2:not(:first-of-type),
+  .massy-wrap__card h3:not(:first-of-type),
+  .shopify-app-block h2:not(:first-of-type),
+  .shopify-app-block h3:not(:first-of-type) {
+    margin-top: 2.5rem !important;
+    padding-top: 2.5rem !important;
+    border-top: 1px solid #e7e5e4 !important;
+  }
+
+  html.a11y-high-contrast .shopify-app-block h2:not(:first-of-type),
+  html.a11y-high-contrast .shopify-app-block h3:not(:first-of-type) {
+    border-top-color: #000000 !important;
+  }
+
+  /* ── Labels ─────────────────────────────────────────── */
+
   .massy-wrap__card label,
-  .massy-wrap__card .massy-label,
-  .massy-wrap__card .field-label {
-    display: block;
+  .massy-wrap__card [class*="label"],
+  .shopify-app-block label,
+  .shopify-app-block [class*="label"] {
+    display: block !important;
     font-family: var(--font-body-family) !important;
     font-size: 0.9375rem !important;
     font-weight: 700 !important;
@@ -59,27 +160,29 @@
   }
 
   html.a11y-high-contrast .massy-wrap__card label,
-  html.a11y-high-contrast .massy-wrap__card .massy-label,
-  html.a11y-high-contrast .massy-wrap__card .field-label {
+  html.a11y-high-contrast .shopify-app-block label {
     color: #000000 !important;
   }
 
-  /* Inputs, selects, textareas */
-  .massy-wrap__card input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
+  /* ── Text inputs, selects, textareas ─────────────────── */
+
+  .massy-wrap__card input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="hidden"]),
   .massy-wrap__card select,
   .massy-wrap__card textarea,
-  .massy-wrap__card .massy-input,
-  .massy-wrap__card .field-input {
+  .shopify-app-block input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="hidden"]),
+  .shopify-app-block select,
+  .shopify-app-block textarea {
     width: 100% !important;
     padding: 0.875rem 1rem !important;
     font-family: var(--font-body-family) !important;
     font-size: 1rem !important;
     font-weight: 500 !important;
     color: #1c1917 !important;
-    background-color: #ffffff !important;
-    border: 1.5px solid #d6d3d1 !important;
+    background-color: #fafaf9 !important;
+    border: 1.5px solid #e7e5e4 !important;
     border-radius: 0.75rem !important;
     outline: none !important;
+    width: 100% !important;
     box-sizing: border-box !important;
     transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
     -webkit-appearance: none !important;
@@ -87,44 +190,100 @@
     box-shadow: none !important;
   }
 
-  .massy-wrap__card input:focus,
+  .massy-wrap__card input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):focus,
   .massy-wrap__card select:focus,
   .massy-wrap__card textarea:focus,
-  .massy-wrap__card .massy-input:focus,
-  .massy-wrap__card .field-input:focus {
+  .shopify-app-block input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):focus,
+  .shopify-app-block select:focus,
+  .shopify-app-block textarea:focus {
     border-color: #b45309 !important;
     box-shadow: 0 0 0 3px rgba(180, 83, 9, 0.15) !important;
+    background-color: #ffffff !important;
   }
 
-  .massy-wrap--high-contrast .massy-wrap__card input,
-  .massy-wrap--high-contrast .massy-wrap__card select,
-  .massy-wrap--high-contrast .massy-wrap__card textarea,
   html.a11y-high-contrast .massy-wrap__card input,
   html.a11y-high-contrast .massy-wrap__card select,
-  html.a11y-high-contrast .massy-wrap__card textarea {
+  html.a11y-high-contrast .massy-wrap__card textarea,
+  html.a11y-high-contrast .shopify-app-block input,
+  html.a11y-high-contrast .shopify-app-block select,
+  html.a11y-high-contrast .shopify-app-block textarea {
     border: 2px solid #000000 !important;
+    background-color: #ffffff !important;
   }
 
-  /* Checkboxes & radios — keep their native look but tint accent */
+  /* ── Custom select chevron ──────────────────────────── */
+
+  .massy-wrap__card select,
+  .shopify-app-block select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2378716c' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 1rem center !important;
+    background-size: 1.125rem !important;
+    padding-right: 3rem !important;
+    cursor: pointer !important;
+  }
+
+  /* ── Checkboxes / radios ────────────────────────────── */
+
   .massy-wrap__card input[type="checkbox"],
-  .massy-wrap__card input[type="radio"] {
+  .massy-wrap__card input[type="radio"],
+  .shopify-app-block input[type="checkbox"],
+  .shopify-app-block input[type="radio"] {
     width: 1.125rem !important;
     height: 1.125rem !important;
     padding: 0 !important;
     accent-color: #b45309 !important;
     border-radius: 0.25rem !important;
+    flex-shrink: 0 !important;
   }
 
   html.a11y-high-contrast .massy-wrap__card input[type="checkbox"],
-  html.a11y-high-contrast .massy-wrap__card input[type="radio"] {
+  html.a11y-high-contrast .massy-wrap__card input[type="radio"],
+  html.a11y-high-contrast .shopify-app-block input[type="checkbox"],
+  html.a11y-high-contrast .shopify-app-block input[type="radio"] {
     accent-color: #000000 !important;
   }
 
-  /* Submit button */
+  /* ── Field groups / rows / spacing ─────────────────── */
+
+  .massy-wrap__card [class*="field"],
+  .massy-wrap__card [class*="form-group"],
+  .massy-wrap__card [class*="form-row"],
+  .shopify-app-block [class*="field"],
+  .shopify-app-block [class*="form-group"],
+  .shopify-app-block [class*="form-row"] {
+    margin-bottom: 1.25rem !important;
+  }
+
+  /* Two-column grid for field pairs on desktop */
+  .massy-wrap__card [class*="row"],
+  .massy-wrap__card [class*="grid"],
+  .shopify-app-block [class*="row"],
+  .shopify-app-block [class*="grid"] {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 1.25rem !important;
+  }
+
+  @media screen and (min-width: 600px) {
+    .massy-wrap__card [class*="row"],
+    .massy-wrap__card [class*="grid"],
+    .shopify-app-block [class*="row"],
+    .shopify-app-block [class*="grid"] {
+      grid-template-columns: 1fr 1fr !important;
+    }
+  }
+
+  /* ── Submit button ──────────────────────────────────── */
+
   .massy-wrap__card input[type="submit"],
   .massy-wrap__card button[type="submit"],
-  .massy-wrap__card .massy-btn,
-  .massy-wrap__card .massy-submit {
+  .massy-wrap__card [class*="submit"],
+  .massy-wrap__card [class*="massy-btn"],
+  .shopify-app-block input[type="submit"],
+  .shopify-app-block button[type="submit"],
+  .shopify-app-block [class*="submit"],
+  .shopify-app-block [class*="btn"]:not([class*="back"]):not([class*="cancel"]) {
     width: 100% !important;
     padding: 1.125rem 1.5rem !important;
     font-family: var(--font-body-family) !important;
@@ -141,43 +300,67 @@
     box-shadow: none !important;
     -webkit-appearance: none !important;
     appearance: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.75rem !important;
+    text-decoration: none !important;
+    margin-top: 2rem !important;
   }
 
   .massy-wrap__card input[type="submit"]:hover,
   .massy-wrap__card button[type="submit"]:hover,
-  .massy-wrap__card .massy-btn:hover,
-  .massy-wrap__card .massy-submit:hover {
+  .massy-wrap__card [class*="submit"]:hover,
+  .shopify-app-block input[type="submit"]:hover,
+  .shopify-app-block button[type="submit"]:hover,
+  .shopify-app-block [class*="submit"]:hover {
     background-color: #b45309 !important;
     border-color: #b45309 !important;
   }
 
-  .massy-wrap--high-contrast .massy-wrap__card input[type="submit"],
-  .massy-wrap--high-contrast .massy-wrap__card button[type="submit"],
   html.a11y-high-contrast .massy-wrap__card input[type="submit"],
-  html.a11y-high-contrast .massy-wrap__card button[type="submit"] {
+  html.a11y-high-contrast .massy-wrap__card button[type="submit"],
+  html.a11y-high-contrast .shopify-app-block input[type="submit"],
+  html.a11y-high-contrast .shopify-app-block button[type="submit"] {
     background-color: #000000 !important;
     border-color: #000000 !important;
   }
 
-  /* Error messages */
-  .massy-wrap__card .massy-error,
-  .massy-wrap__card .field-error,
-  .massy-wrap__card .error-message {
+  /* ── Error messages ─────────────────────────────────── */
+
+  .massy-wrap__card [class*="error"]:not(input):not(select):not(textarea),
+  .massy-wrap__card [class*="invalid"],
+  .shopify-app-block [class*="error"]:not(input):not(select):not(textarea),
+  .shopify-app-block [class*="invalid"] {
     font-family: var(--font-body-family) !important;
     font-size: 0.875rem !important;
     font-weight: 700 !important;
     color: #dc2626 !important;
     margin-top: 0.375rem !important;
+    display: block !important;
   }
 
-  html.a11y-high-contrast .massy-wrap__card .massy-error,
-  html.a11y-high-contrast .massy-wrap__card .field-error {
+  html.a11y-high-contrast .massy-wrap__card [class*="error"],
+  html.a11y-high-contrast .shopify-app-block [class*="error"] {
     color: #000000 !important;
   }
 
-  /* Success message */
-  .massy-wrap__card .massy-success,
-  .massy-wrap__card .success-message {
+  /* Invalid field border */
+  .massy-wrap__card input[class*="error"],
+  .massy-wrap__card input[class*="invalid"],
+  .massy-wrap__card select[class*="error"],
+  .shopify-app-block input[class*="error"],
+  .shopify-app-block input[class*="invalid"],
+  .shopify-app-block select[class*="error"] {
+    border-color: #dc2626 !important;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12) !important;
+  }
+
+  /* ── Success / confirmation message ─────────────────── */
+
+  .massy-wrap__card [class*="success"],
+  .shopify-app-block [class*="success"],
+  .shopify-app-block [class*="confirmation"] {
     font-family: var(--font-body-family) !important;
     font-size: 1rem !important;
     font-weight: 600 !important;
@@ -185,67 +368,44 @@
     background-color: #f0fdf4 !important;
     border: 1px solid #bbf7d0 !important;
     border-radius: 0.75rem !important;
-    padding: 1rem 1.25rem !important;
+    padding: 1.25rem 1.5rem !important;
+    text-align: center !important;
   }
 
-  /* Form row spacing */
-  .massy-wrap__card .massy-field,
-  .massy-wrap__card .field-group,
-  .massy-wrap__card .form-group {
-    margin-bottom: 1.25rem !important;
+  /* ── Legal / privacy text ────────────────────────────── */
+
+  .massy-wrap__card [class*="legal"],
+  .massy-wrap__card [class*="privacy"],
+  .shopify-app-block [class*="legal"],
+  .shopify-app-block [class*="privacy"],
+  .shopify-app-block [class*="disclaimer"] {
+    font-family: var(--font-body-family) !important;
+    font-size: 0.875rem !important;
+    line-height: 1.6 !important;
+    color: #78716c !important;
+    text-align: center !important;
+    margin-top: 1.25rem !important;
   }
 
-  /* Headings inside form */
-  .massy-wrap__card h2,
-  .massy-wrap__card h3 {
-    font-family: var(--font-heading-family) !important;
-    font-weight: var(--font-heading-weight) !important;
-    color: #1c1917 !important;
-    margin-bottom: 1.5rem !important;
-    padding-bottom: 1rem !important;
-    border-bottom: 1px solid #e7e5e4 !important;
-  }
-
-  html.a11y-high-contrast .massy-wrap__card h2,
-  html.a11y-high-contrast .massy-wrap__card h3 {
+  html.a11y-high-contrast .shopify-app-block [class*="legal"],
+  html.a11y-high-contrast .shopify-app-block [class*="privacy"] {
     color: #000000 !important;
-    border-bottom-color: #000000 !important;
-  }
-
-  /* ── Two-column page layout ─────────────────────────
-     When application-info and this section are used
-     together on page.application, they go side-by-side.
-  ─────────────────────────────────────────────────── */
-
-  @media screen and (min-width: 990px) {
-    .shopify-section:has(.app-info) {
-      width: 40%;
-      float: left;
-      clear: left;
-    }
-
-    .shopify-section:has(.massy-wrap) {
-      width: 60%;
-      float: right;
-      clear: right;
-    }
-
-    /* Clearfix for the section container */
-    .shopify-section:has(.massy-wrap)::after {
-      content: '';
-      display: table;
-      clear: both;
-    }
   }
 </style>
 
 <div
   class="massy-wrap{{ section_mod }}"
   id="MassyFormWrapper-{{ section.id }}"
+  aria-hidden="true"
 >
-  <div class="massy-wrap__card">
-    {{ page.content }}
-  </div>
+  {%- comment -%}
+    This section delivers layout and style overrides for the Massy App Block
+    that follows in the template. It is visually empty unless the page has
+    content (page.content path). No custom form is rendered here.
+  {%- endcomment -%}
+  {%- unless page.content == blank -%}
+    <div class="massy-wrap__card">{{ page.content }}</div>
+  {%- endunless -%}
 </div>
 
 {% schema %}

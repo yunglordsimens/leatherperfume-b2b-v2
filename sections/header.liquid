@@ -679,7 +679,19 @@
         {%- endif -%}
       </div>
 
-      {% render 'header-search', input_id: 'Search-In-Modal' %}
+      <button
+        id="open-predictive-search"
+        type="button"
+        class="header__icon header__icon--search focus-inset"
+        aria-label="{{ 'general.search.search' | t | default: 'Search' }}"
+        aria-haspopup="dialog"
+        aria-controls="PredictiveOverlay"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" fill="none" class="icon icon-search" viewBox="0 0 18 19">
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M11.03 11.68A5.784 5.784 0 0 1 7.5 13c-3.19 0-5.784-2.594-5.784-5.784S4.31 1.432 7.5 1.432c3.19 0 5.784 2.594 5.784 5.784a5.784 5.784 0 0 1-1.311 3.567l3.374 3.375a.75.75 0 1 1-1.06 1.06l-3.257-3.538ZM7.5 11.5a4.284 4.284 0 1 0 0-8.568 4.284 4.284 0 0 0 0 8.568Z" fill="currentColor"/>
+        </svg>
+        <span class="header__search-label small-hide">Search SKU</span>
+      </button>
 
       {%- if shop.customer_accounts_enabled -%}
         <a href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}" class="header__icon header__icon--account link focus-inset{% if section.settings.menu != blank %} small-hide{% endif %}" rel="nofollow">

@@ -1,0 +1,810 @@
+<style>
+  /* ════════════════════════════════════════════════════════
+     Predictive Search Overlay
+     ════════════════════════════════════════════════════════ */
+
+  /* ── Overlay container ──────────────────────────────────── */
+
+  .pso {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-0.75rem);
+    transition:
+      opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+      visibility 0.4s,
+      transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    background-color: rgba(250, 250, 249, 0.97);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .pso.is-open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  html.a11y-high-contrast .pso {
+    background-color: #ffffff !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  /* ── Top bar ────────────────────────────────────────────── */
+
+  .pso__bar {
+    height: 5rem;
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #e7e5e4;
+    flex-shrink: 0;
+  }
+
+  @media screen and (min-width: 768px) {
+    .pso__bar { height: 6rem; padding: 0 3rem; }
+  }
+
+  html.a11y-high-contrast .pso__bar {
+    border-bottom: 4px solid #000000 !important;
+  }
+
+  .pso__bar-label {
+    font-family: var(--font-body-family);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #a8a29e;
+  }
+
+  html.a11y-high-contrast .pso__bar-label { color: #000000 !important; }
+
+  .pso__close {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1rem 0.625rem 1.25rem;
+    font-family: var(--font-body-family);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #1c1917;
+    background-color: #e7e5e4;
+    border: none;
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: background-color 0.15s;
+  }
+
+  .pso__close:hover { background-color: #d6d3d1; }
+  .pso__close svg { width: 1.125rem; height: 1.125rem; flex-shrink: 0; }
+
+  .pso__close-text {
+    display: none;
+  }
+
+  @media screen and (min-width: 480px) { .pso__close-text { display: inline; } }
+
+  html.a11y-high-contrast .pso__close {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border: 2px solid #000000 !important;
+  }
+
+  html.a11y-high-contrast .pso__close:hover {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+  }
+
+  /* ── Search input area ──────────────────────────────────── */
+
+  .pso__input-section {
+    flex-shrink: 0;
+    padding: 2.5rem 1.5rem 1.5rem;
+    max-width: 64rem;
+    width: 100%;
+    margin: 0 auto;
+    box-sizing: border-box;
+  }
+
+  @media screen and (min-width: 768px) {
+    .pso__input-section { padding: 4rem 3rem 2rem; }
+  }
+
+  .pso__input-wrap { position: relative; }
+
+  .pso__input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight);
+    font-size: clamp(2.25rem, 8vw, 5rem);
+    line-height: 1.1;
+    color: #1c1917;
+    caret-color: #b45309;
+    padding: 0;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .pso__input::placeholder { color: #d6d3d1; }
+
+  html.a11y-high-contrast .pso__input { color: #000000 !important; }
+  html.a11y-high-contrast .pso__input::placeholder { color: #a8a29e !important; }
+
+  .pso__underline {
+    height: 0.1875rem;
+    width: 100%;
+    margin-top: 1rem;
+    background-color: #e7e5e4;
+    border-radius: 9999px;
+    transition: background-color 0.4s ease;
+  }
+
+  .pso__underline.is-active { background-color: #b45309; }
+
+  html.a11y-high-contrast .pso__underline { background-color: #000000 !important; }
+
+  /* ── Scrollable results area ────────────────────────────── */
+
+  .pso__results {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 1.5rem 6rem;
+    max-width: 64rem;
+    width: 100%;
+    margin: 0 auto;
+    box-sizing: border-box;
+    overscroll-behavior: contain;
+  }
+
+  @media screen and (min-width: 768px) {
+    .pso__results { padding: 0 3rem 6rem; }
+  }
+
+  /* ── Empty state — popular searches ────────────────────── */
+
+  .pso-state { animation: psoFadeIn 0.25s ease both; }
+
+  @keyframes psoFadeIn {
+    from { opacity: 0; transform: translateY(0.5rem); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .pso-popular-heading {
+    font-family: var(--font-body-family);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #a8a29e;
+    margin: 2rem 0 1.5rem;
+  }
+
+  html.a11y-high-contrast .pso-popular-heading { color: #000000 !important; }
+
+  .pso-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .pso-pill {
+    padding: 0.625rem 1.25rem;
+    font-family: var(--font-body-family);
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: #44403c;
+    background-color: #ffffff;
+    border: 1px solid #e7e5e4;
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: border-color 0.12s, color 0.12s;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  }
+
+  .pso-pill:hover { border-color: #d97706; color: #b45309; }
+
+  html.a11y-high-contrast .pso-pill {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border: 2px solid #000000 !important;
+  }
+
+  html.a11y-high-contrast .pso-pill:hover {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+  }
+
+  /* ── Loading state ──────────────────────────────────────── */
+
+  .pso-state--loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 4rem 0;
+    opacity: 0.6;
+    gap: 1rem;
+  }
+
+  .pso-spinner {
+    width: 2rem;
+    height: 2rem;
+    border: 3px solid #e7e5e4;
+    border-top-color: #b45309;
+    border-radius: 50%;
+    animation: psoSpin 0.75s linear infinite;
+  }
+
+  @keyframes psoSpin { to { transform: rotate(360deg); } }
+
+  html.a11y-high-contrast .pso-spinner {
+    border-color: #000000 !important;
+    border-top-color: transparent !important;
+  }
+
+  .pso-loading-text {
+    font-family: var(--font-body-family);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #78716c;
+    margin: 0;
+  }
+
+  /* ── Results ────────────────────────────────────────────── */
+
+  .pso-results-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 1.5rem 0 1.25rem;
+  }
+
+  .pso-results-count {
+    font-family: var(--font-body-family);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #a8a29e;
+  }
+
+  html.a11y-high-contrast .pso-results-count { color: #000000 !important; }
+
+  .pso-results-all {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-family: var(--font-body-family);
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #57534e;
+    text-decoration: none;
+    transition: color 0.12s;
+  }
+
+  .pso-results-all:hover { color: #b45309; }
+  .pso-results-all svg { width: 0.875rem; height: 0.875rem; }
+
+  html.a11y-high-contrast .pso-results-all { color: #000000 !important; }
+
+  /* ── Product cards grid ─────────────────────────────────── */
+
+  .pso-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.875rem;
+  }
+
+  @media screen and (min-width: 540px) {
+    .pso-grid { grid-template-columns: 1fr 1fr; gap: 1rem; }
+  }
+
+  .pso-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: #ffffff;
+    border: 1px solid #e7e5e4;
+    border-radius: 1.25rem;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  .pso-card:hover {
+    border-color: #fde68a;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+  }
+
+  html.a11y-high-contrast .pso-card {
+    background-color: #ffffff !important;
+    border: 2px solid #000000 !important;
+    box-shadow: none !important;
+  }
+
+  html.a11y-high-contrast .pso-card:hover {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+  }
+
+  .pso-card__img {
+    width: 5rem;
+    height: 5rem;
+    border-radius: 0.75rem;
+    background-color: #f5f5f4;
+    flex-shrink: 0;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .pso-card__img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .pso-card__placeholder-icon {
+    width: 2rem;
+    height: 2rem;
+    color: #d6d3d1;
+  }
+
+  html.a11y-high-contrast .pso-card__img {
+    background-color: #ffffff !important;
+    border: 2px solid #000000 !important;
+  }
+
+  html.a11y-high-contrast .pso-card:hover .pso-card__img {
+    border-color: #ffffff !important;
+  }
+
+  .pso-card__body { flex: 1; min-width: 0; }
+
+  .pso-card__sku {
+    display: inline-block;
+    font-family: monospace;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    color: #78716c;
+    background-color: #f5f5f4;
+    border-radius: 0.25rem;
+    padding: 0.125rem 0.5rem;
+    margin-bottom: 0.375rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+
+  html.a11y-high-contrast .pso-card__sku {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+  }
+
+  html.a11y-high-contrast .pso-card:hover .pso-card__sku {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  .pso-card__title {
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight);
+    font-size: 1rem;
+    line-height: 1.25;
+    color: #1c1917;
+    margin: 0 0 0.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  html.a11y-high-contrast .pso-card__title { color: #000000 !important; }
+  html.a11y-high-contrast .pso-card:hover .pso-card__title { color: #ffffff !important; }
+
+  .pso-card__meta {
+    font-family: var(--font-body-family);
+    font-size: 0.875rem;
+    color: #78716c;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  html.a11y-high-contrast .pso-card__meta { color: #000000 !important; }
+  html.a11y-high-contrast .pso-card:hover .pso-card__meta { color: #ffffff !important; }
+
+  .pso-card__arrow {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    background-color: #f5f5f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #a8a29e;
+    transition: background-color 0.15s, color 0.15s;
+  }
+
+  .pso-card:hover .pso-card__arrow { background-color: #fef3c7; color: #b45309; }
+  .pso-card__arrow svg { width: 1rem; height: 1rem; }
+
+  html.a11y-high-contrast .pso-card__arrow {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+  }
+
+  html.a11y-high-contrast .pso-card:hover .pso-card__arrow {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border: 2px solid #ffffff !important;
+  }
+
+  /* ── No results ─────────────────────────────────────────── */
+
+  .pso-state--noresults {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 4rem 1rem;
+  }
+
+  .pso-noresults-icon {
+    width: 4rem;
+    height: 4rem;
+    color: #d6d3d1;
+    margin-bottom: 1.5rem;
+  }
+
+  html.a11y-high-contrast .pso-noresults-icon { color: #000000 !important; }
+
+  .pso-noresults-heading {
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight);
+    font-size: clamp(1.75rem, 4vw, 2.25rem);
+    color: #1c1917;
+    margin: 0 0 0.75rem;
+  }
+
+  html.a11y-high-contrast .pso-noresults-heading { color: #000000 !important; }
+
+  .pso-noresults-text {
+    font-family: var(--font-body-family);
+    font-size: 1rem;
+    line-height: 1.65;
+    color: #78716c;
+    max-width: 28rem;
+    margin: 0;
+  }
+
+  html.a11y-high-contrast .pso-noresults-text { color: #000000 !important; font-weight: 500 !important; }
+
+  /* ── Header search button (for use in header.liquid) ────── */
+
+  .header__icon--search {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .header__icon--search .header__search-label {
+    font-family: var(--font-body-family);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.075em;
+  }
+</style>
+
+<div
+  class="pso"
+  id="PredictiveOverlay"
+  role="dialog"
+  aria-modal="true"
+  aria-label="{{ 'general.search.search' | t }}"
+  data-search-url="{{ routes.predictive_search_url }}"
+>
+
+  {%- comment -%} ── Top bar ── {%- endcomment -%}
+  <div class="pso__bar">
+    <span class="pso__bar-label">Predictive Search</span>
+    <button class="pso__close" id="PsoClose" type="button" aria-label="Close search">
+      <span class="pso__close-text">Close</span>
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+  </div>
+
+  {%- comment -%} ── Search input ── {%- endcomment -%}
+  <div class="pso__input-section">
+    <div class="pso__input-wrap">
+      <input
+        class="pso__input"
+        id="PsoInput"
+        type="search"
+        placeholder="{{ 'general.search.placeholder' | t | default: 'Search SKU or Fragrance…' }}"
+        autocomplete="off"
+        spellcheck="false"
+        aria-label="{{ 'general.search.search' | t }}"
+        aria-controls="PsoResults"
+        aria-autocomplete="list"
+      >
+      <div class="pso__underline" id="PsoUnderline" aria-hidden="true"></div>
+    </div>
+  </div>
+
+  {%- comment -%} ── Results area (populated by JS) ── {%- endcomment -%}
+  <div class="pso__results" id="PsoResults" role="region" aria-live="polite" aria-label="Search results">
+  </div>
+
+</div>
+
+<script>
+(function () {
+  if (window.lpPsoReady) return;
+  window.lpPsoReady = true;
+
+  var overlay   = document.getElementById('PredictiveOverlay');
+  var closeBtn  = document.getElementById('PsoClose');
+  var input     = document.getElementById('PsoInput');
+  var results   = document.getElementById('PsoResults');
+  var underline = document.getElementById('PsoUnderline');
+
+  if (!overlay) return;
+
+  var searchUrl   = overlay.dataset.searchUrl || '/search/suggest';
+  var debounceTimer = null;
+  var abortCtrl   = null;
+
+  /* ── Popular search terms (hardcoded, easily editable) ── */
+  var popularTerms = ['Amber Royale', 'Tester Sets', 'New Arrivals', 'Noir Sauvage', 'Leather Belts'];
+
+  /* ════════════════════════════════════════════════════════
+     Open / Close
+     ════════════════════════════════════════════════════════ */
+
+  function openSearch() {
+    overlay.classList.add('is-open');
+    overlay.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    showEmpty();
+    setTimeout(function () { if (input) input.focus(); }, 160);
+  }
+
+  function closeSearch() {
+    overlay.classList.remove('is-open');
+    overlay.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    if (input) { input.value = ''; }
+    if (underline) underline.classList.remove('is-active');
+    if (abortCtrl) { abortCtrl.abort(); abortCtrl = null; }
+    clearTimeout(debounceTimer);
+  }
+
+  /* Initial state */
+  overlay.setAttribute('aria-hidden', 'true');
+
+  /* ── Open triggers (button#open-predictive-search + data attr) ── */
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('#open-predictive-search, [data-open-search]');
+    if (btn) { openSearch(); }
+  });
+
+  /* ── Close ── */
+  if (closeBtn) {
+    closeBtn.addEventListener('click', closeSearch);
+  }
+
+  /* Click outside overlay content area to close */
+  overlay.addEventListener('click', function (e) {
+    if (e.target === overlay) closeSearch();
+  });
+
+  /* Escape key */
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && overlay.classList.contains('is-open')) {
+      closeSearch();
+    }
+  });
+
+  /* ════════════════════════════════════════════════════════
+     Input handler with debounce
+     ════════════════════════════════════════════════════════ */
+
+  if (input) {
+    input.addEventListener('input', function () {
+      var q = input.value.trim();
+
+      if (underline) {
+        underline.classList.toggle('is-active', q.length > 0);
+      }
+
+      clearTimeout(debounceTimer);
+
+      if (abortCtrl) { abortCtrl.abort(); abortCtrl = null; }
+
+      if (q.length === 0) {
+        showEmpty();
+        return;
+      }
+
+      showLoading();
+
+      debounceTimer = setTimeout(function () {
+        fetchResults(q);
+      }, 350);
+    });
+  }
+
+  /* ════════════════════════════════════════════════════════
+     Fetch
+     ════════════════════════════════════════════════════════ */
+
+  function fetchResults(q) {
+    try { abortCtrl = new AbortController(); } catch (e) { abortCtrl = null; }
+
+    var url = searchUrl + '?q=' + encodeURIComponent(q) +
+              '&resources[type]=product&resources[limit]=6&resources[options][unavailable_products]=last';
+
+    fetch(url, {
+      headers: { 'Accept': 'application/json' },
+      signal: abortCtrl ? abortCtrl.signal : undefined
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        var products = [];
+        if (data.resources && data.resources.results && data.resources.results.products) {
+          products = data.resources.results.products;
+        }
+        if (products.length > 0) {
+          showResults(products, q);
+        } else {
+          showNoResults(q);
+        }
+      })
+      .catch(function (err) {
+        if (err.name !== 'AbortError') { showNoResults(q); }
+      });
+  }
+
+  /* ════════════════════════════════════════════════════════
+     State renderers
+     ════════════════════════════════════════════════════════ */
+
+  function showEmpty() {
+    if (!results) return;
+    var html = '<div class="pso-state">';
+    html += '<p class="pso-popular-heading">Popular B2B Searches</p>';
+    html += '<div class="pso-pills">';
+    popularTerms.forEach(function (term) {
+      html += '<button class="pso-pill" type="button" data-pso-term="' + escAttr(term) + '">' + escHtml(term) + '</button>';
+    });
+    html += '</div></div>';
+    results.innerHTML = html;
+  }
+
+  function showLoading() {
+    if (!results) return;
+    results.innerHTML = '<div class="pso-state pso-state--loading">' +
+      '<div class="pso-spinner" aria-hidden="true"></div>' +
+      '<p class="pso-loading-text">Searching catalog…</p>' +
+      '</div>';
+  }
+
+  function showResults(products, q) {
+    if (!results) return;
+    var html = '<div class="pso-state">';
+    html += '<div class="pso-results-header">';
+    html +=   '<span class="pso-results-count">Products (' + products.length + ')</span>';
+    html +=   '<a href="/search?type=product&q=' + encodeURIComponent(q) + '" class="pso-results-all">' +
+                'View all results' +
+                '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>' +
+              '</a>';
+    html += '</div>';
+    html += '<div class="pso-grid">';
+    products.forEach(function (p) { html += renderCard(p); });
+    html += '</div></div>';
+    results.innerHTML = html;
+  }
+
+  function showNoResults(q) {
+    if (!results) return;
+    results.innerHTML = '<div class="pso-state pso-state--noresults">' +
+      '<svg class="pso-noresults-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>' +
+      '<h3 class="pso-noresults-heading">No products found</h3>' +
+      '<p class="pso-noresults-text">We couldn’t find anything matching “' + escHtml(q) + '”. Try checking the spelling or searching by SKU.</p>' +
+      '</div>';
+  }
+
+  /* ════════════════════════════════════════════════════════
+     Card renderer
+     ════════════════════════════════════════════════════════ */
+
+  function renderCard(p) {
+    var sku = (p.variants && p.variants[0] && p.variants[0].sku) ? p.variants[0].sku : '';
+    var type = p.product_type || p.type || '';
+
+    /* Format price — API returns cents as integer */
+    var priceStr = '';
+    if (p.price) {
+      /* price is already formatted string from API */
+      priceStr = 'WSP: ' + p.price;
+    }
+
+    var metaParts = [];
+    if (type) metaParts.push(type);
+    if (priceStr) metaParts.push(priceStr);
+    var metaStr = metaParts.join(' • ');
+
+    /* Image */
+    var imgHtml = '';
+    if (p.featured_image && p.featured_image.url) {
+      var rawUrl = p.featured_image.url;
+      /* Append width param — the CDN URL may already have a query string */
+      var imgSrc = rawUrl + (rawUrl.indexOf('?') !== -1 ? '&' : '?') + 'width=160&height=160&crop=center';
+      imgHtml = '<img src="' + escAttr(imgSrc) + '" alt="' + escAttr(p.featured_image.alt || p.title) + '" loading="lazy" width="80" height="80">';
+    } else {
+      imgHtml = '<svg class="pso-card__placeholder-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>';
+    }
+
+    return '<a href="' + escAttr(p.url) + '" class="pso-card">' +
+      '<div class="pso-card__img">' + imgHtml + '</div>' +
+      '<div class="pso-card__body">' +
+        (sku ? '<span class="pso-card__sku">' + escHtml(sku) + '</span>' : '') +
+        '<h4 class="pso-card__title">' + escHtml(p.title) + '</h4>' +
+        (metaStr ? '<p class="pso-card__meta">' + escHtml(metaStr) + '</p>' : '') +
+      '</div>' +
+      '<div class="pso-card__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>' +
+    '</a>';
+  }
+
+  /* ════════════════════════════════════════════════════════
+     Pill click — populate input and search
+     ════════════════════════════════════════════════════════ */
+
+  results && results.addEventListener('click', function (e) {
+    var pill = e.target.closest('[data-pso-term]');
+    if (pill && input) {
+      input.value = pill.dataset.psoTerm;
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      input.focus();
+    }
+  });
+
+  /* ════════════════════════════════════════════════════════
+     Helpers
+     ════════════════════════════════════════════════════════ */
+
+  function escHtml(s) {
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function escAttr(s) { return escHtml(s); }
+
+})();
+</script>

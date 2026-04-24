@@ -1,0 +1,344 @@
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign first_collection = product.collections | first
+
+  assign badge_text = product.metafields.custom.badge.value
+  if badge_text == blank
+    for tag in product.tags
+      if tag == 'Bestseller' or tag == 'New' or tag == 'Sale' or tag == 'Featured'
+        assign badge_text = tag
+        break
+      endif
+    endfor
+  endif
+-%}
+
+<style>
+  /* ═══════════════════════════════════
+     Product B2B — Gallery + Breadcrumb
+  ═══════════════════════════════════ */
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  /* ── Breadcrumb ─────────────────── */
+  .pdp-bc {
+    background-color: #ffffff;
+    border-bottom: 1px solid #e7e5e4;
+    padding: 0.875rem 1.5rem;
+  }
+
+  html.a11y-high-contrast .pdp-bc { border-color: #000000; }
+
+  .pdp-bc__inner {
+    max-width: var(--page-width, 90rem);
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    font-family: var(--font-body-family);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #a8a29e;
+  }
+
+  .pdp-bc__link {
+    color: #a8a29e;
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .pdp-bc__link:hover { color: #b45309; }
+
+  html.a11y-high-contrast .pdp-bc__link {
+    color: #000000 !important;
+    text-decoration: underline;
+  }
+
+  .pdp-bc__sep {
+    display: flex;
+    align-items: center;
+    color: #d6d3d1;
+  }
+
+  .pdp-bc__sep svg { width: 0.75rem; height: 0.75rem; }
+
+  .pdp-bc__current { color: #1c1917; }
+
+  html.a11y-high-contrast .pdp-bc__current { color: #000000 !important; }
+
+  /* ── Outer wrapper ──────────────── */
+  .pdp-wrap {
+    background-color: #fafaf9;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  @media screen and (min-width: 640px) {
+    .pdp-wrap { padding: 3rem 1.5rem 5rem; }
+  }
+
+  .pdp-container {
+    max-width: var(--page-width, 90rem);
+    margin: 0 auto;
+  }
+
+  .pdp-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+  }
+
+  @media screen and (min-width: 1024px) {
+    .pdp-grid {
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 4rem;
+    }
+  }
+
+  /* ── Gallery ────────────────────── */
+  .pdp-gallery { width: 100%; }
+
+  @media screen and (min-width: 1024px) { .pdp-gallery { width: 50%; } }
+
+  /* Main image */
+  .pdp-gallery__main-wrap {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    background-color: #ffffff;
+    border: 1px solid #e7e5e4;
+    border-radius: 1.5rem;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  html.a11y-high-contrast .pdp-gallery__main-wrap {
+    border: 4px solid #000000 !important;
+    box-shadow: none !important;
+  }
+
+  .pdp-gallery__main-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    transition: opacity 0.2s;
+  }
+
+  .pdp-gallery__placeholder {
+    color: #d6d3d1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .pdp-gallery__placeholder svg { width: 6rem; height: 6rem; }
+
+  /* Badge */
+  .pdp-badge {
+    position: absolute;
+    top: 1.25rem;
+    left: 1.25rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.4rem 0.875rem;
+    font-family: var(--font-body-family);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #ffffff;
+    background-color: #1c1917;
+    border-radius: 0.5rem;
+    line-height: 1;
+    z-index: 2;
+  }
+
+  .pdp-badge svg {
+    width: 0.75rem;
+    height: 0.75rem;
+    fill: #d97706;
+    flex-shrink: 0;
+  }
+
+  html.a11y-high-contrast .pdp-badge {
+    background-color: #000000 !important;
+    border: 2px solid #ffffff !important;
+  }
+
+  /* Thumbnails */
+  .pdp-gallery__thumbs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .pdp-gallery__thumb {
+    aspect-ratio: 1;
+    border-radius: 0.75rem;
+    border: 1.5px solid #e7e5e4;
+    background-color: #ffffff;
+    overflow: hidden;
+    cursor: pointer;
+    opacity: 0.55;
+    padding: 0;
+    transition: border-color 0.15s, opacity 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .pdp-gallery__thumb:hover { opacity: 1; border-color: #b45309; }
+
+  .pdp-gallery__thumb.is-active {
+    border: 2px solid #b45309;
+    opacity: 1;
+  }
+
+  html.a11y-high-contrast .pdp-gallery__thumb {
+    border: 2px solid #000000 !important;
+    opacity: 1 !important;
+  }
+
+  html.a11y-high-contrast .pdp-gallery__thumb.is-active {
+    border: 4px solid #000000 !important;
+  }
+
+  .pdp-gallery__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    pointer-events: none;
+  }
+</style>
+
+{%- comment -%}── Breadcrumb ──{%- endcomment -%}
+<nav class="pdp-bc" aria-label="{{ 'general.breadcrumbs.title' | t | default: 'Breadcrumb' }}">
+  <div class="pdp-bc__inner">
+    <a href="{{ routes.root_url }}" class="pdp-bc__link">Home</a>
+
+    {%- if first_collection -%}
+      <span class="pdp-bc__sep" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </span>
+      <a href="{{ first_collection.url }}" class="pdp-bc__link">{{ first_collection.title }}</a>
+    {%- endif -%}
+
+    <span class="pdp-bc__sep" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </span>
+    <span class="pdp-bc__current" aria-current="page">{{ product.title }}</span>
+  </div>
+</nav>
+
+{%- comment -%}── Main content ──{%- endcomment -%}
+<div class="pdp-wrap">
+  <div class="pdp-container">
+    <div class="pdp-grid">
+
+      {%- comment -%}── Gallery column ──{%- endcomment -%}
+      <div class="pdp-gallery" id="PdpGallery-{{ section.id }}">
+
+        <div class="pdp-gallery__main-wrap">
+          {%- if product.featured_media -%}
+            <img
+              id="PdpMainImg-{{ section.id }}"
+              src="{{ product.featured_media | image_url: width: 900 }}"
+              alt="{{ product.featured_media.alt | escape }}"
+              width="900"
+              height="1125"
+              loading="eager"
+              class="pdp-gallery__main-img"
+            >
+          {%- else -%}
+            <div class="pdp-gallery__placeholder" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5"/>
+                <polyline points="21 15 16 10 5 21"/>
+              </svg>
+            </div>
+          {%- endif -%}
+
+          {%- if badge_text != blank -%}
+            <div class="pdp-badge">
+              <svg aria-hidden="true" viewBox="0 0 24 24">
+                <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
+              </svg>
+              {{ badge_text }}
+            </div>
+          {%- endif -%}
+        </div>
+
+        {%- if product.media.size > 1 -%}
+          <ul class="pdp-gallery__thumbs" id="PdpThumbs-{{ section.id }}" role="list">
+            {%- for media in product.media limit: 4 -%}
+              <li>
+                <button
+                  class="pdp-gallery__thumb{% if forloop.first %} is-active{% endif %}"
+                  type="button"
+                  data-main-src="{{ media | image_url: width: 900 }}"
+                  data-alt="{{ media.alt | escape }}"
+                  aria-label="View image {{ forloop.index }}"
+                >
+                  <img
+                    src="{{ media | image_url: width: 200 }}"
+                    alt="{{ media.alt | escape }}"
+                    width="200"
+                    height="200"
+                    loading="lazy"
+                  >
+                </button>
+              </li>
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+
+      </div>
+      {%- comment -%}── Info column added in next prompt ──{%- endcomment -%}
+
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var sid     = '{{ section.id }}';
+  var mainImg = document.getElementById('PdpMainImg-' + sid);
+  var thumbs  = document.querySelectorAll('#PdpThumbs-' + sid + ' .pdp-gallery__thumb');
+
+  thumbs.forEach(function (thumb) {
+    thumb.addEventListener('click', function () {
+      var src = this.dataset.mainSrc;
+      var alt = this.dataset.alt || '';
+      if (mainImg && src) {
+        mainImg.style.opacity = '0.4';
+        mainImg.src = src;
+        mainImg.alt = alt;
+        mainImg.onload = function () { mainImg.style.opacity = '1'; };
+      }
+      thumbs.forEach(function (t) { t.classList.remove('is-active'); });
+      this.classList.add('is-active');
+    });
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Product B2B",
+  "settings": [],
+  "presets": [{ "name": "Product B2B" }]
+}
+{% endschema %}

@@ -27,13 +27,13 @@
         "contact_email": "b2b@leatherparfum.com",
         "phone": "+420 123 456 789",
         "whatsapp": "+420 123 456 789",
-        "address": "<p><strong>Leather Parfum s.r.o.</strong>Václavské náměstí 1<br>110 00 Prague, Czechia</p>",
+        "address": "<p><strong>Leather Parfum s.r.o.</strong>Václavské náměstí 1<br/>110 00 Prague, Czechia</p>",
         "hours_weekdays": "9:00 – 17:00 CET",
         "hours_weekend": "Closed",
         "promo_heading": "Looking to become a partner?",
         "promo_text": "<p>Apply for wholesale access to see our full catalog and pricing.</p>",
         "promo_btn_label": "Apply Now",
-        "promo_btn_link": ""
+        "promo_btn_link": "shopify://pages/wholesale-application"
       }
     }
   },

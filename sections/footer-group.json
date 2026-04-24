@@ -14,17 +14,7 @@
     "footer_lp_9CKMXH": {
       "type": "footer",
       "name": "LP Footer",
-      "settings": {
-        "high_contrast": false,
-        "brand_name": "Leather Parfum",
-        "brand_desc": "Your premium wholesale partner. Exclusive terms for retail businesses.",
-        "linkedin_url": "",
-        "facebook_url": "",
-        "phone": "+420 123 456 789",
-        "address": "Prague, Czechia",
-        "email": "b2b@leatherparfum.com",
-        "copyright_name": "Leather Parfum Wholesale"
-      }
+      "settings": {}
     }
   },
   "order": [

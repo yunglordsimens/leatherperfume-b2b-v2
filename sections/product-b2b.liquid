@@ -11,6 +11,23 @@
       endif
     endfor
   endif
+
+  assign is_wholesale = false
+  if customer and customer.tags contains 'wholesale'
+    assign is_wholesale = true
+  endif
+
+  assign rrp = current_variant.compare_at_price
+  assign wsp = current_variant.price
+  if product.metafields.custom.wholesale_price != blank
+    assign wsp = product.metafields.custom.wholesale_price.value
+  endif
+
+  assign margin_percent = 0
+  if rrp and wsp and wsp > 0 and rrp > wsp
+    assign margin_diff = rrp | minus: wsp
+    assign margin_percent = margin_diff | times: 100 | divided_by: wsp
+  endif
 -%}
 
 <style>
@@ -221,6 +238,248 @@
     display: block;
     pointer-events: none;
   }
+
+  /* ── Info column ────────────────── */
+  .pdp-info {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  @media screen and (min-width: 1024px) { .pdp-info { width: 50%; } }
+
+  .pdp-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+
+  .pdp-category {
+    font-family: var(--font-body-family);
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #b45309;
+  }
+
+  html.a11y-high-contrast .pdp-category { color: #000000 !important; }
+
+  .pdp-stock {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .pdp-stock__dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .pdp-stock__dot.is-in  { background-color: #22c55e; }
+  .pdp-stock__dot.is-out { background-color: #ef4444; }
+
+  html.a11y-high-contrast .pdp-stock__dot { display: none; }
+
+  .pdp-stock__label {
+    font-family: var(--font-body-family);
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #57534e;
+  }
+
+  html.a11y-high-contrast .pdp-stock__label { color: #000000 !important; }
+
+  .pdp-title {
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight);
+    font-style: var(--font-heading-style);
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    line-height: 1.1;
+    color: #1c1917;
+    margin: 0 0 0.5rem;
+  }
+
+  html.a11y-high-contrast .pdp-title { color: #000000 !important; }
+
+  .pdp-sku {
+    font-family: monospace;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #a8a29e;
+    margin: 0 0 1.5rem;
+  }
+
+  html.a11y-high-contrast .pdp-sku { color: #000000 !important; }
+
+  .pdp-desc {
+    font-family: var(--font-body-family);
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #57534e;
+    margin: 0 0 2rem;
+  }
+
+  html.a11y-high-contrast .pdp-desc { color: #000000 !important; font-weight: 500 !important; }
+
+  /* ── Pricing box ────────────────── */
+  .pdp-pricing {
+    background-color: #ffffff;
+    border: 1px solid #e7e5e4;
+    border-radius: 1.5rem;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+  }
+
+  @media screen and (min-width: 640px) { .pdp-pricing { padding: 2rem; } }
+
+  html.a11y-high-contrast .pdp-pricing {
+    border: 4px solid #000000 !important;
+    box-shadow: none !important;
+  }
+
+  .pdp-pricing__head {
+    font-family: var(--font-body-family);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #a8a29e;
+    border-bottom: 1px solid #f5f5f4;
+    padding-bottom: 1rem;
+    margin: 0 0 1.5rem;
+  }
+
+  html.a11y-high-contrast .pdp-pricing__head {
+    color: #000000 !important;
+    border-color: #000000 !important;
+  }
+
+  .pdp-pricing__row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+
+  .pdp-pricing__lbl {
+    font-family: var(--font-body-family);
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: #78716c;
+  }
+
+  html.a11y-high-contrast .pdp-pricing__lbl { color: #000000 !important; }
+
+  .pdp-pricing__lbl--wsp { color: #92400e !important; }
+  html.a11y-high-contrast .pdp-pricing__lbl--wsp { color: #000000 !important; }
+
+  .pdp-pricing__excl {
+    display: block;
+    font-family: var(--font-body-family);
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: #a8a29e;
+    margin-top: 0.25rem;
+  }
+
+  .pdp-pricing__rrp {
+    font-family: var(--font-body-family);
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #d6d3d1;
+    text-decoration: line-through;
+  }
+
+  html.a11y-high-contrast .pdp-pricing__rrp { color: #000000 !important; }
+
+  .pdp-pricing__wsp {
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight);
+    font-size: clamp(2rem, 3.5vw, 2.75rem);
+    line-height: 1;
+    color: #1c1917;
+    text-align: right;
+  }
+
+  html.a11y-high-contrast .pdp-pricing__wsp { color: #000000 !important; }
+
+  .pdp-pricing__margin {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 0.875rem;
+    padding: 1rem 1.25rem;
+    font-family: var(--font-body-family);
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: #166534;
+  }
+
+  .pdp-pricing__margin strong { font-size: 1.125rem; }
+
+  html.a11y-high-contrast .pdp-pricing__margin {
+    background-color: #ffffff !important;
+    border: 2px solid #000000 !important;
+    color: #000000 !important;
+  }
+
+  /* Login CTA */
+  .pdp-pricing__login {
+    background-color: #f5f5f4;
+    border-radius: 1rem;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  html.a11y-high-contrast .pdp-pricing__login {
+    background-color: #ffffff !important;
+    border: 2px solid #000000 !important;
+  }
+
+  .pdp-pricing__login-icon { color: #a8a29e; }
+  .pdp-pricing__login-icon svg { width: 2.5rem; height: 2.5rem; }
+
+  .pdp-pricing__login-text {
+    font-family: var(--font-body-family);
+    font-size: 1rem;
+    font-weight: 700;
+    color: #44403c;
+    margin: 0;
+  }
+
+  html.a11y-high-contrast .pdp-pricing__login-text { color: #000000 !important; }
+
+  .pdp-pricing__login-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.75rem 2rem;
+    background-color: #1c1917;
+    color: #ffffff;
+    font-family: var(--font-body-family);
+    font-size: 0.9375rem;
+    font-weight: 700;
+    border-radius: 0.875rem;
+    text-decoration: none;
+    transition: background-color 0.15s;
+  }
+
+  .pdp-pricing__login-btn:hover { background-color: #b45309; }
+
+  html.a11y-high-contrast .pdp-pricing__login-btn {
+    background-color: #000000 !important;
+    border: 2px solid #000000 !important;
+  }
 </style>
 
 {%- comment -%}── Breadcrumb ──{%- endcomment -%}
@@ -306,7 +565,85 @@
         {%- endif -%}
 
       </div>
-      {%- comment -%}── Info column added in next prompt ──{%- endcomment -%}
+      {%- comment -%}── Info column ──{%- endcomment -%}
+      <div class="pdp-info">
+
+        <div class="pdp-meta">
+          {%- if first_collection -%}
+            <span class="pdp-category">{{ first_collection.title }}</span>
+          {%- elsif product.type != blank -%}
+            <span class="pdp-category">{{ product.type }}</span>
+          {%- endif -%}
+          <div class="pdp-stock">
+            <span class="pdp-stock__dot {% if current_variant.available %}is-in{% else %}is-out{% endif %}"></span>
+            <span class="pdp-stock__label">
+              {%- if current_variant.available -%}
+                In Stock
+                {%- if current_variant.inventory_management != blank and current_variant.inventory_quantity > 0 -%}
+                  &nbsp;({{ current_variant.inventory_quantity }} units)
+                {%- endif -%}
+              {%- else -%}
+                Out of Stock
+              {%- endif -%}
+            </span>
+          </div>
+        </div>
+
+        <h1 class="pdp-title">{{ product.title }}</h1>
+
+        {%- if current_variant.sku != blank -%}
+          <p class="pdp-sku">SKU: {{ current_variant.sku }}</p>
+        {%- endif -%}
+
+        <div class="pdp-desc">{{ product.description }}</div>
+
+        {%- comment -%}── Pricing ──{%- endcomment -%}
+        <div class="pdp-pricing">
+          <h3 class="pdp-pricing__head">Wholesale Pricing</h3>
+
+          {%- if is_wholesale -%}
+
+            {%- if rrp and rrp > wsp -%}
+              <div class="pdp-pricing__row">
+                <span class="pdp-pricing__lbl">Retail Price (RRP)</span>
+                <span class="pdp-pricing__rrp">{{ rrp | money_without_trailing_zeros }}</span>
+              </div>
+            {%- endif -%}
+
+            <div class="pdp-pricing__row" style="margin-bottom:1.5rem">
+              <div>
+                <span class="pdp-pricing__lbl pdp-pricing__lbl--wsp">Your Price (WSP)</span>
+                <span class="pdp-pricing__excl">Excl. VAT</span>
+              </div>
+              <span class="pdp-pricing__wsp">{{ wsp | money_without_trailing_zeros }}</span>
+            </div>
+
+            {%- if margin_percent > 0 -%}
+              <div class="pdp-pricing__margin">
+                <span>Your Retail Margin</span>
+                <strong>+{{ margin_percent }}%</strong>
+              </div>
+            {%- endif -%}
+
+          {%- else -%}
+
+            <div class="pdp-pricing__login">
+              <span class="pdp-pricing__login-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+              </span>
+              <p class="pdp-pricing__login-text">Log in to see your B2B price</p>
+              <a href="/pages/partner-login" class="pdp-pricing__login-btn">Log In as Partner</a>
+            </div>
+
+          {%- endif -%}
+        </div>
+
+        {%- comment -%}── Quantity + cart added in next prompt ──{%- endcomment -%}
+
+      </div>
 
     </div>
   </div>

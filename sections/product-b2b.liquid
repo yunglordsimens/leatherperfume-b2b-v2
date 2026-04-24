@@ -28,6 +28,8 @@
     assign margin_diff = rrp | minus: wsp
     assign margin_percent = margin_diff | times: 100 | divided_by: wsp
   endif
+
+  assign features_meta = product.metafields.custom.features.value
 -%}
 
 <style>
@@ -664,6 +666,61 @@
     background-color: #000000 !important;
     border: 2px solid #ffffff !important;
   }
+
+  /* ── Features ───────────────────── */
+  .pdp-features {
+    padding-top: 2rem;
+    border-top: 1px solid #e7e5e4;
+  }
+
+  html.a11y-high-contrast .pdp-features { border-top: 2px solid #000000 !important; }
+
+  .pdp-features__head {
+    font-family: var(--font-body-family);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #a8a29e;
+    margin: 0 0 1.5rem;
+  }
+
+  html.a11y-high-contrast .pdp-features__head { color: #000000 !important; }
+
+  .pdp-features__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .pdp-features__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    font-family: var(--font-body-family);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: #44403c;
+    line-height: 1.5;
+  }
+
+  html.a11y-high-contrast .pdp-features__item {
+    color: #000000 !important;
+    font-weight: 700 !important;
+  }
+
+  .pdp-features__icon {
+    color: #b45309;
+    flex-shrink: 0;
+    margin-top: 0.125rem;
+  }
+
+  .pdp-features__icon svg { width: 1.25rem; height: 1.25rem; }
+
+  html.a11y-high-contrast .pdp-features__icon { color: #000000 !important; }
 </style>
 
 {%- comment -%}── Breadcrumb ──{%- endcomment -%}
@@ -783,28 +840,28 @@
 
         {%- comment -%}── Pricing ──{%- endcomment -%}
         <div class="pdp-pricing">
-          <h3 class="pdp-pricing__head">Wholesale Pricing</h3>
+          <h3 class="pdp-pricing__head">{{ section.settings.pricing_heading | default: 'Wholesale Pricing' }}</h3>
 
           {%- if is_wholesale -%}
 
             {%- if rrp and rrp > wsp -%}
               <div class="pdp-pricing__row">
-                <span class="pdp-pricing__lbl">Retail Price (RRP)</span>
+                <span class="pdp-pricing__lbl">{{ section.settings.rrp_label | default: 'Retail Price (RRP)' }}</span>
                 <span class="pdp-pricing__rrp">{{ rrp | money_without_trailing_zeros }}</span>
               </div>
             {%- endif -%}
 
             <div class="pdp-pricing__row" style="margin-bottom:1.5rem">
               <div>
-                <span class="pdp-pricing__lbl pdp-pricing__lbl--wsp">Your Price (WSP)</span>
-                <span class="pdp-pricing__excl">Excl. VAT</span>
+                <span class="pdp-pricing__lbl pdp-pricing__lbl--wsp">{{ section.settings.wsp_label | default: 'Your Price (WSP)' }}</span>
+                <span class="pdp-pricing__excl">{{ section.settings.vat_note | default: 'Excl. VAT' }}</span>
               </div>
               <span class="pdp-pricing__wsp">{{ wsp | money_without_trailing_zeros }}</span>
             </div>
 
             {%- if margin_percent > 0 -%}
               <div class="pdp-pricing__margin">
-                <span>Your Retail Margin</span>
+                <span>{{ section.settings.margin_label | default: 'Your Retail Margin' }}</span>
                 <strong>+{{ margin_percent }}%</strong>
               </div>
             {%- endif -%}
@@ -818,8 +875,8 @@
                   <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
                 </svg>
               </span>
-              <p class="pdp-pricing__login-text">Log in to see your B2B price</p>
-              <a href="/pages/partner-login" class="pdp-pricing__login-btn">Log In as Partner</a>
+              <p class="pdp-pricing__login-text">{{ section.settings.login_cta_text | default: 'Log in to see your B2B price' }}</p>
+              <a href="/pages/partner-login" class="pdp-pricing__login-btn">{{ section.settings.login_cta_button | default: 'Log In as Partner' }}</a>
             </div>
 
           {%- endif -%}
@@ -860,7 +917,7 @@
                 data-variant-id="{{ current_variant.id }}"
               >
                 <div class="pdp-spinner" aria-hidden="true"></div>
-                <span class="pdp-add-label">Add to Order</span>
+                <span class="pdp-add-label">{{ section.settings.add_button_label | default: 'Add to Order' }}</span>
                 <svg class="pdp-add-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <circle cx="9" cy="21" r="1"/>
                   <circle cx="20" cy="21" r="1"/>
@@ -877,7 +934,50 @@
           </div>
         {%- endif -%}
 
-        {%- comment -%}── Features added in next prompt ──{%- endcomment -%}
+        {%- comment -%}── Features list ──{%- endcomment -%}
+        {%- capture static_features_check -%}
+          {%- for i in (1..6) -%}
+            {%- assign fk = 'feature_' | append: i -%}
+            {%- if section.settings[fk] != blank -%}yes{%- endif -%}
+          {%- endfor -%}
+        {%- endcapture -%}
+
+        {%- if features_meta != blank or static_features_check contains 'yes' -%}
+          <div class="pdp-features">
+            <h4 class="pdp-features__head">{{ section.settings.features_heading | default: 'Product Details' }}</h4>
+            <ul class="pdp-features__list">
+              {%- if features_meta != blank -%}
+                {%- for feature in features_meta -%}
+                  <li class="pdp-features__item">
+                    <span class="pdp-features__icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                        <polyline points="22 4 12 14.01 9 11.01"/>
+                      </svg>
+                    </span>
+                    {{ feature }}
+                  </li>
+                {%- endfor -%}
+              {%- else -%}
+                {%- for i in (1..6) -%}
+                  {%- assign fk = 'feature_' | append: i -%}
+                  {%- assign fv = section.settings[fk] -%}
+                  {%- if fv != blank -%}
+                    <li class="pdp-features__item">
+                      <span class="pdp-features__icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                          <polyline points="22 4 12 14.01 9 11.01"/>
+                        </svg>
+                      </span>
+                      {{ fv }}
+                    </li>
+                  {%- endif -%}
+                {%- endfor -%}
+              {%- endif -%}
+            </ul>
+          </div>
+        {%- endif -%}
 
       </div>
 
@@ -1040,7 +1140,110 @@
 {% schema %}
 {
   "name": "Product B2B",
-  "settings": [],
-  "presets": [{ "name": "Product B2B" }]
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Headings & Labels"
+    },
+    {
+      "type": "text",
+      "id": "pricing_heading",
+      "label": "Pricing box heading",
+      "default": "Wholesale Pricing"
+    },
+    {
+      "type": "text",
+      "id": "features_heading",
+      "label": "Features section heading",
+      "default": "Product Details"
+    },
+    {
+      "type": "text",
+      "id": "add_button_label",
+      "label": "Add to cart button label",
+      "default": "Add to Order"
+    },
+    {
+      "type": "text",
+      "id": "login_cta_text",
+      "label": "Login CTA (non-wholesale visitors)",
+      "default": "Log in to see your B2B price"
+    },
+    {
+      "type": "text",
+      "id": "login_cta_button",
+      "label": "Login CTA button label",
+      "default": "Log In as Partner"
+    },
+    {
+      "type": "text",
+      "id": "rrp_label",
+      "label": "RRP label",
+      "default": "Retail Price (RRP)"
+    },
+    {
+      "type": "text",
+      "id": "wsp_label",
+      "label": "WSP label",
+      "default": "Your Price (WSP)"
+    },
+    {
+      "type": "text",
+      "id": "vat_note",
+      "label": "VAT note",
+      "default": "Excl. VAT"
+    },
+    {
+      "type": "text",
+      "id": "margin_label",
+      "label": "Margin label",
+      "default": "Your Retail Margin"
+    },
+    {
+      "type": "header",
+      "content": "Static Features (used if no metafield)"
+    },
+    {
+      "type": "paragraph",
+      "content": "If the product has the metafield custom.features, it will be used instead of the fields below."
+    },
+    {
+      "type": "text",
+      "id": "feature_1",
+      "label": "Feature 1",
+      "default": "High concentration (25% Parfum)"
+    },
+    {
+      "type": "text",
+      "id": "feature_2",
+      "label": "Feature 2",
+      "default": "Ingredients sourced from Grasse, France"
+    },
+    {
+      "type": "text",
+      "id": "feature_3",
+      "label": "Feature 3",
+      "default": "Retail-ready luxury packaging"
+    },
+    {
+      "type": "text",
+      "id": "feature_4",
+      "label": "Feature 4"
+    },
+    {
+      "type": "text",
+      "id": "feature_5",
+      "label": "Feature 5"
+    },
+    {
+      "type": "text",
+      "id": "feature_6",
+      "label": "Feature 6"
+    }
+  ],
+  "presets": [
+    { "name": "Product B2B" }
+  ]
 }
 {% endschema %}

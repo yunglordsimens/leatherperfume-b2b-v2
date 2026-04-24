@@ -141,6 +141,13 @@
         "type": "shopify://apps/massy-b2b-wholesale/blocks/massy-app-embed/755249cf-b2d3-401e-a5e9-91307113bce4",
         "disabled": false,
         "settings": {}
+      },
+      "15119538188275799212": {
+        "type": "shopify://apps/fontify/blocks/app-embed/334490e2-2153-4a2e-a452-e90bdeffa3cc",
+        "disabled": false,
+        "settings": {
+          "use_with_weglot": false
+        }
       }
     },
     "color_schemes": {

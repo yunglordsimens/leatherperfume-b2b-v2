@@ -1,8 +1,19 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "cart-items": {
       "type": "main-cart-items",
+      "disabled": true,
       "settings": {
+        "color_scheme": "",
         "padding_top": 36,
         "padding_bottom": 36
       }
@@ -12,44 +23,78 @@
       "blocks": {
         "subtotal": {
           "type": "subtotal",
-          "settings": {
-          }
+          "settings": {}
         },
         "buttons": {
           "type": "buttons",
-          "settings": {
-          }
+          "settings": {}
         }
       },
       "block_order": [
         "subtotal",
         "buttons"
-      ]
+      ],
+      "disabled": true,
+      "settings": {
+        "color_scheme": "",
+        "padding_top": 40,
+        "padding_bottom": 40
+      }
     },
     "featured-collection": {
       "type": "featured-collection",
+      "disabled": true,
       "settings": {
-        "title": "Featured collection",
-        "heading_size": "h2",
         "collection": "all",
         "products_to_show": 4,
+        "title": "Featured collection",
+        "heading_size": "h2",
+        "description": "",
+        "show_description": false,
+        "description_style": "body",
         "columns_desktop": 4,
-        "color_scheme": "scheme-1",
+        "enable_desktop_slider": false,
+        "full_width": false,
         "show_view_all": true,
-        "swipe_on_mobile": false,
+        "view_all_style": "solid",
+        "color_scheme": "scheme-1",
         "image_ratio": "square",
+        "image_shape": "default",
         "show_secondary_image": false,
         "show_vendor": false,
         "show_rating": false,
+        "quick_add": "none",
         "columns_mobile": "2",
+        "swipe_on_mobile": false,
         "padding_top": 36,
         "padding_bottom": 36
+      }
+    },
+    "cart_summary_b2b_xrpaN7": {
+      "type": "cart-summary-b2b",
+      "name": "Cart Summary B2B",
+      "settings": {
+        "summary_heading": "Summary",
+        "moq_amount": 500000,
+        "moq_label": "MOQ Target",
+        "moq_reached_label": "MOQ Reached",
+        "moq_msg_prefix": "Add",
+        "moq_msg_suffix": "more to proceed with this order.",
+        "subtotal_label": "Subtotal (WSP)",
+        "vat_rate": 21,
+        "vat_label": "Estimated VAT",
+        "shipping_label": "Shipping",
+        "shipping_value": "Calculated Later",
+        "total_label": "Total",
+        "submit_btn": "Submit for Invoicing",
+        "submit_note": "No payment required now. You will receive an invoice after order confirmation."
       }
     }
   },
   "order": [
     "cart-items",
     "cart-footer",
-    "featured-collection"
+    "featured-collection",
+    "cart_summary_b2b_xrpaN7"
   ]
 }

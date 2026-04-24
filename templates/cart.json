@@ -11,7 +11,6 @@
   "sections": {
     "cart-items": {
       "type": "main-cart-items",
-      "disabled": true,
       "settings": {
         "color_scheme": "",
         "padding_top": 36,
@@ -20,20 +19,7 @@
     },
     "cart-footer": {
       "type": "main-cart-footer",
-      "blocks": {
-        "subtotal": {
-          "type": "subtotal",
-          "settings": {}
-        },
-        "buttons": {
-          "type": "buttons",
-          "settings": {}
-        }
-      },
-      "block_order": [
-        "subtotal",
-        "buttons"
-      ],
+      "disabled": true,
       "settings": {
         "color_scheme": "",
         "padding_top": 40,

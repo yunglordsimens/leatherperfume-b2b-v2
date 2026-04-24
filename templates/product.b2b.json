@@ -1,0 +1,6 @@
+{
+  "sections": {
+    "product-b2b": { "type": "product-b2b" }
+  },
+  "order": ["product-b2b"]
+}

@@ -412,14 +412,30 @@
       .replace(/\{\{\s*amount_no_decimals_with_comma_separator\s*\}\}/g, Math.floor(cents / 100));
   }
 
-  /* initialise from Liquid-rendered values on first load */
+  /* initialise from Liquid-rendered values on first load with animation */
   (function init() {
     var initTotal = {{ cart.total_price }};
     var pct       = Math.min(Math.round(initTotal * 100 / moqTarget), 100);
-    if (moqFill) { moqFill.style.width = pct + '%'; moqFill.setAttribute('aria-valuenow', pct); }
-    var rem = moqTarget - initTotal;
+    var rem       = moqTarget - initTotal;
+    var reached   = initTotal >= moqTarget;
     var moqRemaining = document.querySelector('.moq-remaining');
+
+    /* Start at 0 so the CSS transition plays on load */
+    if (moqFill) {
+      moqFill.style.width = '0%';
+      moqFill.classList.toggle('csb__fill--reached', reached);
+    }
     if (moqRemaining && rem > 0) moqRemaining.textContent = fmtMoney(rem);
+
+    /* Small delay lets the browser paint width:0 first, then animates to target */
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        if (moqFill) {
+          moqFill.style.width = pct + '%';
+          moqFill.setAttribute('aria-valuenow', pct);
+        }
+      });
+    });
   })();
 
   window.addEventListener('cart:updated', function (e) {

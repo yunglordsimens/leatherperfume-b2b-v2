@@ -1,21 +1,21 @@
 {
   "sections": {
-    "catalog-header": {
-      "type": "catalog-header",
+    "catalog-header-b2b": {
+      "type": "catalog-header-b2b",
       "settings": {}
     },
     "catalog-sidebar": {
       "type": "catalog-sidebar",
       "settings": {}
     },
-    "product-grid-b2b": {
-      "type": "product-grid-b2b",
+    "product-grid-b2b-logged-in": {
+      "type": "product-grid-b2b-logged-in",
       "settings": {}
     }
   },
   "order": [
-    "catalog-header",
+    "catalog-header-b2b",
     "catalog-sidebar",
-    "product-grid-b2b"
+    "product-grid-b2b-logged-in"
   ]
 }

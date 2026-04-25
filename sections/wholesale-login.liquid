@@ -18,13 +18,18 @@
      Wholesale Login — inline section styles
      ================================================ */
 
+  #shopify-section-{{ section.id }} {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
   .wl {
     display: flex;
     flex-direction: column;
     min-height: calc(100vh - 100px);
     width: 100%;
-    max-width: 90rem;
-    margin: 0 auto;
+    max-width: none;
+    margin: 0;
   }
 
   @media screen and (min-width: 990px) {

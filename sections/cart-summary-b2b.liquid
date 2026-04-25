@@ -438,6 +438,51 @@
     });
   })();
 
+  /* ── Submit → show success ────────────────────────── */
+  function revealSuccess(poValue) {
+    var sec1 = document.getElementById('shopify-section-cart-items-b2b');
+    var sec2 = document.getElementById('shopify-section-cart-summary-b2b');
+    var sec3 = document.querySelector('[data-cart-success]');
+
+    if (sec1) sec1.style.display = 'none';
+    if (sec2) sec2.style.display = 'none';
+
+    if (sec3) {
+      if (poValue) {
+        var refEl = sec3.querySelector('#css-po-ref');
+        if (refEl) refEl.textContent = 'PO-' + poValue;
+      }
+      sec3.style.display = '';
+      window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+  }
+
+  function handleSubmit() {
+    var poInput = document.querySelector('[data-cib-po]');
+    var poValue = poInput ? poInput.value.trim() : '';
+
+    if (poValue) {
+      fetch('/cart/update.js', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest'},
+        body: JSON.stringify({attributes: {po_number: poValue}})
+      })
+      .then(function () { revealSuccess(poValue); })
+      .catch(function () { revealSuccess(poValue); });
+    } else {
+      revealSuccess(poValue);
+    }
+  }
+
+  /* Use event delegation so it works even if the button element is replaced */
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('#CsbSubmitBtn');
+    if (!btn) return;
+    if (btn.disabled || btn.classList.contains('is-disabled')) return;
+    e.preventDefault();
+    handleSubmit();
+  });
+
   window.addEventListener('cart:updated', function (e) {
     var cart = e.detail;
     if (!cart) return;

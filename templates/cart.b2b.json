@@ -7,7 +7,11 @@
     "cart-summary-b2b": {
       "type": "cart-summary-b2b",
       "settings": {}
+    },
+    "cart-success-b2b": {
+      "type": "cart-success-b2b",
+      "settings": {}
     }
   },
-  "order": ["cart-items-b2b", "cart-summary-b2b"]
+  "order": ["cart-items-b2b", "cart-summary-b2b", "cart-success-b2b"]
 }

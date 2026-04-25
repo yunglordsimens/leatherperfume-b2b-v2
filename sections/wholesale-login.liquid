@@ -112,11 +112,39 @@
     max-width: 32rem;
   }
 
+  /* B2B badge */
+  .wl__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: #f59e0b;
+    color: #1c1917;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+    margin-bottom: 1.5rem;
+  }
+
+  .wl__badge svg {
+    width: 0.85rem;
+    height: 0.85rem;
+    flex-shrink: 0;
+  }
+
+  .wl--high-contrast .wl__badge,
+  html.a11y-high-contrast .wl__badge {
+    background: #000000 !important;
+    color: #ffffff !important;
+    border: 2px solid #ffffff !important;
+  }
+
   .wl__left-heading {
-    font-family: var(--font-heading-family);
-    font-weight: var(--font-heading-weight);
-    font-style: var(--font-heading-style);
-    font-size: clamp(2.75rem, 5vw, 3.75rem);
+    font-family: 'Yeseva One', serif;
+    font-weight: 400;
+    font-size: clamp(2rem, 4vw, 3.5rem);
     line-height: 1.1;
     color: #ffffff;
     margin: 0 0 2rem;
@@ -158,29 +186,23 @@
   }
 
   .wl__benefit-icon {
-    width: 3rem;
-    height: 3rem;
-    border-radius: 50%;
-    background-color: #292524;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    color: #f59e0b;
+    color: #b45309;
   }
 
   .wl__benefit-icon svg { width: 1.5rem; height: 1.5rem; }
 
   .wl--high-contrast .wl__benefit-icon,
   html.a11y-high-contrast .wl__benefit-icon {
-    background-color: transparent !important;
-    border: 2px solid #000000 !important;
     color: #000000 !important;
   }
 
   .wl__benefit-label {
     font-family: var(--font-body-family);
-    font-size: 1.125rem;
+    font-size: 1.25rem;
     font-weight: 700;
     color: #ffffff;
   }
@@ -532,6 +554,13 @@
     <div class="wl__blob wl__blob--bottom"></div>
     <div class="wl__left-inner">
 
+      <span class="wl__badge">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/>
+        </svg>
+        B2B Portal
+      </span>
+
       <h1 class="wl__left-heading">
         {{- section.settings.left_heading | default: 'Exclusive access for our partners.' | escape -}}
       </h1>
@@ -557,9 +586,9 @@
           -%}
           <li class="wl__benefit">
             <div class="wl__benefit-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                <polyline points="22 4 12 14.01 9 11.01"/>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="9 12 11 14 15 10"/>
               </svg>
             </div>
             <span class="wl__benefit-label">{{ benefit_text | escape }}</span>

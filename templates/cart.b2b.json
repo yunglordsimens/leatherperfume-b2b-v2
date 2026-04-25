@@ -6,7 +6,9 @@
     },
     "cart-summary-b2b": {
       "type": "cart-summary-b2b",
-      "settings": {}
+      "settings": {
+        "moq_amount": 5000
+      }
     },
     "cart-success-b2b": {
       "type": "cart-success-b2b",

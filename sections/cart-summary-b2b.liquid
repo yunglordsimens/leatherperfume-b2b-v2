@@ -1,5 +1,6 @@
 {%- liquid
-  assign moq_amount  = section.settings.moq_amount  | default: 5000 | times: 100
+  assign moq_display = section.settings.moq_amount | default: 5000
+  assign moq_cents   = moq_display | times: 100
   assign vat_rate    = section.settings.vat_rate    | default: 21
   assign submit_btn  = section.settings.submit_btn  | default: 'Submit for Invoicing'
   assign submit_note = section.settings.submit_note | default: 'No payment required now. You will receive an invoice after order confirmation.'
@@ -7,16 +8,16 @@
   assign moq_reached_label = section.settings.moq_reached_label | default: 'MOQ Reached'
 
   assign moq_reached = false
-  if cart.total_price >= moq_amount
+  if cart.total_price >= moq_cents
     assign moq_reached = true
   endif
 
-  assign progress_raw = cart.total_price | times: 100 | divided_by: moq_amount
+  assign progress_raw = cart.total_price | divided_by: moq_display
   if progress_raw > 100
     assign progress_raw = 100
   endif
 
-  assign remaining = moq_amount | minus: cart.total_price
+  assign remaining_cents = moq_cents | minus: cart.total_price
 
   assign vat_cents = cart.items_subtotal_price | times: vat_rate | divided_by: 100
 -%}
@@ -305,7 +306,7 @@
 <div
   class="csb"
   id="CartSummaryB2B-{{ section.id }}"
-  data-moq="{{ moq_amount }}"
+  data-moq="{{ moq_display }}"
   data-vat="{{ vat_rate }}"
   data-money-format="{{ shop.money_format | escape }}"
 >
@@ -313,32 +314,27 @@
     <h2 class="csb__heading">{{ section.settings.summary_heading | default: 'Summary' }}</h2>
 
     <!-- MOQ tracker -->
-    <div class="csb__moq moq-tracker" data-moq="{{ moq_amount }}">
+    <div class="csb__moq moq-tracker" id="CsbMoqTracker">
       <div class="csb__moq-header">
         <span class="csb__moq-title{% if moq_reached %} csb__moq-title--reached{% endif %}" id="CsbMoqTitle">
           {%- if moq_reached -%}{{ moq_reached_label }}{%- else -%}{{ moq_label }}{%- endif -%}
         </span>
-        <span class="csb__moq-target">{{ moq_amount | money }}</span>
+        <span class="csb__moq-target">{{ moq_cents | money }}</span>
       </div>
       <div class="csb__track">
         <div
           class="csb__fill moq-bar{% if moq_reached %} csb__fill--reached{% endif %}"
           id="CsbMoqFill"
-          style="width: {{ progress_raw }}%"
+          style="width: 0%;"
           role="progressbar"
-          aria-valuenow="{{ progress_raw }}"
+          aria-valuenow="0"
           aria-valuemin="0"
           aria-valuemax="100"
         ></div>
       </div>
-      {%- unless moq_reached -%}
-        <p class="csb__moq-msg moq-text" id="CsbMoqMsg">
-          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-          </svg>
-          <span id="CsbMoqMsgText">{{ section.settings.moq_msg_prefix | default: 'Add' }} <span class="moq-remaining">{{ remaining | money }}</span> {{ section.settings.moq_msg_suffix | default: 'more to proceed with this order.' }}</span>
-        </p>
-      {%- endunless -%}
+      <p class="csb__moq-msg moq-text" id="CsbMoqMsg"{% if moq_reached %} style="display:none;"{% endif %}>
+        You are <span class="moq-remaining" id="CsbMoqRemaining">{{ remaining_cents | money }}</span> away from minimum order.
+      </p>
     </div>
 
     <!-- Cost breakdown -->
@@ -390,18 +386,17 @@
   window.lpCartSummaryReady = true;
 
   var wrap      = document.getElementById('CartSummaryB2B-{{ section.id }}');
-  var moqTarget = parseInt(wrap.getAttribute('data-moq')) || 500000; /* cents */
+  var moqTarget = parseInt(wrap.getAttribute('data-moq')) || 5000; /* display units */
   var vatRate   = parseInt(wrap.getAttribute('data-vat')) || 21;
   var moneyFmt  = wrap.getAttribute('data-money-format') || '{{ shop.money_format | escape }}';
 
-  var moqTitle  = document.getElementById('CsbMoqTitle');
-  var moqFill   = document.getElementById('CsbMoqFill');
-  var moqMsg    = document.getElementById('CsbMoqMsg');
-  var moqMsgTxt = document.getElementById('CsbMoqMsgText');
-  var subtotEl  = document.getElementById('CsbSubtotal');
-  var vatEl     = document.getElementById('CsbVat');
-  var totalEl   = document.getElementById('CsbTotal');
-  var submitBtn = document.getElementById('CsbSubmitBtn');
+  var moqTitle     = document.getElementById('CsbMoqTitle');
+  var moqFill      = document.getElementById('CsbMoqFill');
+  var moqMsg       = document.getElementById('CsbMoqMsg');
+  var moqRemaining = document.getElementById('CsbMoqRemaining');
+  var subtotEl     = document.getElementById('CsbSubtotal');
+  var vatEl        = document.getElementById('CsbVat');
+  var totalEl      = document.getElementById('CsbTotal');
 
   function fmtMoney(cents) {
     var val = (cents / 100).toFixed(2);
@@ -412,29 +407,68 @@
       .replace(/\{\{\s*amount_no_decimals_with_comma_separator\s*\}\}/g, Math.floor(cents / 100));
   }
 
-  /* initialise from Liquid-rendered values on first load with animation */
-  (function init() {
-    var initTotal = {{ cart.total_price }};
-    var pct       = Math.min(Math.round(initTotal * 100 / moqTarget), 100);
-    var rem       = moqTarget - initTotal;
-    var reached   = initTotal >= moqTarget;
-    var moqRemaining = document.querySelector('.moq-remaining');
+  /* Update MOQ bar, text and submit button state. totalDisplay = display units (e.g. CZK) */
+  function updateMoq(totalDisplay) {
+    var pct         = Math.min(Math.round((totalDisplay / moqTarget) * 100), 100);
+    var remaining   = Math.max(moqTarget - totalDisplay, 0);
+    var reached     = totalDisplay >= moqTarget;
 
-    /* Start at 0 so the CSS transition plays on load */
     if (moqFill) {
-      moqFill.style.width = '0%';
+      moqFill.style.width = pct + '%';
+      moqFill.setAttribute('aria-valuenow', pct);
       moqFill.classList.toggle('csb__fill--reached', reached);
     }
-    if (moqRemaining && rem > 0) moqRemaining.textContent = fmtMoney(rem);
 
-    /* Small delay lets the browser paint width:0 first, then animates to target */
+    if (moqTitle) {
+      moqTitle.classList.toggle('csb__moq-title--reached', reached);
+      moqTitle.textContent = reached
+        ? '{{ section.settings.moq_reached_label | default: "MOQ Reached" }}'
+        : '{{ section.settings.moq_label | default: "MOQ Target" }}';
+    }
+
+    if (moqMsg)       moqMsg.style.display = reached ? 'none' : '';
+    if (moqRemaining) moqRemaining.textContent = fmtMoney(remaining * 100);
+
+    /* Enable / disable submit */
+    var submitBtn = document.getElementById('CsbSubmitBtn');
+    if (!submitBtn) return;
+    if (reached) {
+      if (submitBtn.tagName === 'BUTTON') {
+        var link    = document.createElement('a');
+        link.href      = '#';
+        link.className = submitBtn.className.replace(/\bis-disabled\b/g, '').trim();
+        link.id        = 'CsbSubmitBtn';
+        link.innerHTML = submitBtn.innerHTML;
+        submitBtn.parentNode.replaceChild(link, submitBtn);
+      } else {
+        submitBtn.classList.remove('is-disabled');
+        submitBtn.removeAttribute('disabled');
+        submitBtn.removeAttribute('aria-disabled');
+      }
+    } else {
+      if (submitBtn.tagName === 'A') {
+        var btn     = document.createElement('button');
+        btn.type      = 'button';
+        btn.className = submitBtn.className + ' is-disabled';
+        btn.id        = 'CsbSubmitBtn';
+        btn.disabled  = true;
+        btn.setAttribute('aria-disabled', 'true');
+        btn.innerHTML = submitBtn.innerHTML;
+        submitBtn.parentNode.replaceChild(btn, submitBtn);
+      } else {
+        submitBtn.disabled = true;
+        submitBtn.classList.add('is-disabled');
+        submitBtn.setAttribute('aria-disabled', 'true');
+      }
+    }
+  }
+
+  /* Animate bar from 0 on page load */
+  (function init() {
+    var initCents   = {{ cart.total_price }};
+    var initDisplay = initCents / 100;
     requestAnimationFrame(function () {
-      requestAnimationFrame(function () {
-        if (moqFill) {
-          moqFill.style.width = pct + '%';
-          moqFill.setAttribute('aria-valuenow', pct);
-        }
-      });
+      requestAnimationFrame(function () { updateMoq(initDisplay); });
     });
   })();
 
@@ -460,7 +494,6 @@
   function handleSubmit() {
     var poInput = document.querySelector('[data-cib-po]');
     var poValue = poInput ? poInput.value.trim() : '';
-
     if (poValue) {
       fetch('/cart/update.js', {
         method: 'POST',
@@ -474,7 +507,6 @@
     }
   }
 
-  /* Use event delegation so it works even if the button element is replaced */
   document.addEventListener('click', function (e) {
     var btn = e.target.closest('#CsbSubmitBtn');
     if (!btn) return;
@@ -483,73 +515,25 @@
     handleSubmit();
   });
 
-  window.addEventListener('cart:updated', function (e) {
-    var cart = e.detail;
+  /* ── React to cart changes ─────────────────────────── */
+  function onCartChange(cart) {
     if (!cart) return;
-
-    var subtotal   = cart.items_subtotal_price || 0;
-    var total      = cart.total_price          || 0;
-    var vat        = Math.round(subtotal * vatRate / 100);
-    var pct        = Math.min(Math.round(total * 100 / moqTarget), 100);
-    var reached    = total >= moqTarget;
-    var remaining  = moqTarget - total;
+    var subtotal    = cart.items_subtotal_price || 0;
+    var totalCents  = cart.total_price          || 0;
+    var vat         = Math.round(subtotal * vatRate / 100);
 
     if (subtotEl) subtotEl.textContent = fmtMoney(subtotal);
     if (vatEl)    vatEl.textContent    = fmtMoney(vat);
-    if (totalEl)  totalEl.textContent  = fmtMoney(total);
+    if (totalEl)  totalEl.textContent  = fmtMoney(totalCents);
 
-    if (moqFill) {
-      moqFill.style.width      = pct + '%';
-      moqFill.setAttribute('aria-valuenow', pct);
-      moqFill.classList.toggle('csb__fill--reached', reached);
-    }
+    updateMoq(totalCents / 100);
+  }
 
-    if (moqTitle) {
-      moqTitle.classList.toggle('csb__moq-title--reached', reached);
-      moqTitle.textContent = reached
-        ? '{{ section.settings.moq_reached_label | default: "MOQ Reached" }}'
-        : '{{ section.settings.moq_label | default: "MOQ Target" }}';
-    }
+  /* cart:updated — dispatched by cart-items-b2b AJAX handlers */
+  window.addEventListener('cart:updated', function (e) { onCartChange(e.detail); });
 
-    if (moqMsg) moqMsg.style.display = reached ? 'none' : '';
-    var moqRemaining = document.querySelector('.moq-remaining');
-    if (!reached) {
-      if (moqRemaining) moqRemaining.textContent = fmtMoney(remaining);
-      if (moqMsgTxt && !moqRemaining) {
-        moqMsgTxt.textContent = '{{ section.settings.moq_msg_prefix | default: "Add" }} ' + fmtMoney(remaining) + ' {{ section.settings.moq_msg_suffix | default: "more to proceed with this order." }}';
-      }
-    }
-
-    if (submitBtn) {
-      if (reached) {
-        submitBtn.disabled = false;
-        submitBtn.classList.remove('is-disabled');
-        submitBtn.setAttribute('href', '/checkout');
-        if (submitBtn.tagName === 'BUTTON') {
-          var link = document.createElement('a');
-          link.href        = '/checkout';
-          link.className   = submitBtn.className.replace('is-disabled', '').trim();
-          link.id          = submitBtn.id;
-          link.innerHTML   = submitBtn.innerHTML;
-          submitBtn.parentNode.replaceChild(link, submitBtn);
-        }
-      } else {
-        if (submitBtn.tagName === 'A') {
-          var btn = document.createElement('button');
-          btn.type      = 'button';
-          btn.className = submitBtn.className + ' is-disabled';
-          btn.id        = submitBtn.id;
-          btn.disabled  = true;
-          btn.setAttribute('aria-disabled', 'true');
-          btn.innerHTML = submitBtn.innerHTML;
-          submitBtn.parentNode.replaceChild(btn, submitBtn);
-        } else {
-          submitBtn.disabled = true;
-          submitBtn.classList.add('is-disabled');
-        }
-      }
-    }
-  });
+  /* cart:changed — Shopify Dawn native event */
+  document.addEventListener('cart:changed', function (e) { onCartChange(e.detail && e.detail.cart ? e.detail.cart : e.detail); });
 })();
 </script>
 

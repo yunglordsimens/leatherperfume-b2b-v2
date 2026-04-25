@@ -1,13 +1,13 @@
 {
   "sections": {
-    "cart-items": {
+    "cart-items-b2b": {
       "type": "cart-items-b2b",
       "settings": {}
     },
-    "cart-summary": {
+    "cart-summary-b2b": {
       "type": "cart-summary-b2b",
       "settings": {}
     }
   },
-  "order": ["cart-items", "cart-summary"]
+  "order": ["cart-items-b2b", "cart-summary-b2b"]
 }

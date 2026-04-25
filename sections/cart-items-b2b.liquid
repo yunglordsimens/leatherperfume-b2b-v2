@@ -37,7 +37,7 @@
   @media screen and (min-width: 600px) {
     .cib__thead {
       display: grid;
-      grid-template-columns: 1fr 160px 140px;
+      grid-template-columns: 6fr 3fr 3fr;
       gap: 1rem;
       padding: 1rem 1.5rem;
       border-bottom: 1px solid #e7e5e4;
@@ -77,11 +77,24 @@
   @media screen and (min-width: 600px) {
     .cib__row {
       display: grid;
-      grid-template-columns: 1fr 160px 140px;
+      grid-template-columns: 6fr 3fr 3fr;
       align-items: center;
       gap: 1rem;
     }
   }
+
+  .cib__mobile-label {
+    font-family: var(--font-body-family);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #78716c;
+  }
+
+  @media screen and (min-width: 600px) { .cib__mobile-label { display: none; } }
+
+  html.a11y-high-contrast .cib__mobile-label { color: #000000 !important; }
 
   html.a11y-high-contrast .cib__row {
     border-bottom-color: #cccccc !important;
@@ -530,6 +543,7 @@
 
           <!-- Line total + remove -->
           <div class="cib__price-wrap">
+            <span class="cib__mobile-label">Subtotal:</span>
             <span class="cib__line-price" id="CibLineTotal-{{ item.key }}" data-cib-line-total>
               {{ item.line_price | money }}
             </span>

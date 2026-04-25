@@ -28,6 +28,7 @@
 
   /* ── Card ─────────────────────────────────────────── */
   .pgb__card {
+    position: relative;
     background-color: #ffffff;
     border: 1px solid #e7e5e4;
     border-radius: 1.25rem;
@@ -93,6 +94,28 @@
   }
 
   html.a11y-high-contrast .pgb__badge {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border: 1px solid #ffffff !important;
+  }
+
+  /* Out-of-stock chip on image */
+  .pgb__oos {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    background-color: #1c1917;
+    color: #ffffff;
+    font-family: var(--font-body-family);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.625rem;
+    border-radius: 9999px;
+  }
+
+  html.a11y-high-contrast .pgb__oos {
     background-color: #000000 !important;
     color: #ffffff !important;
     border: 1px solid #ffffff !important;
@@ -235,14 +258,79 @@
 
   html.a11y-high-contrast .pgb__login-note { color: #000000 !important; border-top-color: #000000 !important; }
 
+  /* ── Actions: qty + ATC ───────────────────────────── */
+  .pgb__actions {
+    display: flex;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+
+  .pgb__qty-row {
+    display: inline-flex;
+    align-items: center;
+    background-color: #f5f5f4;
+    border: 1px solid #e7e5e4;
+    border-radius: 0.75rem;
+    padding: 0.125rem;
+    flex-shrink: 0;
+  }
+
+  html.a11y-high-contrast .pgb__qty-row {
+    border: 2px solid #000000 !important;
+    background-color: #ffffff !important;
+  }
+
+  .pgb__qty-btn {
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    color: #57534e;
+    transition: background-color 0.15s ease, color 0.15s ease;
+    flex-shrink: 0;
+  }
+
+  .pgb__qty-btn:hover:not(:disabled) { background-color: #e7e5e4; color: #1c1917; }
+  .pgb__qty-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  html.a11y-high-contrast .pgb__qty-btn { color: #000000 !important; }
+
+  .pgb__qty-btn svg { width: 0.875rem; height: 0.875rem; }
+
+  .pgb__qty-input {
+    width: 2.25rem;
+    height: 2rem;
+    text-align: center;
+    font-family: var(--font-body-family);
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: #1c1917;
+    background: none;
+    border: none;
+    outline: none;
+    -moz-appearance: textfield;
+  }
+
+  .pgb__qty-input::-webkit-inner-spin-button,
+  .pgb__qty-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+
+  .pgb__qty-input:disabled { opacity: 0.4; }
+
+  html.a11y-high-contrast .pgb__qty-input { color: #000000 !important; }
+
   /* ── Add to Order button ──────────────────────────── */
   .pgb__atc {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    width: 100%;
-    padding: 0.75rem 1rem;
+    flex: 1;
+    padding: 0.625rem 1rem;
     font-family: var(--font-body-family);
     font-size: 0.9375rem;
     font-weight: 700;
@@ -252,13 +340,14 @@
     border-radius: 0.75rem;
     cursor: pointer;
     transition: background-color 0.15s ease;
+    min-height: 2.25rem;
   }
 
   .pgb__atc:hover:not(:disabled) { background-color: #ea580c; }
 
   .pgb__atc:disabled {
     background-color: #d6d3d1;
-    color: #a8a29e;
+    color: #78716c;
     cursor: not-allowed;
   }
 
@@ -276,6 +365,43 @@
   }
 
   .pgb__atc svg { width: 1rem; height: 1rem; flex-shrink: 0; }
+
+  /* ── Mini "Added" toast (per card) ────────────────── */
+  .pgb__notify {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    background-color: #16a34a;
+    color: #ffffff;
+    font-family: var(--font-body-family);
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.375rem 0.75rem;
+    border-radius: 9999px;
+    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.35);
+    opacity: 0;
+    transform: translateY(-0.5rem);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  .pgb__notify.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  html.a11y-high-contrast .pgb__notify {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border: 2px solid #ffffff !important;
+    box-shadow: none !important;
+  }
+
+  .pgb__notify svg { width: 0.875rem; height: 0.875rem; flex-shrink: 0; }
 
   /* ── Empty ────────────────────────────────────────── */
   .pgb__empty {
@@ -308,6 +434,7 @@
             assign margin_pct = rrp_cents | minus: wsp_cents | times: 100 | divided_by: wsp_cents
           endif
           assign badge        = product.metafields.custom.badge.value
+          assign in_stock     = variant.available
           assign is_wholesale = false
           if customer and customer.tags contains 'wholesale'
             assign is_wholesale = true
@@ -319,6 +446,14 @@
           data-product-id="{{ product.id }}"
           data-variant-id="{{ variant.id }}"
         >
+
+          <!-- Toast -->
+          <div class="pgb__notify" data-pgb-notify aria-live="polite" role="status">
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            <span data-pgb-notify-text>Added!</span>
+          </div>
 
           <!-- Image -->
           <div class="pgb__img-wrap">
@@ -342,6 +477,9 @@
             {%- if badge != blank -%}
               <span class="pgb__badge">{{ badge }}</span>
             {%- endif -%}
+            {%- unless in_stock -%}
+              <span class="pgb__oos">Out of Stock</span>
+            {%- endunless -%}
           </div>
 
           <!-- Body -->
@@ -372,18 +510,56 @@
                 {%- endif -%}
               </div>
 
-              <button
-                type="button"
-                class="pgb__atc"
-                data-pgb-atc
-                data-variant="{{ variant.id }}"
-                aria-label="Add {{ product.title | escape }} to order"
-              >
-                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>
-                </svg>
-                Add to Order
-              </button>
+              <div class="pgb__actions">
+                <div class="pgb__qty-row">
+                  <button
+                    type="button"
+                    class="pgb__qty-btn"
+                    data-pgb-dec
+                    aria-label="Decrease quantity"
+                    {%- unless in_stock %} disabled{% endunless -%}
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  </button>
+                  <input
+                    type="number"
+                    class="pgb__qty-input"
+                    data-pgb-qty
+                    value="1"
+                    min="1"
+                    aria-label="Quantity for {{ product.title | escape }}"
+                    {%- unless in_stock %} disabled{% endunless -%}
+                  >
+                  <button
+                    type="button"
+                    class="pgb__qty-btn"
+                    data-pgb-inc
+                    aria-label="Increase quantity"
+                    {%- unless in_stock %} disabled{% endunless -%}
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  </button>
+                </div>
+
+                {%- if in_stock -%}
+                  <button
+                    type="button"
+                    class="pgb__atc"
+                    data-pgb-atc
+                    data-variant="{{ variant.id }}"
+                    aria-label="Add {{ product.title | escape }} to order"
+                  >
+                    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>
+                    </svg>
+                    <span data-pgb-atc-label>Add</span>
+                  </button>
+                {%- else -%}
+                  <button type="button" class="pgb__atc" disabled aria-disabled="true">
+                    <span>Out of Stock</span>
+                  </button>
+                {%- endif -%}
+              </div>
 
             {%- else -%}
 
@@ -416,41 +592,129 @@
   if (window.lpProductGridB2BReady) return;
   window.lpProductGridB2BReady = true;
 
-  var ATC_SVG = '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>';
-
-  document.querySelectorAll('[data-pgb-atc]').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      if (btn.disabled) return;
-      var variantId = parseInt(btn.getAttribute('data-variant'));
-      if (!variantId) return;
-
-      btn.disabled = true;
-      btn.textContent = 'Adding…';
-
-      fetch('/cart/add.js', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest'},
-        body: JSON.stringify({id: variantId, quantity: 1})
-      })
-      .then(function (r) { return r.json(); })
-      .then(function () {
-        btn.classList.add('is-added');
-        btn.textContent = 'Added!';
-        return fetch('/cart.js').then(function (r) { return r.json(); });
-      })
-      .then(function (cart) {
-        window.dispatchEvent(new CustomEvent('cart:updated', {detail: cart}));
-        setTimeout(function () {
-          btn.disabled = false;
-          btn.classList.remove('is-added');
-          btn.innerHTML = ATC_SVG + 'Add to Order';
-        }, 1800);
-      })
-      .catch(function () {
-        btn.disabled = false;
-        btn.innerHTML = ATC_SVG + 'Add to Order';
+  /* ── Update header cart icon counters ─────────────── */
+  function updateCartCount(count) {
+    var selectors = [
+      '[data-cart-count]',
+      '.cart-count-bubble span:first-child',
+      '.cart-count',
+      '.js-cart-count',
+      '#CartCount',
+      '#cart-icon-bubble .cart-count-bubble span:first-child'
+    ];
+    selectors.forEach(function (sel) {
+      document.querySelectorAll(sel).forEach(function (el) {
+        el.textContent = count;
       });
     });
+    /* Show the bubble if it was hidden (Dawn hides it at 0) */
+    document.querySelectorAll('.cart-count-bubble').forEach(function (el) {
+      if (count > 0) el.removeAttribute('hidden');
+    });
+  }
+
+  /* ── Per-card wiring ──────────────────────────────── */
+  document.querySelectorAll('.pgb__card').forEach(function (card) {
+    var qtyInput = card.querySelector('[data-pgb-qty]');
+    var decBtn   = card.querySelector('[data-pgb-dec]');
+    var incBtn   = card.querySelector('[data-pgb-inc]');
+    var atcBtn   = card.querySelector('[data-pgb-atc]');
+    var notify   = card.querySelector('[data-pgb-notify]');
+    var notifyTx = card.querySelector('[data-pgb-notify-text]');
+    var atcLabel = card.querySelector('[data-pgb-atc-label]');
+
+    function getQty() {
+      var n = parseInt(qtyInput && qtyInput.value, 10);
+      return (isNaN(n) || n < 1) ? 1 : n;
+    }
+    function setQty(n) {
+      if (!qtyInput) return;
+      if (n < 1) n = 1;
+      qtyInput.value = n;
+    }
+
+    if (decBtn && qtyInput) decBtn.addEventListener('click', function () { setQty(getQty() - 1); });
+    if (incBtn && qtyInput) incBtn.addEventListener('click', function () { setQty(getQty() + 1); });
+    if (qtyInput) qtyInput.addEventListener('change', function () { setQty(getQty()); });
+
+    function showNotify(msg, isError) {
+      if (!notify) return;
+      if (notifyTx) notifyTx.textContent = msg;
+      notify.style.backgroundColor = isError ? '#dc2626' : '';
+      notify.classList.add('is-visible');
+      clearTimeout(notify._t);
+      notify._t = setTimeout(function () {
+        notify.classList.remove('is-visible');
+        notify.style.backgroundColor = '';
+      }, 2000);
+    }
+
+    function markOutOfStock() {
+      if (!atcBtn) return;
+      atcBtn.disabled = true;
+      atcBtn.setAttribute('aria-disabled', 'true');
+      if (atcLabel) atcLabel.textContent = 'Out of Stock';
+      else atcBtn.textContent = 'Out of Stock';
+      [decBtn, incBtn, qtyInput].forEach(function (el) { if (el) el.disabled = true; });
+    }
+
+    if (atcBtn && atcBtn.hasAttribute('data-pgb-atc')) {
+      atcBtn.addEventListener('click', function () {
+        if (atcBtn.disabled) return;
+        var variantId = parseInt(atcBtn.getAttribute('data-variant'), 10);
+        var qty       = getQty();
+        if (!variantId) return;
+
+        atcBtn.disabled = true;
+        var originalLabel = atcLabel ? atcLabel.textContent : 'Add';
+        if (atcLabel) atcLabel.textContent = 'Adding…';
+
+        fetch('/cart/add.js', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest'},
+          body: JSON.stringify({id: variantId, quantity: qty})
+        })
+        .then(function (r) {
+          if (!r.ok) {
+            return r.json().then(function (err) { throw err; });
+          }
+          return r.json();
+        })
+        .then(function () {
+          atcBtn.classList.add('is-added');
+          if (atcLabel) atcLabel.textContent = 'Added!';
+          showNotify('Added ' + qty + ' to cart');
+          /* Fetch fresh cart and broadcast */
+          return fetch('/cart.js').then(function (r) { return r.json(); });
+        })
+        .then(function (cart) {
+          if (!cart) return;
+          updateCartCount(cart.item_count || 0);
+          /* Broadcast to MOQ bar (custom) and Dawn header (native) */
+          window.dispatchEvent(new CustomEvent('cart:updated', {detail: cart}));
+          document.dispatchEvent(new CustomEvent('cart:changed', {detail: {cart: cart}}));
+          /* Reset after 2s */
+          setTimeout(function () {
+            atcBtn.disabled = false;
+            atcBtn.classList.remove('is-added');
+            if (atcLabel) atcLabel.textContent = originalLabel;
+            setQty(1);
+          }, 2000);
+        })
+        .catch(function (err) {
+          var msg = (err && (err.description || err.message)) || '';
+          /* Shopify returns 422 with "sold out" or "stock" wording when OOS */
+          if (/stock|sold out|inventory/i.test(msg)) {
+            showNotify('Out of Stock', true);
+            markOutOfStock();
+          } else {
+            atcBtn.disabled = false;
+            if (atcLabel) atcLabel.textContent = originalLabel;
+            showNotify(msg || 'Error adding', true);
+          }
+        });
+      });
+    }
   });
 })();
 </script>

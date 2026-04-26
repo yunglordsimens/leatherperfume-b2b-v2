@@ -148,9 +148,7 @@
   /* ── Labels ─────────────────────────────────────────── */
 
   .massy-wrap__card label,
-  .massy-wrap__card [class*="label"],
-  .shopify-app-block label,
-  .shopify-app-block [class*="label"] {
+  .shopify-app-block label {
     display: block !important;
     font-family: var(--font-body-family) !important;
     font-size: 0.9375rem !important;
@@ -391,6 +389,83 @@
   html.a11y-high-contrast .shopify-app-block [class*="privacy"] {
     color: #000000 !important;
   }
+  /* ── Direct tag selectors for .massy-form-container ── *
+   * Supplements the [class*=...] rules above with explicit
+   * element targeting so the app form always matches.       */
+
+  .massy-form-container label {
+    display: block !important;
+    font-family: var(--font-body-family) !important;
+    font-size: 0.9375rem !important;
+    font-weight: 700 !important;
+    color: #44403c !important;
+    margin-bottom: 0.625rem !important;
+  }
+
+  .massy-form-container input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="hidden"]),
+  .massy-form-container select,
+  .massy-form-container textarea {
+    width: 100% !important;
+    padding: 0.875rem 1rem !important;
+    font-family: var(--font-body-family) !important;
+    font-size: 1rem !important;
+    color: #1c1917 !important;
+    background-color: #fafaf9 !important;
+    border: 1.5px solid #e7e5e4 !important;
+    border-radius: 0.75rem !important;
+    box-sizing: border-box !important;
+    outline: none !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
+  }
+
+  .massy-form-container input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):focus,
+  .massy-form-container select:focus,
+  .massy-form-container textarea:focus {
+    border-color: #b45309 !important;
+    box-shadow: 0 0 0 3px rgba(180, 83, 9, 0.15) !important;
+    background-color: #ffffff !important;
+  }
+
+  .massy-form-container button[type="submit"],
+  .massy-form-container input[type="submit"] {
+    width: 100% !important;
+    padding: 1.125rem 1.5rem !important;
+    font-family: var(--font-body-family) !important;
+    font-size: 1.0625rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.075em !important;
+    color: #ffffff !important;
+    background-color: #1c1917 !important;
+    border: 2px solid #1c1917 !important;
+    border-radius: 0.75rem !important;
+    cursor: pointer !important;
+    transition: background-color 0.2s ease, border-color 0.2s ease !important;
+    margin-top: 0.5rem !important;
+  }
+
+  .massy-form-container button[type="submit"]:hover,
+  .massy-form-container input[type="submit"]:hover {
+    background-color: #ea580c !important;
+    border-color: #ea580c !important;
+  }
+
+  html.a11y-high-contrast .massy-form-container label { color: #000000 !important; }
+  html.a11y-high-contrast .massy-form-container input,
+  html.a11y-high-contrast .massy-form-container select,
+  html.a11y-high-contrast .massy-form-container textarea {
+    border: 2px solid #000000 !important;
+    background-color: #ffffff !important;
+    color: #000000 !important;
+  }
+  html.a11y-high-contrast .massy-form-container button[type="submit"],
+  html.a11y-high-contrast .massy-form-container input[type="submit"] {
+    background-color: #000000 !important;
+    border-color: #000000 !important;
+  }
+
 </style>
 
 <div
@@ -404,7 +479,7 @@
     content (page.content path). No custom form is rendered here.
   {%- endcomment -%}
   {%- unless page.content == blank -%}
-    <div class="massy-wrap__card">{{ page.content }}</div>
+    <div class="massy-wrap__card massy-form-container">{{ page.content }}</div>
   {%- endunless -%}
 </div>
 

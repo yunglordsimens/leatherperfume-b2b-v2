@@ -269,6 +269,13 @@ h6,
   word-break: break-word;
 }
 
+/* Yeseva One explicit override – ensures the font loads even if
+   --font-heading-family is reset by a theme preset */
+h1, h2, h3, h4, h5, h6,
+.h0, .h1, .h2, .h3, .h4, .h5, .h6 {
+  font-family: 'Yeseva One', serif;
+}
+
 .hxxl {
   font-size: clamp(calc(var(--font-heading-scale) * 5.6rem), 14vw, calc(var(--font-heading-scale) * 7.2rem));
   line-height: 1.1;

@@ -1,0 +1,6 @@
+1. В header.liquid в блоке кастомной навигации оберни пункты «Order Portal», «Quick Reorder», «Invoices», «Dashboard» в проверку {% if customer.tags contains 'wholesale' %}. Для гостей и не‑wholesale показывай «Catalog», «Packages», «About Us», «Contact», «Apply».
+2. В header.liquid уменьши иконку корзины до 22px × 22px, как иконка поиска. Используй тот же SVG, что в макете.
+3. В header.liquid в блоке кастомного языкового переключателя используй три POST-формы form 'localization'. Если они уже есть, добавь обработчик, который предотвращает повторную отправку до завершения первого запроса.
+4. В snippets/predictive-search-overlay.liquid замени все переводы типа {{ 'general.search.placeholder' | t }} на жёстко заданный английский текст. Или создай недостающие ключи в locales/en.default.json.
+5. В assets/base.css замени @media screen and (min-width: 990px) на 1100px во всех местах.
+6. Создай URL Redirect: с /account на /pages/partner-dashboard (для всех). Или только для wholesale-клиентов через JavaScript в theme.liquid: проверять customer.tags contains 'wholesale' и делать window.location.href = '/pages/partner-dashboard'.

@@ -558,79 +558,102 @@
     {%- if section.settings.menu != blank -%}
       <nav class="header__lp-nav small-hide medium-hide" aria-label="Main navigation">
         <ul class="lp-nav" role="list">
-          {%- for link in section.settings.menu.links -%}
-            {%- liquid
-              assign is_catalog = false
-              if link.title == 'Catalog' or link.title == 'Katalog' or link.handle == 'catalog' or link.handle == 'katalog'
-                assign is_catalog = true
-              endif
-            -%}
 
-            {%- if is_catalog -%}
-              <li class="lp-nav__item lp-nav__item--catalog">
-                <button class="lp-nav__btn" type="button" aria-haspopup="true" aria-expanded="false">
-                  {{ link.title | escape }}
-                  <svg class="lp-nav__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <polyline points="6 9 12 15 18 9"/>
-                  </svg>
-                </button>
+          {%- if customer and customer.tags contains 'wholesale' -%}
 
-                <div class="lp-mega" role="region" aria-label="{{ link.title | escape }} menu">
-                  <div class="lp-mega__col">
-                    {%- assign col1 = link.links[0] -%}
-                    <p class="lp-mega__col-heading">
-                      {%- if col1 != blank -%}{{ col1.title | escape }}{%- else -%}Perfumes{%- endif -%}
-                    </p>
-                    <ul class="lp-mega__links" role="list">
-                      {%- if col1 != blank and col1.links.size > 0 -%}
-                        {%- for sub in col1.links -%}
-                          <li><a href="{{ sub.url }}" class="lp-mega__link">{{ sub.title | escape }}</a></li>
-                        {%- endfor -%}
-                      {%- else -%}
-                        <li><a href="/collections/all" class="lp-mega__link">All Fragrances</a></li>
-                        <li><a href="/collections/women" class="lp-mega__link">Women's Collection</a></li>
-                        <li><a href="/collections/men" class="lp-mega__link">Men's Collection</a></li>
-                      {%- endif -%}
-                    </ul>
-                  </div>
+            <li class="lp-nav__item">
+              <a href="/pages/partner-dashboard" class="lp-nav__link"{% if request.path == '/pages/partner-dashboard' %} aria-current="page"{% endif %}>Dashboard</a>
+            </li>
+            <li class="lp-nav__item">
+              <a href="/collections/all" class="lp-nav__link"{% if request.path contains '/collections' %} aria-current="page"{% endif %}>Order Portal</a>
+            </li>
+            <li class="lp-nav__item">
+              <a href="/pages/quick-reorder" class="lp-nav__link"{% if request.path == '/pages/quick-reorder' %} aria-current="page"{% endif %}>Quick Reorder</a>
+            </li>
+            <li class="lp-nav__item">
+              <a href="/pages/invoices" class="lp-nav__link"{% if request.path == '/pages/invoices' %} aria-current="page"{% endif %}>Invoices</a>
+            </li>
 
-                  <div class="lp-mega__col">
-                    {%- assign col2 = link.links[1] -%}
-                    <p class="lp-mega__col-heading">
-                      {%- if col2 != blank -%}{{ col2.title | escape }}{%- else -%}Leather Goods{%- endif -%}
-                    </p>
-                    <ul class="lp-mega__links" role="list">
-                      {%- if col2 != blank and col2.links.size > 0 -%}
-                        {%- for sub in col2.links -%}
-                          <li><a href="{{ sub.url }}" class="lp-mega__link">{{ sub.title | escape }}</a></li>
-                        {%- endfor -%}
-                      {%- else -%}
-                        <li><a href="/collections/leather-goods" class="lp-mega__link">All Leather Goods</a></li>
-                        <li><a href="/collections/belts" class="lp-mega__link">Premium Belts</a></li>
-                        <li><a href="/collections/wallets" class="lp-mega__link">Wallets & Purses</a></li>
-                      {%- endif -%}
-                    </ul>
-                  </div>
+          {%- else -%}
 
-                  <hr class="lp-mega__divider">
-                  <a href="{{ link.url | default: '/collections/all' }}" class="lp-mega__cta">
-                    View Full Catalog
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+            {%- for link in section.settings.menu.links -%}
+              {%- liquid
+                assign is_catalog = false
+                if link.title == 'Catalog' or link.title == 'Katalog' or link.handle == 'catalog' or link.handle == 'katalog'
+                  assign is_catalog = true
+                endif
+              -%}
+
+              {%- if is_catalog -%}
+                <li class="lp-nav__item lp-nav__item--catalog">
+                  <button class="lp-nav__btn" type="button" aria-haspopup="true" aria-expanded="false">
+                    {{ link.title | escape }}
+                    <svg class="lp-nav__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <polyline points="6 9 12 15 18 9"/>
                     </svg>
+                  </button>
+
+                  <div class="lp-mega" role="region" aria-label="{{ link.title | escape }} menu">
+                    <div class="lp-mega__col">
+                      {%- assign col1 = link.links[0] -%}
+                      <p class="lp-mega__col-heading">
+                        {%- if col1 != blank -%}{{ col1.title | escape }}{%- else -%}Perfumes{%- endif -%}
+                      </p>
+                      <ul class="lp-mega__links" role="list">
+                        {%- if col1 != blank and col1.links.size > 0 -%}
+                          {%- for sub in col1.links -%}
+                            <li><a href="{{ sub.url }}" class="lp-mega__link">{{ sub.title | escape }}</a></li>
+                          {%- endfor -%}
+                        {%- else -%}
+                          <li><a href="/collections/all" class="lp-mega__link">All Fragrances</a></li>
+                          <li><a href="/collections/women" class="lp-mega__link">Women's Collection</a></li>
+                          <li><a href="/collections/men" class="lp-mega__link">Men's Collection</a></li>
+                        {%- endif -%}
+                      </ul>
+                    </div>
+
+                    <div class="lp-mega__col">
+                      {%- assign col2 = link.links[1] -%}
+                      <p class="lp-mega__col-heading">
+                        {%- if col2 != blank -%}{{ col2.title | escape }}{%- else -%}Leather Goods{%- endif -%}
+                      </p>
+                      <ul class="lp-mega__links" role="list">
+                        {%- if col2 != blank and col2.links.size > 0 -%}
+                          {%- for sub in col2.links -%}
+                            <li><a href="{{ sub.url }}" class="lp-mega__link">{{ sub.title | escape }}</a></li>
+                          {%- endfor -%}
+                        {%- else -%}
+                          <li><a href="/collections/leather-goods" class="lp-mega__link">All Leather Goods</a></li>
+                          <li><a href="/collections/belts" class="lp-mega__link">Premium Belts</a></li>
+                          <li><a href="/collections/wallets" class="lp-mega__link">Wallets & Purses</a></li>
+                        {%- endif -%}
+                      </ul>
+                    </div>
+
+                    <hr class="lp-mega__divider">
+                    <a href="{{ link.url | default: '/collections/all' }}" class="lp-mega__cta">
+                      View Full Catalog
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+                      </svg>
+                    </a>
+                  </div>
+                </li>
+              {%- else -%}
+                <li class="lp-nav__item">
+                  <a href="{{ link.url }}" class="lp-nav__link"{% if link.active %} aria-current="page"{% endif %}>
+                    {{ link.title | escape }}
                   </a>
-                </div>
-              </li>
-            {%- else -%}
-              <li class="lp-nav__item">
-                <a href="{{ link.url }}" class="lp-nav__link"{% if link.active %} aria-current="page"{% endif %}>
-                  {{ link.title | escape }}
-                </a>
-              </li>
-            {%- endif -%}
-          {%- endfor -%}
-        </ul>
-      </nav>
+                </li>
+              {%- endif -%}
+            {%- endfor -%}
+
+            <li class="lp-nav__item">
+              <a href="/pages/wholesale-application" class="lp-nav__link lp-nav__link--apply">Apply</a>
+            </li>
+
+          {%- endif -%}
+
     {%- endif -%}
 
 {%- if section.settings.logo_position == 'middle-center' -%}
@@ -723,17 +746,29 @@
         <div class="header-lang__dropdown" role="listbox">
           {%- form 'localization', id: 'HeaderLangEN' -%}
             <input type="hidden" name="locale_code" value="en">
-            <button type="submit" class="header-lang__option">English <span>🇬🇧</span></button>
+            <button type="submit" class="header-lang__option" data-lang-submit>English <span>🇬🇧</span></button>
           {%- endform -%}
           {%- form 'localization', id: 'HeaderLangCS' -%}
             <input type="hidden" name="locale_code" value="cs">
-            <button type="submit" class="header-lang__option">Čeština <span>🇨🇿</span></button>
+            <button type="submit" class="header-lang__option" data-lang-submit>Čeština <span>🇨🇿</span></button>
           {%- endform -%}
           {%- form 'localization', id: 'HeaderLangVI' -%}
             <input type="hidden" name="locale_code" value="vi">
-            <button type="submit" class="header-lang__option">Tiếng Việt <span>🇻🇳</span></button>
+            <button type="submit" class="header-lang__option" data-lang-submit>Tiếng Việt <span>🇻🇳</span></button>
           {%- endform -%}
         </div>
+        <script>
+        (function () {
+          var submitting = false;
+          document.querySelectorAll('[data-lang-submit]').forEach(function (btn) {
+            btn.addEventListener('click', function (e) {
+              if (submitting) { e.preventDefault(); return; }
+              submitting = true;
+              btn.closest('form').submit();
+            });
+          });
+        })();
+        </script>
       </div>
 
       {%- comment -%}
@@ -745,7 +780,7 @@
       {%- endcomment -%}
 
       <a href="{{ routes.cart_url }}" class="header__icon header__icon--cart link focus-inset" id="cart-icon-bubble">
-        <svg class="icon icon-cart" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg class="icon icon-cart" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
           <line x1="3" y1="6" x2="21" y2="6"/>
           <path d="M16 10a4 4 0 0 1-8 0"/>

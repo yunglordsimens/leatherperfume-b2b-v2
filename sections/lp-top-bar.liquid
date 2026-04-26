@@ -16,8 +16,9 @@
     endif
   endif
 
-  assign company_name   = customer.metafields.custom.company_name.value
-  assign discount_tier  = customer.metafields.custom.discount_tier.value
+  assign company_name          = customer.metafields.custom.company_name.value
+  assign discount_tier         = customer.metafields.custom.discount_tier.value
+  assign discount_percentage   = customer.metafields.custom.discount_percentage.value
   if company_name == blank and customer
     assign company_name = customer.first_name | append: ' ' | append: customer.last_name | strip
   endif
@@ -163,6 +164,16 @@
     color: #000000 !important;
     border: 2px solid #ffffff !important;
   }
+
+  .lp-top-bar__discount {
+    font-size: 0.75rem;
+    color: rgba(252, 211, 77, 0.8);
+    margin-left: 0.25rem;
+  }
+
+  html.a11y-high-contrast .lp-top-bar__discount {
+    color: #ffffff !important;
+  }
 </style>
 
 <div
@@ -182,6 +193,9 @@
         <span>{{ partner_pre }}&nbsp;<span class="lp-top-bar__company">{{ company_name | escape }}</span></span>
         {%- if discount_tier != blank -%}
           <span class="lp-top-bar__tier">{{ discount_tier | upcase | escape }}</span>
+        {%- endif -%}
+        {%- if discount_percentage != blank -%}
+          <span class="lp-top-bar__discount">({{ discount_percentage | escape }}%)</span>
         {%- endif -%}
       </div>
 

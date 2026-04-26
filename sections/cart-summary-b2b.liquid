@@ -473,22 +473,8 @@
   })();
 
   /* ── Submit → show success ────────────────────────── */
-  function revealSuccess(poValue) {
-    var sec1 = document.getElementById('shopify-section-cart-items-b2b');
-    var sec2 = document.getElementById('shopify-section-cart-summary-b2b');
-    var sec3 = document.querySelector('[data-cart-success]');
-
-    if (sec1) sec1.style.display = 'none';
-    if (sec2) sec2.style.display = 'none';
-
-    if (sec3) {
-      if (poValue) {
-        var refEl = sec3.querySelector('#css-po-ref');
-        if (refEl) refEl.textContent = 'PO-' + poValue;
-      }
-      sec3.style.display = '';
-      window.scrollTo({top: 0, behavior: 'smooth'});
-    }
+  function redirectToThankYou() {
+    window.location.href = '/pages/thank-you';
   }
 
   function handleSubmit() {
@@ -500,10 +486,10 @@
         headers: {'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest'},
         body: JSON.stringify({attributes: {po_number: poValue}})
       })
-      .then(function () { revealSuccess(poValue); })
-      .catch(function () { revealSuccess(poValue); });
+      .then(function () { redirectToThankYou(); })
+      .catch(function () { redirectToThankYou(); });
     } else {
-      revealSuccess(poValue);
+      redirectToThankYou();
     }
   }
 

@@ -1,26 +1,43 @@
 {%- liquid
   assign high_contrast = section.settings.high_contrast
-  assign section_mod = ''
+  assign section_mod   = ''
   if high_contrast
     assign section_mod = ' lp-top-bar--high-contrast'
   endif
+
+  assign is_wholesale = false
+  assign is_pending   = false
+
+  if customer
+    if customer.tags contains 'wholesale'
+      assign is_wholesale = true
+    else
+      assign is_pending = true
+    endif
+  endif
+
+  assign company_name   = customer.metafields.custom.company_name.value
+  assign discount_tier  = customer.metafields.custom.discount_tier.value
+  if company_name == blank and customer
+    assign company_name = customer.first_name | append: ' ' | append: customer.last_name | strip
+  endif
+
+  assign apply_text   = section.settings.apply_text   | default: 'Apply for wholesale access'
+  assign apply_url    = section.settings.apply_url     | default: '/pages/wholesale-application'
+  assign pending_text = section.settings.pending_text  | default: 'Application under review'
+  assign partner_pre  = section.settings.partner_prefix | default: 'Welcome,'
 -%}
 
 <style>
-  /* ================================================
-     LP Top Bar — inline section styles
-     ================================================ */
-
   .lp-top-bar {
     padding: 0.625rem 1rem;
     background-color: #92400e;
     color: #fffbeb;
-    text-align: center;
     font-family: var(--font-body-family);
     font-size: 0.75rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.15em;
     line-height: 1.4;
   }
 
@@ -35,15 +52,161 @@
     color: #ffffff !important;
     border-bottom: 2px solid #ffffff !important;
   }
+
+  .lp-top-bar__inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    max-width: var(--page-width, 1440px);
+    margin: 0 auto;
+  }
+
+  /* ── Guest: apply CTA ───────────────────────────── */
+  .lp-top-bar__apply {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255, 251, 235, 0.4);
+    padding-bottom: 0.0625rem;
+    transition: border-color 0.15s ease, opacity 0.15s ease;
+  }
+
+  .lp-top-bar__apply:hover {
+    border-bottom-color: #fffbeb;
+    opacity: 0.85;
+  }
+
+  html.a11y-high-contrast .lp-top-bar__apply {
+    border-bottom: 2px solid #ffffff !important;
+    text-decoration: underline !important;
+  }
+
+  .lp-top-bar__apply-icon {
+    width: 0.875rem;
+    height: 0.875rem;
+    flex-shrink: 0;
+    transition: transform 0.15s ease;
+  }
+
+  .lp-top-bar__apply:hover .lp-top-bar__apply-icon {
+    transform: translateX(0.2rem);
+  }
+
+  /* ── Pending: review state ──────────────────────── */
+  .lp-top-bar__pending {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .lp-top-bar__pending-icon {
+    width: 0.875rem;
+    height: 0.875rem;
+    flex-shrink: 0;
+    animation: lp-spin 3s linear infinite;
+  }
+
+  @keyframes lp-spin {
+    to { transform: rotate(360deg); }
+  }
+
+  html.a11y-high-contrast .lp-top-bar__pending-icon {
+    animation: none !important;
+  }
+
+  /* ── Partner: company + tier ────────────────────── */
+  .lp-top-bar__partner {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .lp-top-bar__partner-icon {
+    width: 0.875rem;
+    height: 0.875rem;
+    flex-shrink: 0;
+    color: #fcd34d;
+  }
+
+  html.a11y-high-contrast .lp-top-bar__partner-icon {
+    color: #ffffff !important;
+  }
+
+  .lp-top-bar__company {
+    color: #fcd34d;
+  }
+
+  html.a11y-high-contrast .lp-top-bar__company {
+    color: #ffffff !important;
+    text-decoration: underline;
+  }
+
+  .lp-top-bar__tier {
+    display: inline-flex;
+    align-items: center;
+    background-color: rgba(252, 211, 77, 0.2);
+    color: #fcd34d;
+    border: 1px solid rgba(252, 211, 77, 0.4);
+    border-radius: 9999px;
+    padding: 0.125rem 0.625rem;
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+  }
+
+  html.a11y-high-contrast .lp-top-bar__tier {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border: 2px solid #ffffff !important;
+  }
 </style>
 
 <div
   class="lp-top-bar{{ section_mod }}"
   id="LpTopBar-{{ section.id }}"
   role="note"
-  aria-label="Site announcement"
+  aria-label="B2B status"
 >
-  {{- section.settings.text | default: 'For verified wholesale partners only' | escape -}}
+  <div class="lp-top-bar__inner">
+
+    {%- if is_wholesale -%}
+
+      <div class="lp-top-bar__partner">
+        <svg class="lp-top-bar__partner-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+        </svg>
+        <span>{{ partner_pre }}&nbsp;<span class="lp-top-bar__company">{{ company_name | escape }}</span></span>
+        {%- if discount_tier != blank -%}
+          <span class="lp-top-bar__tier">{{ discount_tier | upcase | escape }}</span>
+        {%- endif -%}
+      </div>
+
+    {%- elsif is_pending -%}
+
+      <div class="lp-top-bar__pending">
+        <svg class="lp-top-bar__pending-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <polyline points="12 6 12 12 16 14"/>
+        </svg>
+        <span>{{ pending_text | escape }}</span>
+      </div>
+
+    {%- else -%}
+
+      <a href="{{ apply_url }}" class="lp-top-bar__apply">
+        <span>{{ apply_text | escape }}</span>
+        <svg class="lp-top-bar__apply-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+        </svg>
+      </a>
+
+    {%- endif -%}
+
+  </div>
 </div>
 
 {% schema %}
@@ -67,13 +230,39 @@
     },
     {
       "type": "header",
-      "content": "Content"
+      "content": "Guest state"
     },
     {
       "type": "text",
-      "id": "text",
-      "label": "Bar text",
-      "default": "For verified wholesale partners only"
+      "id": "apply_text",
+      "label": "Apply CTA text",
+      "default": "Apply for wholesale access"
+    },
+    {
+      "type": "url",
+      "id": "apply_url",
+      "label": "Apply page link"
+    },
+    {
+      "type": "header",
+      "content": "Pending state"
+    },
+    {
+      "type": "text",
+      "id": "pending_text",
+      "label": "Pending message",
+      "default": "Application under review"
+    },
+    {
+      "type": "header",
+      "content": "Wholesale partner state"
+    },
+    {
+      "type": "text",
+      "id": "partner_prefix",
+      "label": "Greeting prefix",
+      "default": "Welcome,",
+      "info": "Shown before the company name, e.g. \"Welcome, Acme Ltd\""
     }
   ],
   "presets": [

@@ -391,7 +391,7 @@
       <div class="dc__auth-gate">
         <h2>{{ section.settings.auth_heading | default: 'Sign in to access your dashboard' }}</h2>
         <p>{{ section.settings.auth_text | default: 'Please log in with your wholesale account to view your dashboard.' }}</p>
-        <a href="/account/login?return_url={{ request.path | url_encode }}">{{ section.settings.auth_btn | default: 'Sign in' }}</a>
+        <a href="/pages/partner-login?return_url={{ request.path | url_encode }}">{{ section.settings.auth_btn | default: 'Sign in' }}</a>
       </div>
     </div>
   </div>

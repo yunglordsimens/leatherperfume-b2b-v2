@@ -4,6 +4,11 @@
   if high_contrast
     assign section_mod = ' how-it-works--high-contrast'
   endif
+
+  assign step_1_url = section.settings.step_1_url
+  assign step_2_url = section.settings.step_2_url
+  assign step_3_url = section.settings.step_3_url
+  assign step_4_url = section.settings.step_4_url
 -%}
 
 <style>
@@ -152,6 +157,26 @@
     box-shadow: 0 0 0 4px #fef3c7;
   }
 
+  /* Anchor variant — when a step has a URL, the number becomes a link */
+  a.how-it-works__number {
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+  }
+
+  a.how-it-works__number:hover,
+  a.how-it-works__number:focus-visible {
+    background-color: #b45309;
+    color: #ffffff;
+    transform: scale(1.05);
+  }
+
+  /* Last step is already orange — darken on hover for feedback */
+  .how-it-works__step:last-child a.how-it-works__number:hover,
+  .how-it-works__step:last-child a.how-it-works__number:focus-visible {
+    background-color: #92400e;
+  }
+
   .how-it-works--high-contrast .how-it-works__number,
   html.a11y-high-contrast .how-it-works__number {
     background-color: #ffffff !important;
@@ -214,25 +239,41 @@
     <div class="how-it-works__steps">
 
       <div class="how-it-works__step">
-        <div class="how-it-works__number" aria-hidden="true">1</div>
+        {%- if step_1_url != blank -%}
+          <a class="how-it-works__number" href="{{ step_1_url }}" aria-label="Step 1: Browse & Choose">1</a>
+        {%- else -%}
+          <div class="how-it-works__number" aria-hidden="true">1</div>
+        {%- endif -%}
         <h4 class="how-it-works__step-heading">Browse &amp; Choose</h4>
         <p class="how-it-works__step-desc">Explore our catalog or select one of the ready-made packages above.</p>
       </div>
 
       <div class="how-it-works__step">
-        <div class="how-it-works__number" aria-hidden="true">2</div>
+        {%- if step_2_url != blank -%}
+          <a class="how-it-works__number" href="{{ step_2_url }}" aria-label="Step 2: Apply or Log In">2</a>
+        {%- else -%}
+          <div class="how-it-works__number" aria-hidden="true">2</div>
+        {%- endif -%}
         <h4 class="how-it-works__step-heading">Apply / Log In</h4>
         <p class="how-it-works__step-desc">Log in to your account or apply for a new wholesale partnership to see prices.</p>
       </div>
 
       <div class="how-it-works__step">
-        <div class="how-it-works__number" aria-hidden="true">3</div>
+        {%- if step_3_url != blank -%}
+          <a class="how-it-works__number" href="{{ step_3_url }}" aria-label="Step 3: Confirm Order">3</a>
+        {%- else -%}
+          <div class="how-it-works__number" aria-hidden="true">3</div>
+        {%- endif -%}
         <h4 class="how-it-works__step-heading">Confirm Order</h4>
         <p class="how-it-works__step-desc">Add products to cart. We will confirm availability and prepare your proforma invoice.</p>
       </div>
 
       <div class="how-it-works__step">
-        <div class="how-it-works__number" aria-hidden="true">4</div>
+        {%- if step_4_url != blank -%}
+          <a class="how-it-works__number" href="{{ step_4_url }}" aria-label="Step 4: Shipment">4</a>
+        {%- else -%}
+          <div class="how-it-works__number" aria-hidden="true">4</div>
+        {%- endif -%}
         <h4 class="how-it-works__step-heading">Shipment</h4>
         <p class="how-it-works__step-desc">Once paid, your order is packed and shipped from Prague within 1–3 business days.</p>
       </div>
@@ -277,6 +318,31 @@
       "id": "subheading",
       "label": "Subheading",
       "default": "A simple, transparent process from selecting your package to getting the products on your shelves."
+    },
+    {
+      "type": "header",
+      "content": "Step links (optional)",
+      "info": "When set, the step number becomes a link. Leave blank to keep it as a static circle."
+    },
+    {
+      "type": "url",
+      "id": "step_1_url",
+      "label": "Step 1 link"
+    },
+    {
+      "type": "url",
+      "id": "step_2_url",
+      "label": "Step 2 link"
+    },
+    {
+      "type": "url",
+      "id": "step_3_url",
+      "label": "Step 3 link"
+    },
+    {
+      "type": "url",
+      "id": "step_4_url",
+      "label": "Step 4 link"
     }
   ],
   "presets": [

@@ -140,6 +140,13 @@
 
   .pso__input::placeholder { color: #d6d3d1; }
 
+  /* Override Dawn's global *:focus-visible box-shadow ring on the bare-input search field */
+  .pso__input:focus,
+  .pso__input:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
+
   html.a11y-high-contrast .pso__input { color: #000000 !important; }
   html.a11y-high-contrast .pso__input::placeholder { color: #a8a29e !important; }
 

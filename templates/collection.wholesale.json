@@ -1,7 +1,7 @@
 {
   "sections": {
-    "catalog-header-b2b": {
-      "type": "catalog-header-b2b",
+    "catalog-header": {
+      "type": "catalog-header",
       "settings": {}
     },
     "catalog-sidebar": {
@@ -14,7 +14,7 @@
     }
   },
   "order": [
-    "catalog-header-b2b",
+    "catalog-header",
     "catalog-sidebar",
     "product-grid-b2b-logged-in"
   ]

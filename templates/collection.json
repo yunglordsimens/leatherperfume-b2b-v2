@@ -12,19 +12,7 @@
     "catalog_header_PB4GJP": {
       "type": "catalog-header",
       "name": "Catalog Header",
-      "settings": {
-        "heading": "",
-        "subheading": ""
-      }
-    },
-    "catalog_header_b2b_UNkMca": {
-      "type": "catalog-header-b2b",
-      "name": "Catalog Header B2B",
-      "settings": {
-        "heading": "Create Order",
-        "description": "",
-        "filter_button_text": "Filters"
-      }
+      "settings": {}
     },
     "banner": {
       "type": "main-collection-banner",
@@ -69,7 +57,6 @@
   },
   "order": [
     "catalog_header_PB4GJP",
-    "catalog_header_b2b_UNkMca",
     "banner",
     "product-grid",
     "catalog_sidebar_kjz9AY"

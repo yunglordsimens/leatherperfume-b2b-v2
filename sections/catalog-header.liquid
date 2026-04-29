@@ -1,6 +1,18 @@
 {%- liquid
-  assign heading    = section.settings.heading    | default: collection.title
-  assign subheading = section.settings.subheading | default: collection.description
+  assign is_wholesale = false
+  if customer.tags contains 'wholesale'
+    assign is_wholesale = true
+  endif
+
+  if is_wholesale
+    assign heading = section.settings.heading_wholesale | default: 'Create Order'
+    assign sub_html = section.settings.description_wholesale
+  else
+    assign heading = section.settings.heading_default | default: collection.title
+    assign sub_text = section.settings.subheading_default | default: collection.description
+  endif
+
+  assign filter_btn = section.settings.filter_button_text | default: 'Filters'
 -%}
 
 <style>
@@ -53,6 +65,8 @@
     max-width: 42rem;
   }
 
+  .cat-hdr__sub p { margin: 0; }
+
   html.a11y-high-contrast .cat-hdr__sub {
     color: #000000 !important;
     font-weight: 500;
@@ -62,6 +76,7 @@
   .cat-hdr__filter-btn {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 0.625rem;
     padding: 0.875rem 1.5rem;
     font-family: var(--font-body-family);
@@ -73,7 +88,13 @@
     border-radius: 0.75rem;
     cursor: pointer;
     flex-shrink: 0;
+    width: 100%;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
     transition: background-color 0.15s ease, border-color 0.15s ease;
+  }
+
+  @media screen and (min-width: 600px) {
+    .cat-hdr__filter-btn { width: auto; }
   }
 
   .cat-hdr__filter-btn:hover {
@@ -85,6 +106,7 @@
     background-color: #ffffff !important;
     border: 2px solid #000000 !important;
     color: #000000 !important;
+    box-shadow: none !important;
   }
 
   .cat-hdr__filter-icon {
@@ -102,8 +124,14 @@
   <div class="cat-hdr__inner">
     <div class="cat-hdr__text">
       <h1 class="cat-hdr__heading">{{ heading }}</h1>
-      {%- if subheading != blank -%}
-        <p class="cat-hdr__sub">{{ subheading }}</p>
+      {%- if is_wholesale -%}
+        {%- if sub_html != blank -%}
+          <div class="cat-hdr__sub">{{ sub_html }}</div>
+        {%- endif -%}
+      {%- else -%}
+        {%- if sub_text != blank -%}
+          <p class="cat-hdr__sub">{{ sub_text }}</p>
+        {%- endif -%}
       {%- endif -%}
     </div>
 
@@ -115,9 +143,12 @@
       type="button"
     >
       <svg class="cat-hdr__filter-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/>
+        <line x1="21" y1="4" x2="14" y2="4"/><line x1="10" y1="4" x2="3" y2="4"/>
+        <line x1="21" y1="12" x2="12" y2="12"/><line x1="8" y1="12" x2="3" y2="12"/>
+        <line x1="21" y1="20" x2="16" y2="20"/><line x1="12" y1="20" x2="3" y2="20"/>
+        <circle cx="12" cy="4" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="14" cy="20" r="2"/>
       </svg>
-      Filters
+      {{ filter_btn }}
     </button>
   </div>
 </section>
@@ -145,16 +176,46 @@
   },
   "settings": [
     {
+      "type": "header",
+      "content": "Wholesale customers"
+    },
+    {
       "type": "text",
-      "id": "heading",
+      "id": "heading_wholesale",
+      "label": "Heading (wholesale)",
+      "default": "Create Order"
+    },
+    {
+      "type": "richtext",
+      "id": "description_wholesale",
+      "label": "Description (wholesale)",
+      "default": "<p>Add products to your wholesale cart. All prices below reflect your active partnership discount.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Default (guest / retail)"
+    },
+    {
+      "type": "text",
+      "id": "heading_default",
       "label": "Heading override",
       "info": "Leave blank to use the collection title."
     },
     {
       "type": "textarea",
-      "id": "subheading",
+      "id": "subheading_default",
       "label": "Subheading override",
       "info": "Leave blank to use the collection description."
+    },
+    {
+      "type": "header",
+      "content": "Filter button"
+    },
+    {
+      "type": "text",
+      "id": "filter_button_text",
+      "label": "Filter button label",
+      "default": "Filters"
     }
   ],
   "presets": [

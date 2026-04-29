@@ -40,11 +40,10 @@
       }
     },
     "catalog_header_b2b_dpyykV": {
-      "type": "catalog-header-b2b",
-      "name": "Catalog Header B2B",
+      "type": "catalog-header",
+      "name": "Catalog Header",
       "settings": {
-        "heading": "Create Order",
-        "description": "",
+        "heading_wholesale": "Create Order",
         "filter_button_text": "Filters"
       }
     },

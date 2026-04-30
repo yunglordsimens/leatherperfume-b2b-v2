@@ -3,7 +3,23 @@
   assign oos_label       = section.settings.oos_label       | default: 'Out of Stock'
   assign empty_heading   = section.settings.empty_heading   | default: 'No products found'
   assign clear_label     = section.settings.clear_label     | default: 'Clear Filters'
+
+  assign is_wholesale = false
+  if customer and customer.tags contains 'wholesale'
+    assign is_wholesale = true
+  endif
 -%}
+
+{%- unless is_wholesale -%}
+  <div style="padding:4rem 1.5rem;text-align:center;background:#f5f5f4;">
+    <p style="font-family:var(--font-body-family);font-size:1rem;color:#57534e;margin:0 0 1.25rem;">
+      Wholesale catalog access requires a verified partner account.
+    </p>
+    <a href="/pages/partner-login" style="display:inline-flex;align-items:center;padding:0.875rem 2rem;background:#1c1917;color:#fff;font-family:var(--font-body-family);font-weight:700;font-size:0.9375rem;border-radius:0.75rem;text-decoration:none;">
+      Log In as Partner
+    </a>
+  </div>
+{%- else -%}
 
 <style>
   /* ── Layout: float right next to sidebar ─────────── */
@@ -837,6 +853,7 @@
           document.querySelectorAll('.cart-count-bubble').forEach(function (el) {
             el.style.display = cart.item_count > 0 ? '' : 'none';
           });
+          window.dispatchEvent(new CustomEvent('cart:updated', { detail: cart }));
         }
         setTimeout(function () {
           atcBtn.classList.remove('is-success');
@@ -932,6 +949,8 @@
   applyFilters();
 })();
 </script>
+
+{%- endunless -%}
 
 {% schema %}
 {

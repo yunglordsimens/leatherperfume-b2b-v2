@@ -23,10 +23,26 @@
     assign wsp = product.metafields.custom.wholesale_price.value | times: 100
   endif
 
+  assign discount_pct = 0
+  assign has_discount = false
+  if is_wholesale
+    assign discount_tier = customer.metafields.custom.discount_tier | default: 'standard'
+    assign discount_pct  = customer.metafields.custom.discount_percentage | default: 0
+    if discount_pct > 0 and discount_tier != 'standard'
+      assign has_discount = true
+    endif
+  endif
+
+  assign final_price = wsp
+  if has_discount
+    assign discount_factor = 100 | minus: discount_pct
+    assign final_price = wsp | times: discount_factor | divided_by: 100
+  endif
+
   assign margin_percent = 0
-  if rrp and wsp and wsp > 0 and rrp > wsp
-    assign margin_diff = rrp | minus: wsp
-    assign margin_percent = margin_diff | times: 100 | divided_by: wsp
+  if rrp and final_price and final_price > 0 and rrp > final_price
+    assign margin_diff = rrp | minus: final_price
+    assign margin_percent = margin_diff | times: 100 | divided_by: final_price
   endif
 
   assign features_meta = product.metafields.custom.features.value
@@ -853,16 +869,30 @@
 
             <div class="pdp-pricing__row" style="margin-bottom:1.5rem">
               <div>
-                <span class="pdp-pricing__lbl pdp-pricing__lbl--wsp">{{ section.settings.wsp_label | default: 'Your Price (WSP)' }}</span>
+                <span class="pdp-pricing__lbl pdp-pricing__lbl--wsp">
+                  {%- if has_discount -%}Your Tier Price{%- else -%}{{ section.settings.wsp_label | default: 'Your Price (WSP)' }}{%- endif -%}
+                </span>
                 <span class="pdp-pricing__excl">{{ section.settings.vat_note | default: 'Excl. VAT' }}</span>
               </div>
-              <span class="pdp-pricing__wsp">{{ wsp | money_without_trailing_zeros }}</span>
+              <div style="text-align:right;">
+                {%- if has_discount -%}
+                  <span style="font-family:var(--font-body-family);font-size:0.9375rem;color:#a8a29e;text-decoration:line-through;display:block;line-height:1.2;">{{ wsp | money_without_trailing_zeros }}</span>
+                {%- endif -%}
+                <span class="pdp-pricing__wsp">{{ final_price | money_without_trailing_zeros }}</span>
+              </div>
             </div>
 
             {%- if margin_percent > 0 -%}
               <div class="pdp-pricing__margin">
                 <span>{{ section.settings.margin_label | default: 'Your Retail Margin' }}</span>
                 <strong>+{{ margin_percent }}%</strong>
+              </div>
+            {%- endif -%}
+
+            {%- if has_discount -%}
+              <div style="display:flex;align-items:center;justify-content:space-between;background:#fef3c7;border:1px solid #fde68a;border-radius:0.875rem;padding:0.875rem 1.25rem;font-family:var(--font-body-family);font-size:0.875rem;font-weight:700;color:#92400e;margin-top:0.75rem;">
+                <span>{{ discount_tier | capitalize }} tier</span>
+                <strong>{{ discount_pct }}% off</strong>
               </div>
             {%- endif -%}
 
@@ -929,7 +959,7 @@
 
             <p class="pdp-subtotal" aria-live="polite">
               Subtotal for <span id="PdpSubQty-{{ section.id }}">5</span> units:
-              <strong id="PdpSubPrice-{{ section.id }}">{{ wsp | times: 5 | money_without_trailing_zeros }}</strong>
+              <strong id="PdpSubPrice-{{ section.id }}">{{ final_price | times: 5 | money_without_trailing_zeros }}</strong>
             </p>
           </div>
         {%- endif -%}
@@ -1021,7 +1051,7 @@
   var qtyInc   = document.getElementById('PdpQtyInc-' + sid);
   var subQty   = document.getElementById('PdpSubQty-' + sid);
   var subPrice = document.getElementById('PdpSubPrice-' + sid);
-  var unitCents = {{ wsp | default: 0 | json }};
+  var unitCents = {{ final_price | default: 0 | json }};
   var moneyFmt  = {{ shop.money_format | json }};
 
   function fmtMoney(cents) {

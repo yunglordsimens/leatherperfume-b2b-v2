@@ -181,6 +181,22 @@ _(нет на данный момент)_
 
 ## Session Log
 
+### 2026-05-02 (evening-2) — Task A: Discount tier pricing
+
+**Participants:** DS (design) · CC (implementation)
+
+**Context:** DeepSeek спроектировал паттерн discount tier pricing (integer arithmetic `discount_factor = 100 | minus: discount_pct`). CC применил во всех трёх секциях.
+
+**Done this session:**
+- ✅ `product-grid-b2b-logged-in.liquid` — читает `custom.discount_tier` + `custom.discount_percentage` один раз в head; вычисляет `final_cents = wsp_cents * discount_factor / 100` per-product; показывает зачёркнутый WSP + финальную цену оранжевым когда `has_discount`; margin от `final_cents`
+- ✅ `product-b2b.liquid` — то же для PDP: `final_price`, зачёркнутый WSP в pricing box, amber tier badge ниже margin, `unitCents` в JS = `final_price`
+- ✅ `cart-summary-b2b.liquid` — `discounted_subtotal = subtotal * discount_factor / 100`; MOQ check против discounted; discount line в breakdown; VAT и total на discounted base; `data-discount-pct` attr; JS `onCartChange` применяет discount; init() тоже
+- ✅ `BUGS.md` #14 закрыт (✅ Fixed)
+
+**Next:** BUGS #9 `/pages/thank-you` — страница не существует, cart-summary редиректит на 404
+
+---
+
 ### 2026-05-02 (evening) — Task B: топбар {shop_name} · {tier}
 
 **Participants:** CC · US

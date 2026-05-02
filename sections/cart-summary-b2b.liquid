@@ -7,19 +7,33 @@
   assign moq_label   = section.settings.moq_label   | default: 'MOQ Target'
   assign moq_reached_label = section.settings.moq_reached_label | default: 'MOQ Reached'
 
+  assign discount_pct = 0
+  assign has_discount = false
+  if customer and customer.tags contains 'wholesale'
+    assign discount_tier = customer.metafields.custom.discount_tier | default: 'standard'
+    assign discount_pct  = customer.metafields.custom.discount_percentage | default: 0
+    if discount_pct > 0 and discount_tier != 'standard'
+      assign has_discount = true
+    endif
+  endif
+
+  assign discounted_subtotal = cart.items_subtotal_price
+  if has_discount
+    assign discount_factor = 100 | minus: discount_pct
+    assign discounted_subtotal = cart.items_subtotal_price | times: discount_factor | divided_by: 100
+  endif
+
   assign moq_reached = false
-  if cart.total_price >= moq_cents
+  if discounted_subtotal >= moq_cents
     assign moq_reached = true
   endif
 
-  assign progress_raw = cart.total_price | divided_by: moq_display
-  if progress_raw > 100
-    assign progress_raw = 100
+  assign remaining_cents = moq_cents | minus: discounted_subtotal
+  if remaining_cents < 0
+    assign remaining_cents = 0
   endif
 
-  assign remaining_cents = moq_cents | minus: cart.total_price
-
-  assign vat_cents = cart.items_subtotal_price | times: vat_rate | divided_by: 100
+  assign vat_cents = discounted_subtotal | times: vat_rate | divided_by: 100
 -%}
 
 <style>
@@ -308,6 +322,7 @@
   id="CartSummaryB2B-{{ section.id }}"
   data-moq="{{ moq_display }}"
   data-vat="{{ vat_rate }}"
+  data-discount-pct="{{ discount_pct }}"
   data-money-format="{{ shop.money_format | escape }}"
 >
   <div class="csb__card">
@@ -341,8 +356,14 @@
     <div class="csb__breakdown">
       <div class="csb__line">
         <span class="csb__line-label">{{ section.settings.subtotal_label | default: 'Subtotal (WSP)' }}</span>
-        <span class="csb__line-value" id="CsbSubtotal">{{ cart.items_subtotal_price | money }}</span>
+        <span class="csb__line-value" id="CsbSubtotal">{{ discounted_subtotal | money }}</span>
       </div>
+      {%- if has_discount -%}
+        <div class="csb__line">
+          <span class="csb__line-label">Tier Discount ({{ discount_pct }}%)</span>
+          <span class="csb__line-value" style="color:#15803d;" id="CsbDiscount">-{{ cart.items_subtotal_price | minus: discounted_subtotal | money }}</span>
+        </div>
+      {%- endif -%}
       <div class="csb__line">
         <span class="csb__line-label">{{ section.settings.vat_label | default: 'Estimated VAT' }} ({{ vat_rate }}%)</span>
         <span class="csb__line-value" id="CsbVat">{{ vat_cents | money }}</span>
@@ -356,7 +377,7 @@
     <!-- Total -->
     <div class="csb__total">
       <span class="csb__total-label">{{ section.settings.total_label | default: 'Total' }}</span>
-      <span class="csb__total-value" id="CsbTotal">{{ cart.total_price | money }}</span>
+      <span class="csb__total-value" id="CsbTotal">{{ discounted_subtotal | plus: vat_cents | money }}</span>
     </div>
 
     <!-- Submit -->
@@ -386,9 +407,10 @@
   window.lpCartSummaryReady = true;
 
   var wrap      = document.getElementById('CartSummaryB2B-{{ section.id }}');
-  var moqTarget = parseInt(wrap.getAttribute('data-moq')) || 5000; /* display units */
-  var vatRate   = parseInt(wrap.getAttribute('data-vat')) || 21;
-  var moneyFmt  = wrap.getAttribute('data-money-format') || '{{ shop.money_format | escape }}';
+  var moqTarget   = parseInt(wrap.getAttribute('data-moq')) || 5000; /* display units */
+  var vatRate     = parseInt(wrap.getAttribute('data-vat')) || 21;
+  var discountPct = parseInt(wrap.getAttribute('data-discount-pct')) || 0;
+  var moneyFmt    = wrap.getAttribute('data-money-format') || '{{ shop.money_format | escape }}';
 
   var moqTitle     = document.getElementById('CsbMoqTitle');
   var moqFill      = document.getElementById('CsbMoqFill');
@@ -465,8 +487,9 @@
 
   /* Animate bar from 0 on page load */
   (function init() {
-    var initCents   = {{ cart.total_price }};
-    var initDisplay = initCents / 100;
+    var initCents   = {{ cart.items_subtotal_price }};
+    var initDisc    = Math.round(initCents * (100 - discountPct) / 100);
+    var initDisplay = initDisc / 100;
     requestAnimationFrame(function () {
       requestAnimationFrame(function () { updateMoq(initDisplay); });
     });
@@ -504,15 +527,22 @@
   /* ── React to cart changes ─────────────────────────── */
   function onCartChange(cart) {
     if (!cart) return;
-    var subtotal    = cart.items_subtotal_price || 0;
-    var totalCents  = cart.total_price          || 0;
-    var vat         = Math.round(subtotal * vatRate / 100);
+    var subtotal   = cart.items_subtotal_price || 0;
+    var discFactor = (100 - discountPct) / 100;
+    var discounted = Math.round(subtotal * discFactor);
+    var vat        = Math.round(discounted * vatRate / 100);
+    var total      = discounted + vat;
 
-    if (subtotEl) subtotEl.textContent = fmtMoney(subtotal);
+    if (subtotEl) subtotEl.textContent = fmtMoney(discounted);
     if (vatEl)    vatEl.textContent    = fmtMoney(vat);
-    if (totalEl)  totalEl.textContent  = fmtMoney(totalCents);
+    if (totalEl)  totalEl.textContent  = fmtMoney(total);
 
-    updateMoq(totalCents / 100);
+    var discountEl = document.getElementById('CsbDiscount');
+    if (discountEl && discountPct > 0) {
+      discountEl.textContent = '-' + fmtMoney(subtotal - discounted);
+    }
+
+    updateMoq(discounted / 100);
   }
 
   /* cart:updated — dispatched by cart-items-b2b AJAX handlers */

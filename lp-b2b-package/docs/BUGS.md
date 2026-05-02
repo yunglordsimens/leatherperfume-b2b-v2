@@ -24,7 +24,7 @@ Severity: **Critical** = блокирует MVP запуск · **High** = кр�
 | 11 | Меню — структура неясна | Medium | 🔲 Resolved by D-03, awaiting audit | Главное меню — кастомный HTML, не linklist. Mega Menu — проверить рендеринг. Account dropdown — добавить Quick Reorder. Mobile menu — проверить и починить |
 | 12 | Massy B2B vs тема — границы ответственности | High | ✅ Resolved by D-04 | Massy = регистрация/login/apply/теги. Тема = весь UI дашборда, каталога, чекаута, цен, инвойсов |
 | 13 | Invoice generation — чем делать | High | ✅ Resolved by D-01 | Shopify Order Printer + кастомный Liquid Proforma темплейт |
-| 14 | Discount tier system не реализован | High | 🔲 Open | Метафилды есть в плане, но нет кода применения скидки. См. ARCHITECTURE > Pricing model |
+| 14 | Discount tier system не реализован | High | ✅ Fixed (2026-05-02) | `product-grid-b2b-logged-in.liquid`, `product-b2b.liquid`, `cart-summary-b2b.liquid` — читают `custom.discount_tier` + `custom.discount_percentage`, вычисляют `final_price = wsp * (1 - pct/100)`, показывают зачёркнутый WSP + tier badge. Cart-summary: `discounted_subtotal`, discount line, VAT и total на discounted base. JS onCartChange тоже обновлён. |
 | 15 | Топбар не показывает shop_name + tier | Low | ✅ Fixed (2026-05-02) | `header.liquid` обновлён: читает `custom.shop_name` (fallback → `customer.first_name`), показывает tier с `capitalize`, fallback → "Standard". Иконка: дом вместо человека. CC |
 | 16 | Locales JSON-файлы — наполнение | Medium | 🔲 Open | EN/CS/VI ключи могут быть неполными. Аудит после миграции React → Liquid |
 | 17 | Yeseva One — проверить что подгружается на всех страницах | Low | 🔲 Open | Если `@font-face` в `theme.css`, то ок. Если в одной секции — может не примениться где-то ещё |

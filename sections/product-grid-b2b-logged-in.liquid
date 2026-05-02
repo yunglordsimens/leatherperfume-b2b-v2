@@ -8,6 +8,16 @@
   if customer and customer.tags contains 'wholesale'
     assign is_wholesale = true
   endif
+
+  assign discount_pct = 0
+  assign has_discount = false
+  if is_wholesale
+    assign discount_tier = customer.metafields.custom.discount_tier | default: 'standard'
+    assign discount_pct  = customer.metafields.custom.discount_percentage | default: 0
+    if discount_pct > 0 and discount_tier != 'standard'
+      assign has_discount = true
+    endif
+  endif
 -%}
 
 {%- unless is_wholesale -%}
@@ -590,9 +600,17 @@
           assign rrp_cents = product.price
         endif
 
-        comment — Margin %
+        comment — Tier final price and margin
         endcomment
-        assign margin = rrp_cents | minus: wsp_cents | times: 100.0 | divided_by: wsp_cents | round
+        assign final_cents = wsp_cents
+        if has_discount
+          assign discount_factor = 100 | minus: discount_pct
+          assign final_cents = wsp_cents | times: discount_factor | divided_by: 100
+        endif
+        assign margin = 0
+        if rrp_cents > 0 and final_cents > 0
+          assign margin = rrp_cents | minus: final_cents | times: 100.0 | divided_by: final_cents | round
+        endif
 
         comment — Size/option
         endcomment
@@ -675,8 +693,15 @@
                 <p class="pgbl__rrp-val">{{ rrp_cents | money }}</p>
               </div>
               <div class="pgbl__price-row">
-                <p class="pgbl__price-label pgbl__price-label--wsp">Your Price (WSP)</p>
-                <p class="pgbl__wsp-val">{{ wsp_cents | money }}</p>
+                <p class="pgbl__price-label pgbl__price-label--wsp">Your Price</p>
+                <div style="text-align:right;">
+                  {%- if has_discount -%}
+                    <span style="font-family:var(--font-body-family);font-size:0.8125rem;color:#a8a29e;text-decoration:line-through;display:block;line-height:1.3;">{{ wsp_cents | money }}</span>
+                    <p class="pgbl__wsp-val" style="color:#b45309;">{{ final_cents | money }}</p>
+                  {%- else -%}
+                    <p class="pgbl__wsp-val">{{ final_cents | money }}</p>
+                  {%- endif -%}
+                </div>
               </div>
               {%- if margin > 0 -%}
                 <div class="pgbl__margin">

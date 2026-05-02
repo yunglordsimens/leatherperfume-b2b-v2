@@ -25,7 +25,7 @@ Severity: **Critical** = блокирует MVP запуск · **High** = кр�
 | 12 | Massy B2B vs тема — границы ответственности | High | ✅ Resolved by D-04 | Massy = регистрация/login/apply/теги. Тема = весь UI дашборда, каталога, чекаута, цен, инвойсов |
 | 13 | Invoice generation — чем делать | High | ✅ Resolved by D-01 | Shopify Order Printer + кастомный Liquid Proforma темплейт |
 | 14 | Discount tier system не реализован | High | 🔲 Open | Метафилды есть в плане, но нет кода применения скидки. См. ARCHITECTURE > Pricing model |
-| 15 | Топбар не показывает shop_name + tier | Low | 🔲 Open | Решение D-10 принято, нужна имплементация в `header.liquid` |
+| 15 | Топбар не показывает shop_name + tier | Low | ✅ Fixed (2026-05-02) | `header.liquid` обновлён: читает `custom.shop_name` (fallback → `customer.first_name`), показывает tier с `capitalize`, fallback → "Standard". Иконка: дом вместо человека. CC |
 | 16 | Locales JSON-файлы — наполнение | Medium | 🔲 Open | EN/CS/VI ключи могут быть неполными. Аудит после миграции React → Liquid |
 | 17 | Yeseva One — проверить что подгружается на всех страницах | Low | 🔲 Open | Если `@font-face` в `theme.css`, то ок. Если в одной секции — может не примениться где-то ещё |
 | 18 | Все B2B-секции с хардкодом EN строк | High | 🔲 Open | Найдено CC при аудите 2026-05-02. Все B2B-секции содержат хардкод английских строк ("Add to Order", "Out of Stock", etc.). Без локализации не работают CS и VI. Нужно: вынести все строки в `locales/en.default.json`, `cs.json`, `vi.json` и заменить на `{{ 'section.key' | t }}`. Большая, но прямолинейная задача |

@@ -181,6 +181,21 @@ _(нет на данный момент)_
 
 ## Session Log
 
+### 2026-05-02 (evening) — Task B: топбар {shop_name} · {tier}
+
+**Participants:** CC · US
+
+**Context:** Новый пакет документации загружен в репо. CC прочитал PROMPT-claude-code.md, провёл онбординг, начал с задачи B.
+
+**Done this session:**
+- ✅ `lp-b2b-package/` распакован и закоммичен (обновлённые docs, mockups, handoff)
+- ✅ `header.liquid` — топбар обновлён согласно D-10: теперь показывает `{shop_name} · {tier}` вместо `{first_name} {last_name}`. Читает `custom.shop_name` (fallback → `customer.first_name` если метафилд пустой). Tier с `capitalize`, fallback → "Standard". Иконка дом вместо человека.
+- ✅ `BUGS.md` #15 закрыт (✅ Fixed)
+
+**Next:** задача A — discount tier pricing
+
+---
+
 ### 2026-05-02 (post-CC audit) — Docs synced with actual repo state
 
 **Participants:** CC · CL · US

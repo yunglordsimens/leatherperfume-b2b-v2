@@ -463,22 +463,24 @@
 -%}
 
 {%- if customer and customer.tags contains 'wholesale' -%}
+  {%- assign b2b_shop = customer.metafields.custom.shop_name -%}
   {%- assign b2b_tier = customer.metafields.custom.discount_tier -%}
   {%- assign b2b_pct  = customer.metafields.custom.discount_percentage -%}
+  {%- assign b2b_display_name = b2b_shop | default: customer.first_name -%}
   <div class="b2b-bar" role="status" aria-live="polite">
     <div class="b2b-bar__inner">
       <span class="b2b-bar__left">
         <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
         </svg>
-        <strong>{{ customer.first_name | escape }} {{ customer.last_name | escape }}</strong>
+        <strong>{{ b2b_display_name | escape }}</strong>
       </span>
       <span class="b2b-bar__sep" aria-hidden="true">·</span>
       <span class="b2b-bar__right">
         {%- if b2b_tier != blank -%}
-          {{ b2b_tier | escape }}
+          {{ b2b_tier | capitalize | escape }}
         {%- else -%}
-          Wholesale Partner
+          Standard
         {%- endif -%}
         {%- if b2b_pct != blank and b2b_pct != '0' -%}
           &nbsp;—&nbsp;<strong>{{ b2b_pct }}% off</strong>

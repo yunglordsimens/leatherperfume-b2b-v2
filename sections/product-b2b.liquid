@@ -20,7 +20,7 @@
   assign rrp = current_variant.compare_at_price
   assign wsp = current_variant.price
   if product.metafields.custom.wholesale_price != blank
-    assign wsp = product.metafields.custom.wholesale_price.value
+    assign wsp = product.metafields.custom.wholesale_price.value | times: 100
   endif
 
   assign margin_percent = 0

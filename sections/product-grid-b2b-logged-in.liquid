@@ -573,11 +573,11 @@
           assign stock_mod   = 'red'
         endif
 
-        comment — WSP: metafield (in cents) or half RRP
+        comment — WSP: metafield stores CZK (display), multiply × 100 for cents
         endcomment
         assign wsp_meta = product.metafields.custom.wholesale_price
         if wsp_meta != blank
-          assign wsp_cents = wsp_meta | times: 1
+          assign wsp_cents = wsp_meta | times: 100
         else
           assign wsp_cents = product.price | divided_by: 2
         endif

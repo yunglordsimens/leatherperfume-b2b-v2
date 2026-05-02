@@ -4,7 +4,7 @@
 **Branch:** `claude/react-to-shopify-hero-lfeDP-deepseek`
 **Base branch (preserved, untouched):** `claude/react-to-shopify-hero-lfeDP`
 **GitHub:** `yunglordsimens/leatherperfume-b2b-v2`
-**Last Updated:** 2026-05-02
+**Last Updated:** 2026-05-02 (post-CC audit — docs synced with actual repo state)
 
 ---
 
@@ -24,34 +24,42 @@ Status icons: ✅ done · 🔄 in progress · ❌ blocked · 🔲 not started
 
 ## React → Liquid Migration
 
-Контекст: Gemini сделал React-макет в `/mockups/App.full.jsx` (исходный визуал), нужно перенести в Liquid-секции Dawn.
+Контекст: Gemini сделал React-макет в `/mockups/App.full.jsx` (исходный визуал), уже частично перенесён в Liquid-секции Dawn. Аудит CC (2026-05-02) показал что **8 из 11 секций уже существуют** в репо.
 
 ### Полный список блоков из React-макета
 
 | # | React component | Liquid target | Status |
 |---|-----------------|---------------|--------|
-| 1 | AccessibilityPanel | `snippets/accessibility-panel.liquid` | 🔲 not built |
-| 2 | AnnouncementBar (top notification) | `sections/announcement-bar.liquid` (Dawn-нативный, кастомизировать) | 🔲 |
-| 3 | Header (с Mega Menu, Lang Switcher, A11y кнопкой, Login, Cart) | `sections/header.liquid` (Dawn-нативный, кастомизировать) | 🔲 |
-| 4 | Hero (B2B partnership) | `sections/hero-b2b.liquid` | 🔲 |
-| 5 | TrustBar (3 фичи) | `sections/trust-bar.liquid` | 🔲 |
-| 6 | CatalogCards (Perfumes / Leather Goods) | `sections/catalog-cards.liquid` | 🔲 |
-| 7 | EditorialBlock (Heritage/Quality) | `sections/editorial-heritage.liquid` | 🔲 |
-| 8 | WholesalePackages (2 пакета) | `sections/packages-wholesale.liquid` | 🔲 |
-| 9 | BottomCTA (Apply for Partnership) | `sections/bottom-cta.liquid` | 🔲 |
-| 10 | ScrollToTop button | `snippets/scroll-to-top.liquid` + JS в `assets/theme.js` | 🔲 |
-| 11 | Footer | `sections/footer.liquid` (Dawn-нативный, кастомизировать) | 🔲 |
+| 1 | AccessibilityPanel | `snippets/accessibility-panel.liquid` | ✅ exists, нужен аудит |
+| 2 | AnnouncementBar (top notification) | `sections/announcement-bar.liquid` (Dawn-нативный) | 🔲 audit + extend |
+| 3 | Header (с Mega Menu, Lang Switcher, A11y кнопкой, Login, Cart) | `sections/header.liquid` (Dawn-нативный) | 🔲 audit + extend (D-03, D-10) |
+| 4 | Hero (B2B partnership) | `sections/hero-b2b.liquid` | ✅ exists, нужен аудит |
+| 5 | TrustBar (3 фичи) | `sections/trust-bar.liquid` | ✅ exists, нужен аудит |
+| 6 | CatalogCards (Perfumes / Leather Goods) | `sections/catalog-cards.liquid` | ✅ exists, нужен аудит |
+| 7 | EditorialBlock (Heritage/Quality) | `sections/editorial-heritage.liquid` | ✅ exists, нужен аудит |
+| 8 | WholesalePackages (2 пакета) | `sections/packages-wholesale.liquid` | ✅ exists, нужен аудит |
+| 9 | BottomCTA (Apply for Partnership) | `sections/bottom-cta.liquid` | ✅ exists, нужен аудит |
+| 10 | ScrollToTop button | `snippets/scroll-to-top.liquid` + JS | ✅ exists, нужен аудит |
+| 11 | Footer | `sections/footer.liquid` (Dawn-нативный) | 🔲 audit + extend |
 
-См. `/mockups/SECTIONS-MAP.md` для полной карты соответствий.
+См. `/mockups/SECTIONS-MAP.md` для деталей и чеклиста аудита.
+
+### Что нужно проверить в каждой ✅ exists секции
+
+1. Локализация: все строки через `{{ '...' | t }}`, не хардкод (BUGS #18)
+2. Соответствие макету `/mockups/components/<Name>.jsx`
+3. A11y high-contrast вариант через `html.a11y-high-contrast`
+4. Schema settings: тексты вынесены в `{% schema %}`
+5. Wholesale gating где применимо
 
 ### React-макет: что есть, что нужно учесть при миграции
 
-- **Mega Menu** в Header работает на hover, открывает 2 колонки (Perfumes / Leather Goods). В Liquid рендерить из `linklists` Shopify (не хардкод).
-- **Language Switcher** EN/CS/VI — в Liquid использовать нативные `localization` объекты Shopify.
+- **Mega Menu** в Header работает на hover, открывает 2 колонки. В Liquid — рендерить из `linklists` Shopify (D-03).
+- **Language Switcher** EN/CS/VI — нативные `localization` объекты Shopify.
 - **Accessibility state** — переписать с React useState на localStorage + JS-классы на `<html>`.
-- **Hardcoded тексты** в Reactе → в Liquid вынести в `{% schema %}` settings + `locales/`.
+- **Hardcoded тексты** в React → в Liquid через `{% schema %}` + `locales/`.
 - **Иконки lucide-react** → inline SVG snippets (`snippets/icon-package.liquid` и т.д.).
-- **Tailwind classes** → переписать под inline CSS темы (см. ARCHITECTURE — Tailwind в Liquid не используем).
+- **Tailwind classes** → переписаны на inline CSS темы (см. ARCHITECTURE — Tailwind в Liquid не используем).
 
 ---
 
@@ -64,7 +72,7 @@ Status icons: ✅ done · 🔄 in progress · ❌ blocked · 🔲 not started
 ### Pending / not built
 - 🔲 `/pages/thank-you` order confirmation page — cart-summary redirects here but page doesn't exist _(DS found, see BUGS #9)_
 - 🔲 Custom checkout flow (между корзиной и thank-you page) — где собирается адрес/контакт/комментарий
-- 🔲 Invoice generation — TBD каким приложением (см. DECISIONS D-01)
+- 🔲 Invoice generation — **через Shopify Order Printer** (D-01 closed). Нужно: установить app + Liquid-темплейт Proforma Invoice
 - 🔲 Back-in-stock notification for OOS products _(DS found)_
 - 🔲 Order history / reorder flow _(DS found)_
 - 🔲 `cart-summary-b2b.liquid` — re-test MOQ bar on live shop after refactor (commit `e5781b7`) _(US/CL)_
@@ -84,9 +92,9 @@ Status icons: ✅ done · 🔄 in progress · ❌ blocked · 🔲 not started
 - ✅ `product-grid-b2b-logged-in.liquid` — added `customer.tags contains 'wholesale'` gate; non-wholesale visitors now see a login prompt instead of B2B prices _(DS found · CL applied)_
 
 ### Pending / not built
-- 🔲 Wire `custom.discount_tier` + `custom.discount_percentage` customer metafields to pricing in grid and cart _(DS found, см. DECISIONS D-09)_
+- 🔲 Wire `custom.discount_tier` + `custom.discount_percentage` customer metafields to pricing in grid and cart _(D-09 closed: 4 tiers, defaults 0/5/10/15%, manual assignment per D-05)_
 - 🔲 Product-level MOQ enforcement — PDP qty stepper defaults to 5 but no minimum enforced _(DS found)_
-- 🔲 Discount tier application logic not built _(DS found)_
+- 🔲 Discount tier application logic not built — должна читать `customer.metafields.custom.discount_tier` + `discount_percentage` с дефолтом 0% если метафилд отсутствует
 - 🔲 WSP metafield в CZK — проверить весь код, что нигде нет деления на 100 (после решения D-06)
 
 ---
@@ -121,11 +129,17 @@ Status icons: ✅ done · 🔄 in progress · ❌ blocked · 🔲 not started
 ## Account Dashboard
 
 ### Pending
-- 🔲 Прояснить структуру дашборда (см. DECISIONS D-02 — дубляж страниц)
-- 🔲 Решить что делает Massy, что мы (см. DECISIONS D-04)
-- 🔲 Order history page
-- 🔲 Quick reorder page
-- 🔲 Invoice download page
+- 🔲 Реализовать структуру дашборда _(D-02 closed)_:
+  - `/pages/partner-dashboard` (overview)
+  - `/pages/partner-dashboard?tab=orders` (вкладка)
+  - `/pages/partner-dashboard?tab=invoices` (вкладка)
+  - `/pages/quick-reorder` (отдельная страница)
+- 🔲 Аудит репо: найти и удалить дубли (`/pages/invoices`, `/pages/order-history` если есть)
+- 🔲 Проверить `dashboard-content.liquid` — работают ли вкладки Orders и Invoices
+- 🔲 Profile-страница (UI наш, данные через Massy) _(D-04 closed)_
+- 🔲 Order history rendering на вкладке `?tab=orders`
+- 🔲 Quick reorder функционал на `/pages/quick-reorder`
+- 🔲 Invoice download (через Order Printer) на вкладке `?tab=invoices`
 
 ---
 
@@ -134,14 +148,22 @@ Status icons: ✅ done · 🔄 in progress · ❌ blocked · 🔲 not started
 См. `/docs/ARCHITECTURE.md` для полного списка зафиксированных решений.
 
 ### Recently decided (2026-05-02)
-- ✅ WSP metafield = CZK (not cents) — D-06 closed
-- ✅ Checkout = custom flow → /pages/thank-you, no Shopify Checkout — D-07 closed
-- ✅ Shipping = manual via invoice — D-08 closed
-- ✅ Discount tiers = Standard/Silver/Gold/Platinum (default 0/5/10/15%) — D-09 closed
-- ✅ Topbar shows {shop_name} · {tier} when logged in — D-10 closed
+
+**Все известные открытые вопросы закрыты этой сессией.** Detail в `/docs/DECISIONS.md`.
+
+- ✅ D-01 Invoice generator = **Shopify Order Printer**
+- ✅ D-02 Dashboard = табы внутри `/pages/partner-dashboard`, отдельные страницы для quick-reorder, дубли удаляются
+- ✅ D-03 Menu = кастомный HTML в `header.liquid`, NOT linklist; план аудита в DECISIONS
+- ✅ D-04 Massy = регистрация/login/apply + теги; UI дашборда/каталога/чекаута/инвойсов — наши
+- ✅ D-05 Discount tiers = ручное присвоение для MVP, авто — через 3–6 мес
+- ✅ D-06 WSP metafield = CZK (not cents)
+- ✅ D-07 Checkout = custom flow → /pages/thank-you, no Shopify Checkout
+- ✅ D-08 Shipping = manual via invoice
+- ✅ D-09 Discount tiers = Standard/Silver/Gold/Platinum (default 0/5/10/15%)
+- ✅ D-10 Topbar shows {shop_name} · {tier} when logged in
 
 ### Open decisions
-См. `/docs/DECISIONS.md` — D-01 (invoice gen), D-02 (dashboard structure), D-03 (menu audit), D-04 (Massy boundaries), D-05 (tier assignment process)
+_(нет на данный момент)_
 
 ---
 
@@ -158,6 +180,71 @@ Status icons: ✅ done · 🔄 in progress · ❌ blocked · 🔲 not started
 ---
 
 ## Session Log
+
+### 2026-05-02 (post-CC audit) — Docs synced with actual repo state
+
+**Participants:** CC · CL · US
+
+**Context:** После создания пакета документации Маша запустила Claude Code, который провёл аудит реального состояния репо и нашёл 5 расхождений между доками и кодом. Доки обновлены под реальность.
+
+**Findings от CC:**
+1. SECTIONS-MAP помечал все 11 React-блоков как 🔲 not built — на самом деле **8 из 11 уже существуют** в репо (hero-b2b, trust-bar, catalog-cards, editorial-heritage, packages-wholesale, bottom-cta, accessibility-panel, scroll-to-top). Осталось аудитить header, footer, announcement-bar (Dawn-нативные)
+2. ARCHITECTURE предписывал `lp:` namespace для events — реальный код использует `cart:updated` без префикса (как DS и фиксил). Документация виновата, не код
+3. ARCHITECTURE предписывал `lp-` префикс для CSS — реальный код использует короткие префиксы по секциям (`cib`, `csb`, `pgbl`). Аналогично — доки были фантазией
+4. Хардкод EN строк во всех B2B-секциях — реальный долг, без него локализация не работает (BUGS #18 добавлен)
+5. BUGS #4 (`/100` для WSP) уже исправлен в коде
+
+**Done this session:**
+- ✅ ARCHITECTURE.md — events naming convention синхронизирован с кодом (`cart:updated` без префикса)
+- ✅ ARCHITECTURE.md — CSS class naming синхронизирован (короткие префиксы по секциям, не `lp-`)
+- ✅ SECTIONS-MAP.md — переписан, 8 из 11 секций помечены как ✅ exists с пометкой «нужен аудит качества»
+- ✅ BUGS.md — #4 закрыт (Fixed), #18 добавлен (хардкод EN строк во всех B2B-секциях, High severity)
+- ✅ PROGRESS.md — React migration таблица обновлена, новый session log
+
+**Параллельно (от CC топ-3 приоритета):**
+- 🔄 B (топбар `{shop_name} · {tier}`) — быстрая задача, ~30 минут, разблокирует канал чтения customer метафилдов в UI
+- 🔄 A (discount tier pricing) — главное для MVP, формула `final = wsp * (1 - discount_pct / 100)` в grid и cart
+- 🔄 Аудит существующих ✅ secrets секций (B2B-локализация = #18)
+
+**Recommended order:** B → A → C (вместо A → B → C). Топбар первым потому что (а) маленький, (б) тестирует канал customer metafields → Liquid → UI end-to-end дёшево, (в) discount tier pricing наследует тот же канал.
+
+**Next session priorities:**
+1. **CC:** делает B (топбар) — быстрый win, тест канала метафилдов
+2. **CC:** делает A (discount tier pricing) — после B
+3. **US:** установить Order Printer в админке (см. SHOPIFY-SETUP.md)
+4. **US:** прислать HTML формы Massy (input телефона + label) для разблокировки BUGS #5
+5. **DS:** написать кастомный Liquid-темплейт Proforma Invoice для Order Printer
+6. **DS:** аудит `header.liquid` по плану из D-03 (mega menu, account dropdown, mobile)
+7. **CC + DS:** локализация — вынести хардкод EN строк в `locales/` (BUGS #18, большая задача)
+
+### 2026-05-02 (late) — All 5 open decisions closed by DeepSeek review
+
+**Participants:** DS · CL · US
+
+**Context:** Сразу после создания пакета документации Маша отправила DECISIONS.md в DeepSeek для review. DS дал подробные рекомендации по всем 5 открытым вопросам, Маша приняла все рекомендации.
+
+**Done this session:**
+- ✅ D-01 → Shopify Order Printer как генератор инвойсов
+- ✅ D-02 → структура дашборда зафиксирована (tabs + отдельные страницы)
+- ✅ D-03 → структура меню разобрана (4 типа), план аудита составлен
+- ✅ D-04 → границы между Massy и темой определены
+- ✅ D-05 → ручное присвоение discount tier для MVP
+- ✅ DECISIONS.md обновлён — все 5 в раздел «Закрытые»
+- ✅ PROGRESS.md обновлён — этот лог
+- ✅ BUGS.md обновлён — план фикса BUGS #5 (phone overlap)
+
+**Параллельно:**
+- 🔄 Маша запустила Claude Code на работу над D-01 (Order Printer) и D-02 (структура дашборда)
+
+**Next session priorities:**
+1. **US:** прислать HTML формы Massy (один input телефона + label) для разблокировки BUGS #5
+2. **DS:** аудит `header.liquid` по плану из D-03
+3. **DS:** аудит кода на `wholesale_price / 100` (после D-06 — CZK)
+4. **DS:** написать кастомный Liquid-темплейт Proforma Invoice для Order Printer
+5. **CC:** результаты от Claude Code по D-01 / D-02 — внести изменения в PROGRESS.md
+6. **CC:** реализация discount tier чтения из метафилдов в каталоге и корзине
+7. **CC:** реализация топбара `{shop_name} · {tier}` (D-10)
+8. **US:** установить Order Printer в админке Shopify
 
 ### 2026-05-02 — Documentation package created
 

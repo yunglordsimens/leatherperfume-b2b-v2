@@ -15,18 +15,22 @@
 2. /docs/README.md — индекс документации
 3. /docs/REQUIREMENTS.md — что мы строим
 4. /docs/ARCHITECTURE.md — зафиксированные технические решения (НЕ предлагай альтернативы)
-5. /docs/DECISIONS.md — открытые вопросы
-6. /docs/PROGRESS.md — текущий статус
+5. /docs/DECISIONS.md — все 10 решений закрыты, читай для контекста
+6. /docs/PROGRESS.md — текущий статус, особенно Session Log внизу — последние 2 записи описывают где мы
 7. /docs/BUGS.md — известные баги
 8. /docs/MVP-CHECKLIST.md — приоритеты
-9. /mockups/README.md и /mockups/SECTIONS-MAP.md — карта React → Liquid
+9. /mockups/SECTIONS-MAP.md — карта React → Liquid (8 из 11 уже существуют)
 
 После этого скажи коротко:
 - В какой ветке мы (должно быть claude/react-to-shopify-hero-lfeDP-deepseek)
-- Какие 3 первоочередные задачи ты видишь по PROGRESS + MVP-CHECKLIST
-- Есть ли расхождения между документацией и реальным состоянием кода
+- Что ты хочешь начать первым из next session priorities в PROGRESS
 
-НЕ начинай править код пока я не подтвержу план.
+Известный план priorities:
+1. (B) Топбар {shop_name} · {tier} — быстро, тест канала customer metafields
+2. (A) Discount tier pricing — главное для MVP
+3. Локализация хардкода EN (BUGS #18) — большая задача
+
+Можешь начинать с B сразу. НЕ начинай большие архитектурные задачи (#3) пока не подтверждено.
 ```
 
 ---

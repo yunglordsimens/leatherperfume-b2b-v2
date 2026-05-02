@@ -62,9 +62,8 @@ Online Store → Themes → ⋯ → Edit default theme content
 | App | Зачем | Status | Платный? |
 |-----|-------|--------|----------|
 | **Massy B2B** | Регистрация, апрув, формы | ✅ Установлено | TBD |
-| **Order Printer** (Shopify) | Генерация PDF-инвойсов | 🔲 Установить | Бесплатно |
+| **Order Printer** (Shopify) | Генерация PDF Proforma инвойсов (D-01 confirmed) | 🔲 Установить + кастомный темплейт | Бесплатно |
 | **Translate & Adapt** (Shopify) | Управление мультиязычными переводами | 🔲 Опционально | Бесплатно |
-| Invoice generator (альтернатива Order Printer) | Если Order Printer не подойдёт | 🔲 TBD | TBD |
 
 ⚠️ Перед установкой нового app — проверить совместимость с Massy.
 
@@ -97,7 +96,9 @@ Online Store → Pages
 
 | Handle | Title | Контент | Status |
 |--------|-------|---------|--------|
-| `/pages/thank-you` | Thank You / Order Received | Подтверждение заказа + инвойс | 🔲 Не создана (BUGS #9) |
+| `/pages/thank-you` | Thank You / Order Received | Подтверждение заказа + ссылка на инвойс | 🔲 Не создана (BUGS #9) |
+| `/pages/partner-dashboard` | Partner Dashboard | Overview + tabs orders/invoices (D-02) | 🔲 Не создана |
+| `/pages/quick-reorder` | Quick Reorder | Список последних товаров + 1-click ATC (D-02) | 🔲 Не создана |
 | `/pages/apply` | Apply for Partnership | Massy form embed | 🔲 Проверить |
 | `/pages/login` | Partner Login | Massy login form | 🔲 Проверить |
 | `/pages/about` | About Us | Brand story | 🔲 Проверить |
@@ -105,6 +106,10 @@ Online Store → Pages
 | `/pages/b2b-terms` | B2B Terms of Service | Юр.текст | 🔲 Проверить |
 | `/pages/privacy` | Privacy Policy | Юр.текст | 🔲 Проверить |
 | `/pages/returns` | Returns & Claims | Юр.текст | 🔲 Проверить |
+
+⚠️ Дубли которые надо удалить из админки если есть (D-02):
+- `/pages/invoices` (если существует отдельно — функционал в `partner-dashboard?tab=invoices`)
+- `/pages/order-history` (если существует отдельно — функционал в `partner-dashboard?tab=orders`)
 
 ## Email notifications
 

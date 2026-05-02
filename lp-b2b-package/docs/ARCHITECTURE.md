@@ -85,10 +85,10 @@ MOQ minimum для отображения = 5,000 CZK (это display value).
 
 ## Naming conventions
 
-- B2B-специфичные секции: суффикс `-b2b` (`product-grid-b2b-logged-in.liquid`)
-- Переиспользуемые snippets: без суффикса
-- CSS-классы внутри секций: префикс `lp-` чтобы не конфликтовать с Dawn (`lp-cart-summary`, `lp-moq-bar`)
-- Кастомные events: `lp:` namespace (`lp:cart:updated`, `lp:tier:changed`)
+- **B2B-специфичные секции:** суффикс `-b2b` (`product-grid-b2b-logged-in.liquid`)
+- **Переиспользуемые snippets:** без суффикса
+- **CSS-классы:** в реальном коде используются короткие префиксы по секциям (`cib`, `csb`, `pgbl` и т.п.). Это исторически сложившаяся конвенция, не переименовывать. Для новых секций можно использовать тот же паттерн или короткий уникальный префикс. Главное — не конфликтовать с Dawn-овскими классами и быть консистентным внутри одной секции.
+- **Кастомные events:** без префикса, `<scope>:<action>` (`cart:updated`)
 
 ## JS event chain
 
@@ -97,6 +97,8 @@ MOQ minimum для отображения = 5,000 CZK (это display value).
 | `cart:updated` | PDP ATC, Grid ATC, Cart-summary remove | Cart-summary (MOQ bar, totals) | `detail: { cart }` |
 
 ⚠️ Событие исторически называлось `cart:refresh` — переименовано в `cart:updated` (исправлено 2026-04-28). Старое имя нигде не должно встречаться.
+
+⚠️ **Naming convention для events: без префикса** (`cart:updated`, не `lp:cart:updated`). В ранней версии этих доков был указан `lp:` namespace, но реальный код использует events без префикса, и переименовывать сейчас = ломать рабочее. Для новых кастомных events следовать тому же паттерну: `<scope>:<action>` без префикса.
 
 ## Singleton guards
 

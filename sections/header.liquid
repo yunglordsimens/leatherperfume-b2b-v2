@@ -350,6 +350,17 @@
     transform: translateY(0);
   }
 
+  /* Invisible bridge over the 0.5rem gap between trigger and dropdown,
+     so the mouse can travel down without leaving :hover */
+  .header-lang__dropdown::before {
+    content: '';
+    position: absolute;
+    top: -0.625rem;
+    left: 0;
+    right: 0;
+    height: 0.625rem;
+  }
+
   .header-lang__option {
     display: flex;
     align-items: center;
@@ -370,6 +381,14 @@
 
   .header-lang__option:hover {
     background-color: #f5f5f4;
+  }
+
+  /* base.css forces .header__icon .icon to 2rem — keep header icons at 22px */
+  .header__icon--cart svg.icon,
+  .header__icon--search svg.icon,
+  .header__icon--account svg.icon {
+    width: 22px;
+    height: 22px;
   }
 
   /* Accessibility button in header */

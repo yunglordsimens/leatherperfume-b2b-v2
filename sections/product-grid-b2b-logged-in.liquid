@@ -127,6 +127,8 @@
 
   /* Image */
   .pgbl__img-wrap {
+    display: block;
+    text-decoration: none;
     position: relative;
     aspect-ratio: 4 / 5;
     border-radius: 0.875rem;
@@ -220,6 +222,13 @@
     background-color: #f0f0f0 !important;
     color: #000000 !important;
   }
+
+  .pgbl__title-link {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+  .pgbl__title-link:hover { color: #b45309; }
 
   .pgbl__title {
     font-family: var(--font-heading-family);
@@ -670,7 +679,7 @@
         data-available="{{ product.available }}"
       >
         <!-- Image -->
-        <div class="pgbl__img-wrap">
+        <a class="pgbl__img-wrap" href="{{ product.url }}" aria-label="{{ product.title | escape }}" tabindex="-1">
           {%- if product.featured_image -%}
             {{ product.featured_image | image_url: width: 600 | image_tag:
               class: 'pgbl__img',
@@ -698,7 +707,7 @@
               <span class="pgbl__badge">B2B Only</span>
             {%- endif -%}
           </div>
-        </div>
+        </a>
 
         <!-- Body -->
         <div class="pgbl__body">
@@ -707,7 +716,7 @@
             <span class="pgbl__sku">{{ sku }}</span>
           </div>
 
-          <h3 class="pgbl__title">{{ product.title }}</h3>
+          <h3 class="pgbl__title"><a href="{{ product.url }}" class="pgbl__title-link">{{ product.title }}</a></h3>
 
           {%- if first_option != blank and first_option != 'Default Title' -%}
             <p class="pgbl__size">{{ first_option }}</p>

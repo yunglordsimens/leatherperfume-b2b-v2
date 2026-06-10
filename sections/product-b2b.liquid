@@ -134,9 +134,12 @@
   }
 
   /* ── Gallery ────────────────────── */
-  .pdp-gallery { width: 100%; }
+  .pdp-gallery { width: 100%; max-width: 30rem; margin: 0 auto; }
 
-  @media screen and (min-width: 1024px) { .pdp-gallery { width: 50%; } }
+  @media screen and (min-width: 1024px) {
+    .pdp-gallery { width: 42%; max-width: 30rem; margin: 0; flex-shrink: 0; }
+    .pdp-info { flex: 1; min-width: 0; }
+  }
 
   /* Main image */
   .pdp-gallery__main-wrap {

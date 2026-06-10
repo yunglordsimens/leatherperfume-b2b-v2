@@ -171,7 +171,7 @@
   .shopify-app-block select,
   .shopify-app-block textarea {
     width: 100% !important;
-    padding: 0.875rem 1rem !important;
+    padding: 1rem 1.25rem !important;
     font-family: var(--font-body-family) !important;
     font-size: 1rem !important;
     font-weight: 500 !important;
@@ -219,6 +219,48 @@
     background-size: 1.125rem !important;
     padding-right: 3rem !important;
     cursor: pointer !important;
+  }
+
+  /* ── Inline field icons (mockup: Mail / Phone in input) ── */
+
+  .massy-wrap__card input[type="email"],
+  .shopify-app-block input[type="email"],
+  .massy-form-container input[type="email"] {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23a8a29e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='2' y='4' width='20' height='16' rx='2'/%3E%3Cpath d='m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7'/%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: left 1.25rem center !important;
+    background-size: 1.25rem !important;
+    padding-left: 3.5rem !important;
+  }
+
+  .massy-wrap__card input[type="tel"],
+  .shopify-app-block input[type="tel"],
+  .massy-form-container input[type="tel"] {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23a8a29e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z'/%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: left 1.25rem center !important;
+    background-size: 1.25rem !important;
+    padding-left: 3.5rem !important;
+  }
+
+  /* intl-tel-input renders its own flag in that spot — drop our icon there */
+  .massy-wrap__card .iti input[type="tel"],
+  .shopify-app-block .iti input[type="tel"],
+  .massy-form-container .iti input[type="tel"] {
+    background-image: none !important;
+  }
+
+  /* ── Required asterisk (mockup: red star after label) ── */
+
+  .massy-wrap__card label abbr,
+  .massy-wrap__card label [class*="required"],
+  .shopify-app-block label abbr,
+  .shopify-app-block label [class*="required"],
+  .massy-form-container label abbr,
+  .massy-form-container label [class*="required"] {
+    color: #dc2626 !important;
+    text-decoration: none !important;
+    border: none !important;
   }
 
   /* ── Phone field (BUGS #5) ──────────────────────────
@@ -320,12 +362,12 @@
   .shopify-app-block [class*="submit"],
   .shopify-app-block [class*="btn"]:not([class*="back"]):not([class*="cancel"]) {
     width: 100% !important;
-    padding: 1.125rem 1.5rem !important;
+    padding: 1.25rem 1.5rem !important;
     font-family: var(--font-body-family) !important;
-    font-size: 1.0625rem !important;
+    font-size: 1.125rem !important;
     font-weight: 700 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.075em !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
     color: #ffffff !important;
     background-color: #1c1917 !important;
     border: 2px solid #1c1917 !important;
@@ -443,7 +485,7 @@
   .massy-form-container select,
   .massy-form-container textarea {
     width: 100% !important;
-    padding: 0.875rem 1rem !important;
+    padding: 1rem 1.25rem !important;
     font-family: var(--font-body-family) !important;
     font-size: 1rem !important;
     color: #1c1917 !important;
@@ -468,12 +510,12 @@
   .massy-form-container button[type="submit"],
   .massy-form-container input[type="submit"] {
     width: 100% !important;
-    padding: 1.125rem 1.5rem !important;
+    padding: 1.25rem 1.5rem !important;
     font-family: var(--font-body-family) !important;
-    font-size: 1.0625rem !important;
+    font-size: 1.125rem !important;
     font-weight: 700 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.075em !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
     color: #ffffff !important;
     background-color: #1c1917 !important;
     border: 2px solid #1c1917 !important;
@@ -485,8 +527,8 @@
 
   .massy-form-container button[type="submit"]:hover,
   .massy-form-container input[type="submit"]:hover {
-    background-color: #ea580c !important;
-    border-color: #ea580c !important;
+    background-color: #b45309 !important;
+    border-color: #b45309 !important;
   }
 
   html.a11y-high-contrast .massy-form-container label { color: #000000 !important; }

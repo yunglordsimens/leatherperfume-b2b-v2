@@ -10,8 +10,8 @@
   assign discount_pct = 0
   assign has_discount = false
   if customer and customer.tags contains 'wholesale'
-    assign discount_tier = customer.metafields.custom.discount_tier | default: 'standard'
-    assign discount_pct  = customer.metafields.custom.discount_percentage | default: 0
+    assign discount_tier = customer.metafields.custom.discount_tier.value | default: 'standard'
+    assign discount_pct  = customer.metafields.custom.discount_percentage.value | default: 0
     if discount_pct > 0 and discount_tier != 'standard'
       assign has_discount = true
     endif
@@ -34,6 +34,14 @@
   endif
 
   assign vat_cents = discounted_subtotal | times: vat_rate | divided_by: 100
+
+  assign progress_pct = 0
+  if moq_cents > 0
+    assign progress_pct = discounted_subtotal | times: 100 | divided_by: moq_cents
+  endif
+  if progress_pct > 100
+    assign progress_pct = 100
+  endif
 -%}
 
 <style>
@@ -340,9 +348,9 @@
         <div
           class="csb__fill moq-bar{% if moq_reached %} csb__fill--reached{% endif %}"
           id="CsbMoqFill"
-          style="width: 0%;"
+          style="width: {{ progress_pct }}%;"
           role="progressbar"
-          aria-valuenow="0"
+          aria-valuenow="{{ progress_pct }}"
           aria-valuemin="0"
           aria-valuemax="100"
         ></div>
@@ -403,13 +411,13 @@
 
 <script>
 (function () {
-  if (window.lpCartSummaryReady) return;
-  window.lpCartSummaryReady = true;
+  var wrap = document.getElementById('CartSummaryB2B-{{ section.id }}');
+  if (!wrap || wrap.dataset.csbInit === 'true') return;
+  wrap.dataset.csbInit = 'true';
 
-  var wrap      = document.getElementById('CartSummaryB2B-{{ section.id }}');
-  var moqTarget   = parseInt(wrap.getAttribute('data-moq')) || 5000; /* display units */
-  var vatRate     = parseInt(wrap.getAttribute('data-vat')) || 21;
-  var discountPct = parseInt(wrap.getAttribute('data-discount-pct')) || 0;
+  var moqTarget   = parseFloat(wrap.getAttribute('data-moq')) || 5000; /* display units */
+  var vatRate     = parseFloat(wrap.getAttribute('data-vat')) || 21;
+  var discountPct = parseFloat(wrap.getAttribute('data-discount-pct')) || 0;
   var moneyFmt    = wrap.getAttribute('data-money-format') || '{{ shop.money_format | escape }}';
 
   var moqTitle     = document.getElementById('CsbMoqTitle');
@@ -485,14 +493,12 @@
     }
   }
 
-  /* Animate bar from 0 on page load */
+  /* Sync JS state with the server-rendered bar on load */
   (function init() {
     var initCents   = {{ cart.items_subtotal_price }};
     var initDisc    = Math.round(initCents * (100 - discountPct) / 100);
     var initDisplay = initDisc / 100;
-    requestAnimationFrame(function () {
-      requestAnimationFrame(function () { updateMoq(initDisplay); });
-    });
+    updateMoq(initDisplay);
   })();
 
   /* ── Submit → show success ────────────────────────── */
@@ -516,7 +522,7 @@
     }
   }
 
-  document.addEventListener('click', function (e) {
+  wrap.addEventListener('click', function (e) {
     var btn = e.target.closest('#CsbSubmitBtn');
     if (!btn) return;
     if (btn.disabled || btn.classList.contains('is-disabled')) return;

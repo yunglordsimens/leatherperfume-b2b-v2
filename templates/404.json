@@ -9,28 +9,28 @@
  */
 {
   "sections": {
-    "cart_summary_b2b_taRaPc": {
-      "type": "cart-summary-b2b",
-      "name": "Cart Summary B2B",
+    "main_404_b2b_4VNEzR": {
+      "type": "main-404-b2b",
+      "name": "404 Page B2B",
       "settings": {
-        "summary_heading": "Summary",
-        "moq_amount": 5000,
-        "moq_label": "MOQ Target",
-        "moq_reached_label": "MOQ Reached",
-        "moq_msg_prefix": "Add",
-        "moq_msg_suffix": "more to proceed with this order.",
-        "subtotal_label": "Subtotal (WSP)",
-        "vat_rate": 21,
-        "vat_label": "Estimated VAT",
-        "shipping_label": "Shipping",
-        "shipping_value": "Calculated Later",
-        "total_label": "Total",
-        "submit_btn": "Submit for Invoicing",
-        "submit_note": "No payment required now. You will receive an invoice after order confirmation."
+        "heading": "404",
+        "subheading": "Page not found",
+        "description": "",
+        "back_btn": "Go Back",
+        "home_btn": "Home Page",
+        "links_heading": "Popular Destinations",
+        "link1_label": "Perfume Catalog",
+        "link1_url": "",
+        "link2_label": "Wholesale Packages",
+        "link2_url": "",
+        "link3_label": "Partner Login",
+        "link3_url": "",
+        "link4_label": "Contact Support",
+        "link4_url": ""
       }
     }
   },
   "order": [
-    "cart_summary_b2b_taRaPc"
+    "main_404_b2b_4VNEzR"
   ]
 }

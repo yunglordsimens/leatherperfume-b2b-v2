@@ -15,6 +15,76 @@
 <script src="{{ 'main-search.js' | asset_url }}" defer="defer"></script>
 
 <style>
+  /* ── B2B restyle of the Dawn search results page ───────── */
+
+  .template-search {
+    background-color: #fafaf9;
+  }
+
+  .template-search h1.h2 {
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight);
+    font-size: clamp(2.25rem, 5vw, 3.25rem);
+    color: #1c1917;
+  }
+
+  .template-search .search__input.field__input {
+    background-color: #ffffff;
+    border: 1.5px solid #e7e5e4;
+    border-radius: 0.75rem;
+    font-family: var(--font-body-family);
+    box-shadow: none;
+  }
+
+  .template-search .search__input.field__input:focus,
+  .template-search .search__input.field__input:focus-visible {
+    border-color: #b45309;
+    box-shadow: 0 0 0 3px rgba(180, 83, 9, 0.15);
+    outline: none;
+  }
+
+  .template-search .field__label { font-family: var(--font-body-family); }
+
+  /* Product cards: white rounded cards, subtle border, amber hover */
+  .template-search .card,
+  .template-search .card .card__inner {
+    border-radius: 1rem;
+  }
+
+  .template-search .card-wrapper {
+    background-color: #ffffff;
+    border: 1px solid #e7e5e4;
+    border-radius: 1.25rem;
+    padding: 0.75rem;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+
+  .template-search .card-wrapper:hover {
+    border-color: #d6d3d1;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.07);
+  }
+
+  .template-search .card__heading {
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight);
+  }
+
+  .template-search .card__heading a:hover {
+    color: #b45309;
+    text-decoration: none;
+  }
+
+  .template-search .price {
+    font-family: var(--font-body-family);
+    font-weight: 700;
+    color: #1c1917;
+  }
+
+  html.a11y-high-contrast .template-search .card-wrapper {
+    border: 2px solid #000000 !important;
+    box-shadow: none !important;
+  }
+
   .template-search__header {
     margin-bottom: 3rem;
   }

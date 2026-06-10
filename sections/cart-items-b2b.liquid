@@ -440,14 +440,16 @@
 
   /* ── Saved indicator ──────────────────────────────── */
   .cib__saved {
-    display: inline-block;
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
     font-family: var(--font-body-family);
     font-size: 0.8125rem;
     font-weight: 700;
     color: #15803d;
     opacity: 0;
     transition: opacity 0.3s ease;
-    margin-left: 0.5rem;
   }
 
   .cib__saved.is-visible { opacity: 1; }

@@ -123,6 +123,8 @@
   }
 </style>
 
+{%- comment -%} CTA is an invitation to apply — hide it for logged-in customers {%- endcomment -%}
+{%- unless customer -%}
 <section
   class="bottom-cta{{ section_mod }}"
   id="BottomCta-{{ section.id }}"
@@ -139,7 +141,7 @@
 
     {%- if section.settings.button_label != blank -%}
       <a
-        href="{{ section.settings.button_link | default: '#' }}"
+        href="{{ section.settings.button_link | default: '/pages/wholesale-application' }}"
         class="bottom-cta__btn"
       >
         {{- section.settings.button_label | escape -}}
@@ -152,6 +154,7 @@
 
   </div>
 </section>
+{%- endunless -%}
 
 {% render 'accessibility-panel' %}
 

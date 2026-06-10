@@ -161,12 +161,26 @@
         "button_label": "Apply for Partnership",
         "button_link": ""
       }
+    },
+    "how_it_works_bz6NFL": {
+      "type": "how-it-works",
+      "name": "How It Works",
+      "settings": {
+        "high_contrast": false,
+        "heading": "How to Order",
+        "subheading": "A simple, transparent process from selecting your package to getting the products on your shelves.",
+        "step_1_url": "",
+        "step_2_url": "",
+        "step_3_url": "",
+        "step_4_url": ""
+      }
     }
   },
   "order": [
     "hero_b2b_6RdgDL",
-    "trust_bar_HGTr33",
     "catalog_cards_Le7Cgf",
+    "trust_bar_HGTr33",
+    "how_it_works_bz6NFL",
     "editorial_heritage_YH9ihV",
     "packages_wholesale_pX8HYH",
     "bottom_cta_rthwmW"

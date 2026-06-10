@@ -151,17 +151,11 @@
     color: #ffffff;
   }
 
-  .how-it-works__step:last-child .how-it-works__number {
-    background-color: #b45309;
-    color: #ffffff;
-    box-shadow: 0 0 0 4px #fef3c7;
-  }
-
   /* Anchor variant — when a step has a URL, the number becomes a link */
   a.how-it-works__number {
     text-decoration: none;
     cursor: pointer;
-    transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+    transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
   }
 
   a.how-it-works__number:hover,
@@ -169,12 +163,7 @@
     background-color: #b45309;
     color: #ffffff;
     transform: scale(1.05);
-  }
-
-  /* Last step is already orange — darken on hover for feedback */
-  .how-it-works__step:last-child a.how-it-works__number:hover,
-  .how-it-works__step:last-child a.how-it-works__number:focus-visible {
-    background-color: #92400e;
+    box-shadow: 0 0 0 4px #fef3c7;
   }
 
   .how-it-works--high-contrast .how-it-works__number,

@@ -5,10 +5,10 @@
     assign section_mod = ' how-it-works--high-contrast'
   endif
 
-  assign step_1_url = section.settings.step_1_url
-  assign step_2_url = section.settings.step_2_url
-  assign step_3_url = section.settings.step_3_url
-  assign step_4_url = section.settings.step_4_url
+  assign step_1_url = section.settings.step_1_url | default: '/collections/all'
+  assign step_2_url = section.settings.step_2_url | default: '/pages/wholesale-application'
+  assign step_3_url = section.settings.step_3_url | default: '/cart'
+  assign step_4_url = section.settings.step_4_url | default: '/pages/partner-dashboard'
 -%}
 
 <style>
@@ -321,8 +321,8 @@
     },
     {
       "type": "header",
-      "content": "Step links (optional)",
-      "info": "When set, the step number becomes a link. Leave blank to keep it as a static circle."
+      "content": "Step links",
+      "info": "Each step number is a link with an orange hover. Leave blank to use the defaults: catalog, application, cart, partner dashboard."
     },
     {
       "type": "url",

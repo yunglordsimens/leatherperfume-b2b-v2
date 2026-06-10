@@ -56,12 +56,18 @@
         "category_label": "Categories",
         "avail_label": "Availability"
       }
+    },
+    "product_grid_b2b": {
+      "type": "product-grid-b2b-logged-in",
+      "name": "Product Grid B2B",
+      "settings": {}
     }
   },
   "order": [
     "banner",
     "product-grid",
     "catalog_header_b2b_dpyykV",
-    "catalog_sidebar_KcYae6"
+    "catalog_sidebar_KcYae6",
+    "product_grid_b2b"
   ]
 }

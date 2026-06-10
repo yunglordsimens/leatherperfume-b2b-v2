@@ -383,13 +383,32 @@
     background-color: #f5f5f4;
   }
 
-  /* Full-bleed header: logo hugs the left edge, icons the right,
-     nav spreads across the full viewport width */
+  /* Full-bleed header: flex row — logo left, nav fills the middle,
+     icons pushed to the right edge */
   @media screen and (min-width: 990px) {
     .header.page-width {
       max-width: 100%;
       padding-left: 2.5rem;
       padding-right: 2.5rem;
+      display: flex;
+      align-items: center;
+      gap: 2.5rem;
+    }
+
+    .header.page-width .header__heading,
+    .header.page-width > .header__heading-link {
+      margin: 0;
+      flex-shrink: 0;
+    }
+
+    .header.page-width .header__lp-nav {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    .header.page-width .header__icons {
+      flex-shrink: 0;
+      margin-left: auto;
     }
   }
 
@@ -512,60 +531,6 @@
     endif
   endfor
 -%}
-
-{%- if customer and customer.tags contains 'wholesale' -%}
-  {%- assign b2b_shop = customer.metafields.custom.shop_name -%}
-  {%- assign b2b_tier = customer.metafields.custom.discount_tier -%}
-  {%- assign b2b_pct  = customer.metafields.custom.discount_percentage -%}
-  {%- assign b2b_display_name = b2b_shop | default: customer.first_name -%}
-  <div class="b2b-bar" role="status" aria-live="polite">
-    <div class="b2b-bar__inner">
-      <span class="b2b-bar__left">
-        <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
-        </svg>
-        <strong>{{ b2b_display_name | escape }}</strong>
-      </span>
-      <span class="b2b-bar__sep" aria-hidden="true">·</span>
-      <span class="b2b-bar__right">
-        {%- if b2b_tier != blank -%}
-          {{ b2b_tier | capitalize | escape }}
-        {%- else -%}
-          Standard
-        {%- endif -%}
-        {%- if b2b_pct != blank and b2b_pct != '0' -%}
-          &nbsp;—&nbsp;<strong>{{ b2b_pct }}% off</strong>
-        {%- endif -%}
-      </span>
-    </div>
-  </div>
-  <style>
-    .b2b-bar {
-      background-color: #92400e;
-      color: #fef3c7;
-      font-family: var(--font-body-family);
-      font-size: 0.8125rem;
-      font-weight: 600;
-      text-align: center;
-      padding: 0.5rem 1.5rem;
-      letter-spacing: 0.01em;
-    }
-    .b2b-bar__inner {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-    .b2b-bar__left { display: flex; align-items: center; gap: 0.375rem; }
-    .b2b-bar__sep  { opacity: 0.6; }
-    html.a11y-high-contrast .b2b-bar {
-      background-color: #000000 !important;
-      color: #ffffff !important;
-      border-bottom: 2px solid #ffffff !important;
-    }
-  </style>
-{%- endif -%}
 
 <sticky-header data-sticky-type="{{ section.settings.sticky_header_type }}" class="header-wrapper color-{{ section.settings.color_scheme }} gradient{% if section.settings.show_line_separator %} header-wrapper--border-bottom{% endif %}">
   <header class="header header--{{ section.settings.logo_position }} header--mobile-{{ section.settings.mobile_logo_position }} page-width{% if section.settings.menu_type_desktop == 'drawer' %} drawer-menu{% endif %}{% if section.settings.menu != blank %} header--has-menu{% endif %}{% if has_app_block %} header--has-app{% endif %}{% if shop.customer_accounts_enabled %} header--has-account{% endif %}{% if localization.available_countries.size > 1 or localization.available_languages.size > 1 %} header--has-localizations{% endif %}">

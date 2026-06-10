@@ -3,8 +3,8 @@
   assign mgr_email = section.settings.manager_email | default: 'wholesale@leatherparfum.com'
   assign mgr_phone = section.settings.manager_phone | default: ''
 
-  assign tier       = customer.metafields.custom.discount_tier        | default: '—'
-  assign disc_pct   = customer.metafields.custom.discount_percentage  | default: '0'
+  assign tier       = customer.metafields.custom.discount_tier.value        | default: '—'
+  assign disc_pct   = customer.metafields.custom.discount_percentage.value  | default: '0'
 -%}
 
 <style>
@@ -490,7 +490,11 @@
 
                       assign reorder_params = ''
                       for item in order.line_items
-                        assign sep = '&' | unless forloop.first | default: ''
+                        if forloop.first
+                          assign sep = ''
+                        else
+                          assign sep = '&'
+                        endif
                         assign reorder_params = reorder_params | append: sep | append: 'items[][id]=' | append: item.variant_id | append: '&items[][quantity]=' | append: item.quantity
                       endfor
                     -%}
@@ -585,7 +589,11 @@
                       endif
                       assign reorder_params = ''
                       for item in order.line_items
-                        assign sep = '&' | unless forloop.first | default: ''
+                        if forloop.first
+                          assign sep = ''
+                        else
+                          assign sep = '&'
+                        endif
                         assign reorder_params = reorder_params | append: sep | append: 'items[][id]=' | append: item.variant_id | append: '&items[][quantity]=' | append: item.quantity
                       endfor
                     -%}
@@ -623,10 +631,55 @@
 
       <!-- Invoices placeholder panel -->
       <div class="dc__panel" id="dc-panel-invoices" role="tabpanel">
-        <div class="dc__coming-soon">
-          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-          <h3>{{ section.settings.invoices_coming_title | default: 'Invoices coming soon' }}</h3>
-          <p>{{ section.settings.invoices_coming_text | default: 'Download invoices and statements will be available here shortly.' }}</p>
+        <h2 class="dc__section-title">{{ section.settings.tab_invoices | default: 'Invoices' }}</h2>
+        <div class="dc__table-wrap">
+          {%- if customer.orders.size > 0 -%}
+            <div class="dc__table-scroll">
+              <table class="dc__table">
+                <thead>
+                  <tr>
+                    <th>{{ section.settings.col_invoice | default: 'Invoice / Order' }}</th>
+                    <th>{{ section.settings.col_po | default: 'PO Number' }}</th>
+                    <th>{{ section.settings.col_date | default: 'Date' }}</th>
+                    <th>{{ section.settings.col_status | default: 'Status' }}</th>
+                    <th>{{ section.settings.col_total | default: 'Total' }}</th>
+                    <th>{{ section.settings.col_actions | default: 'Actions' }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {%- for order in customer.orders -%}
+                    {%- liquid
+                      assign po_num   = order.attributes.po_number | default: '—'
+                      assign fin_stat = order.financial_status
+                      assign badge_mod = 'other'
+                      if fin_stat == 'paid'
+                        assign badge_mod = 'paid'
+                      elsif fin_stat == 'pending' or fin_stat == 'authorized'
+                        assign badge_mod = 'pending'
+                      elsif fin_stat == 'refunded' or fin_stat == 'voided'
+                        assign badge_mod = 'refunded'
+                      endif
+                    -%}
+                    <tr>
+                      <td><a class="dc__order-link" href="{{ order.customer_url }}">{{ order.name }}</a></td>
+                      <td>{{ po_num }}</td>
+                      <td>{{ order.created_at | date: '%b %d, %Y' }}</td>
+                      <td><span class="dc__badge dc__badge--{{ badge_mod }}">{{ fin_stat | replace: '_', ' ' }}</span></td>
+                      <td>{{ order.total_price | money }}</td>
+                      <td>
+                        <a class="dc__btn dc__btn--outline" href="{{ order.customer_url }}">
+                          <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                          {{ section.settings.btn_download | default: 'Download' }}
+                        </a>
+                      </td>
+                    </tr>
+                  {%- endfor -%}
+                </tbody>
+              </table>
+            </div>
+          {%- else -%}
+            <div class="dc__empty">{{ section.settings.no_invoices_text | default: 'No invoices yet — they appear here after your first order.' }}</div>
+          {%- endif -%}
         </div>
       </div>
 
@@ -653,18 +706,33 @@
   var btns   = document.querySelectorAll('[data-dc-tab]');
   var panels = document.querySelectorAll('.dc__panel');
 
+  function activate(target, syncUrl) {
+    var panel = document.getElementById('dc-panel-' + target);
+    if (!panel) return;
+
+    btns.forEach(function (b) {
+      b.classList.toggle('is-active', b.getAttribute('data-dc-tab') === target);
+    });
+    panels.forEach(function (p) { p.classList.remove('is-active'); });
+    panel.classList.add('is-active');
+
+    if (syncUrl && window.history && history.replaceState) {
+      var url = new URL(window.location.href);
+      if (target === 'overview') url.searchParams.delete('tab');
+      else url.searchParams.set('tab', target);
+      history.replaceState(null, '', url);
+    }
+  }
+
   btns.forEach(function (btn) {
     btn.addEventListener('click', function () {
-      var target = btn.getAttribute('data-dc-tab');
-
-      btns.forEach(function (b) { b.classList.remove('is-active'); });
-      panels.forEach(function (p) { p.classList.remove('is-active'); });
-
-      btn.classList.add('is-active');
-      var panel = document.getElementById('dc-panel-' + target);
-      if (panel) panel.classList.add('is-active');
+      activate(btn.getAttribute('data-dc-tab'), true);
     });
   });
+
+  /* Deep links: /pages/partner-dashboard?tab=invoices (D-02) */
+  var initial = new URLSearchParams(window.location.search).get('tab');
+  if (initial) activate(initial, false);
 })();
 </script>
 

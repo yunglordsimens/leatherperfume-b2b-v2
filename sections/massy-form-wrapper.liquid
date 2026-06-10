@@ -221,6 +221,43 @@
     cursor: pointer !important;
   }
 
+  /* ── Phone field (BUGS #5) ──────────────────────────
+     The width:100% !important above breaks composite phone
+     widgets where a country-code select sits beside the tel
+     input — both get full width and overlap. Two patterns:
+  ─────────────────────────────────────────────────────── */
+
+  /* 1. intl-tel-input style: input wrapped in .iti with a flag button */
+  .massy-wrap__card .iti,
+  .shopify-app-block .iti {
+    width: 100% !important;
+    display: block !important;
+  }
+  .massy-wrap__card .iti input,
+  .shopify-app-block .iti input {
+    padding-left: 3.5rem !important;
+  }
+
+  /* 2. Plain select + tel input sharing one wrapper: lay out as a row */
+  .massy-wrap__card div:has(> select):has(> input[type="tel"]),
+  .shopify-app-block div:has(> select):has(> input[type="tel"]) {
+    display: flex !important;
+    gap: 0.5rem !important;
+    align-items: stretch !important;
+  }
+  .massy-wrap__card div:has(> input[type="tel"]) > select,
+  .shopify-app-block div:has(> input[type="tel"]) > select {
+    width: auto !important;
+    max-width: 8rem !important;
+    flex: 0 0 auto !important;
+  }
+  .massy-wrap__card div:has(> select) > input[type="tel"],
+  .shopify-app-block div:has(> select) > input[type="tel"] {
+    width: auto !important;
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+  }
+
   /* ── Checkboxes / radios ────────────────────────────── */
 
   .massy-wrap__card input[type="checkbox"],

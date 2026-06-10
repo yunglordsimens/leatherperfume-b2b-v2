@@ -50,17 +50,33 @@
     background-color: #f5f5f4;
   }
 
+  /* ── Cart layout: items + summary centered at page-width ──
+     #MainContent grid keeps both columns aligned with the rest
+     of the content instead of floating across the full viewport. */
   @media screen and (min-width: 990px) {
-    .shopify-section:has(.csb) {
-      width: 36%;
-      float: right;
-      clear: right;
+    #MainContent:has(.cib):has(.csb) {
+      display: grid;
+      grid-template-columns:
+        minmax(1.5rem, 1fr)
+        minmax(0, calc(var(--page-width, 144rem) * 0.62))
+        minmax(0, calc(var(--page-width, 144rem) * 0.38))
+        minmax(1.5rem, 1fr);
     }
-    .shopify-section:has(.csb)::after {
-      content: '';
-      display: table;
-      clear: both;
+
+    #MainContent:has(.cib):has(.csb) > .shopify-section {
+      grid-column: 1 / -1;
     }
+
+    #MainContent:has(.cib):has(.csb) > .shopify-section:has(.cib) {
+      grid-column: 2;
+      grid-row: 1;
+    }
+
+    #MainContent:has(.cib):has(.csb) > .shopify-section:has(.csb) {
+      grid-column: 3;
+      grid-row: 1;
+    }
+
     .csb { padding: 3rem 0 3rem 2rem; }
   }
 

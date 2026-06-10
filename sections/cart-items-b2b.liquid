@@ -4,14 +4,62 @@
     background-color: #f5f5f4;
   }
 
+  /* Placed in the #MainContent grid defined in cart-summary-b2b.liquid */
   @media screen and (min-width: 990px) {
-    .shopify-section:has(.cib) {
-      width: 62%;
-      float: left;
-      clear: left;
-    }
     .cib { padding: 3rem 2rem 3rem 0; }
   }
+
+  /* ── Page header (mockup: Your Order + Continue Shopping) ── */
+  .cib__header {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding-bottom: 2rem;
+    margin-bottom: 2.5rem;
+    border-bottom: 1px solid #e7e5e4;
+  }
+
+  @media screen and (min-width: 750px) {
+    .cib__header {
+      flex-direction: row;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+  }
+
+  .cib__heading {
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight);
+    font-size: clamp(2.25rem, 5vw, 3rem);
+    line-height: 1.1;
+    color: #1c1917;
+    margin: 0 0 0.75rem;
+  }
+
+  .cib__heading-sub {
+    font-family: var(--font-body-family);
+    font-size: 1rem;
+    color: #57534e;
+    margin: 0;
+  }
+
+  .cib__continue {
+    font-family: var(--font-body-family);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #1c1917;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color 0.15s ease;
+  }
+
+  .cib__continue:hover { color: #b45309; }
+
+  html.a11y-high-contrast .cib__heading,
+  html.a11y-high-contrast .cib__heading-sub,
+  html.a11y-high-contrast .cib__continue { color: #000000 !important; }
 
   .cib__inner { max-width: 100%; }
 
@@ -474,6 +522,14 @@
   data-money-format="{{ shop.money_format | escape }}"
 >
 
+  <div class="cib__header">
+    <div>
+      <h1 class="cib__heading">{{ section.settings.page_heading | default: 'Your Order' }}</h1>
+      <p class="cib__heading-sub">{{ section.settings.page_subheading | default: 'Review your items and provide internal purchase details before submitting.' }}</p>
+    </div>
+    <a class="cib__continue" href="/collections/all">{{ section.settings.continue_label | default: 'Continue Shopping' }}</a>
+  </div>
+
   {%- if cart.item_count > 0 -%}
 
     <!-- Items card -->
@@ -741,7 +797,23 @@
   "tag": "section",
   "class": "section",
   "disabled_on": { "groups": ["header", "footer"] },
-  "settings": [],
+  "settings": [
+    { "type": "header", "content": "Page header" },
+    { "type": "text", "id": "page_heading", "label": "Heading", "default": "Your Order" },
+    { "type": "text", "id": "page_subheading", "label": "Subheading", "default": "Review your items and provide internal purchase details before submitting." },
+    { "type": "text", "id": "continue_label", "label": "Continue shopping label", "default": "Continue Shopping" },
+    { "type": "header", "content": "Order details card" },
+    { "type": "text", "id": "details_heading", "label": "Heading", "default": "Order Details" },
+    { "type": "text", "id": "po_label", "label": "PO field label", "default": "PO Number (Optional)" },
+    { "type": "text", "id": "po_placeholder", "label": "PO placeholder", "default": "Enter your internal Purchase Order number" },
+    { "type": "text", "id": "po_hint", "label": "PO hint", "default": "This reference will appear on your invoice." },
+    { "type": "text", "id": "notes_label", "label": "Notes label", "default": "Order Notes / Special Instructions" },
+    { "type": "text", "id": "notes_placeholder", "label": "Notes placeholder", "default": "Delivery instructions, requests, etc." },
+    { "type": "header", "content": "Empty state" },
+    { "type": "text", "id": "empty_heading", "label": "Heading", "default": "Your cart is empty" },
+    { "type": "text", "id": "empty_text", "label": "Text", "default": "Add products from the catalog to build your wholesale order." },
+    { "type": "text", "id": "catalog_btn", "label": "Button label", "default": "Go to Catalog" }
+  ],
   "presets": [{ "name": "Cart Items B2B" }]
 }
 {% endschema %}

@@ -12,8 +12,8 @@
   assign discount_pct = 0
   assign has_discount = false
   if is_wholesale
-    assign discount_tier = customer.metafields.custom.discount_tier | default: 'standard'
-    assign discount_pct  = customer.metafields.custom.discount_percentage | default: 0
+    assign discount_tier = customer.metafields.custom.discount_tier.value | default: 'standard'
+    assign discount_pct  = customer.metafields.custom.discount_percentage.value | default: 0
     if discount_pct > 0 and discount_tier != 'standard'
       assign has_discount = true
     endif
@@ -621,7 +621,7 @@
 
         comment — WSP: metafield stores CZK (display), multiply × 100 for cents
         endcomment
-        assign wsp_meta = product.metafields.custom.wholesale_price
+        assign wsp_meta = product.metafields.custom.wholesale_price.value
         if wsp_meta != blank
           assign wsp_cents = wsp_meta | times: 100
         else

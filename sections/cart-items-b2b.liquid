@@ -497,7 +497,7 @@
             <div class="cib__thumb">
               {%- if item.image -%}
                 {{ item.image | image_url: width: 160 | image_tag:
-                  alt: item.product.title | escape,
+                  alt: item.product.title,
                   loading: 'lazy',
                   width: 80,
                   height: 80

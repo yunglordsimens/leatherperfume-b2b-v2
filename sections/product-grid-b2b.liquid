@@ -517,7 +517,7 @@
             {%- if product.featured_image -%}
               {{ product.featured_image | image_url: width: 600 | image_tag:
                 class: 'pgb__img',
-                alt: product.title | escape,
+                alt: product.title,
                 loading: 'lazy',
                 width: 300,
                 height: 300

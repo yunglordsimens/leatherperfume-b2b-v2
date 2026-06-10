@@ -658,6 +658,8 @@
         comment — Badge from tags or metafield
         endcomment
         assign badge_meta = product.metafields.custom.badge
+
+        assign img_alt = product.featured_image.alt | default: product.title | escape
       -%}
 
       <div
@@ -672,7 +674,7 @@
           {%- if product.featured_image -%}
             {{ product.featured_image | image_url: width: 600 | image_tag:
               class: 'pgbl__img',
-              alt: product.featured_image.alt | default: product.title | escape,
+              alt: img_alt,
               loading: 'lazy',
               width: product.featured_image.width,
               height: product.featured_image.height

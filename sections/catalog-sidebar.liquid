@@ -19,14 +19,33 @@
 -%}
 
 <style>
-  /* ── Sidebar layout integration ──────────────────────
-     Floats next to the product grid via :has() when on desktop.
+  /* ── Sidebar + grid layout ───────────────────────────
+     #MainContent becomes a grid: flexible gutters keep the
+     sidebar/grid pair centered at page-width, aligned with
+     the rest of the content (mockup: max-w-7xl mx-auto).
   ──────────────────────────────────────────────────── */
   @media screen and (min-width: 990px) {
-    .shopify-section:has(.cat-sb) {
-      width: 280px;
-      float: left;
-      clear: left;
+    #MainContent:has(.cat-sb) {
+      display: grid;
+      grid-template-columns:
+        minmax(1.5rem, 1fr)
+        280px
+        minmax(0, calc(var(--page-width, 144rem) - 320px))
+        minmax(1.5rem, 1fr);
+    }
+
+    #MainContent:has(.cat-sb) > .shopify-section {
+      grid-column: 1 / -1;
+    }
+
+    #MainContent:has(.cat-sb) > .shopify-section:has(.cat-sb) {
+      grid-column: 2;
+      grid-row: 2;
+    }
+
+    #MainContent:has(.cat-sb) > .shopify-section:has(.pgbl) {
+      grid-column: 3;
+      grid-row: 2;
     }
   }
 

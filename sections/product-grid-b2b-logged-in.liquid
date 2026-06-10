@@ -27,17 +27,16 @@
 {%- endcomment -%}
 
 <style>
-  /* ── Layout: float right next to sidebar ─────────── */
+  /* ── Layout ───────────────────────────────────────
+     Placed next to the sidebar by the #MainContent grid
+     defined in catalog-sidebar.liquid. Without a sidebar
+     on the page, center at page-width.
+  ─────────────────────────────────────────────────── */
   @media screen and (min-width: 990px) {
-    .shopify-section:has(.pgbl) {
-      float: right;
-      width: calc(100% - 320px);
-      clear: right;
-    }
-    .shopify-section:has(.pgbl)::after {
-      content: '';
-      display: table;
-      clear: both;
+    #MainContent:not(:has(.cat-sb)) .pgbl {
+      max-width: var(--page-width, 144rem);
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem;
     }
   }
 

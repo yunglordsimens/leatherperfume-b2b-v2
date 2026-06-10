@@ -44,6 +44,9 @@
       "name": "Catalog Header",
       "settings": {
         "heading_wholesale": "Create Order",
+        "description_wholesale": "<p>Add products to your wholesale cart. All prices below reflect your active partnership discount.</p>",
+        "heading_default": "",
+        "subheading_default": "",
         "filter_button_text": "Filters"
       }
     },
@@ -57,10 +60,15 @@
         "avail_label": "Availability"
       }
     },
-    "product_grid_b2b": {
+    "product_grid_b2b_logged_in_4e3cXh": {
       "type": "product-grid-b2b-logged-in",
       "name": "Product Grid B2B",
-      "settings": {}
+      "settings": {
+        "atc_label": "Add to Order",
+        "oos_label": "Out of Stock",
+        "empty_heading": "No products found",
+        "clear_label": "Clear Filters"
+      }
     }
   },
   "order": [
@@ -68,6 +76,6 @@
     "product-grid",
     "catalog_header_b2b_dpyykV",
     "catalog_sidebar_KcYae6",
-    "product_grid_b2b"
+    "product_grid_b2b_logged_in_4e3cXh"
   ]
 }

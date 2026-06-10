@@ -20,16 +20,11 @@
   endif
 -%}
 
-{%- unless is_wholesale -%}
-  <div style="padding:4rem 1.5rem;text-align:center;background:#f5f5f4;">
-    <p style="font-family:var(--font-body-family);font-size:1rem;color:#57534e;margin:0 0 1.25rem;">
-      Wholesale catalog access requires a verified partner account.
-    </p>
-    <a href="/pages/partner-login" style="display:inline-flex;align-items:center;padding:0.875rem 2rem;background:#1c1917;color:#fff;font-family:var(--font-body-family);font-weight:700;font-size:0.9375rem;border-radius:0.75rem;text-decoration:none;">
-      Log In as Partner
-    </a>
-  </div>
-{%- else -%}
+{%- comment -%}
+  Guests see the full grid with RRP and a "Log in for B2B price" lock
+  button per card (per Catalog-react mockup); wholesale customers see
+  WSP, margin and add-to-order controls.
+{%- endcomment -%}
 
 <style>
   /* ── Layout: float right next to sidebar ─────────── */
@@ -465,6 +460,48 @@
   }
 
   /* OOS button */
+  /* Guest lock button (mockup: amber block with lock + arrow) */
+  .pgbl__lock-btn {
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    background-color: #fffbeb;
+    border: 1px solid #fde68a;
+    color: #78350f;
+    font-family: var(--font-body-family);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-decoration: none;
+    transition: background-color 0.15s ease;
+  }
+
+  .pgbl__lock-btn:hover { background-color: #fef3c7; }
+
+  .pgbl__lock-left {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-align: left;
+  }
+
+  .pgbl__lock-btn svg { width: 1.125rem; height: 1.125rem; flex-shrink: 0; }
+  .pgbl__lock-arrow { opacity: 0.5; transition: opacity 0.15s ease; }
+  .pgbl__lock-btn:hover .pgbl__lock-arrow { opacity: 1; }
+
+  html.a11y-high-contrast .pgbl__lock-btn {
+    background-color: #ffffff !important;
+    border: 2px solid #000000 !important;
+    color: #000000 !important;
+  }
+
   .pgbl__oos-btn {
     width: 100%;
     padding: 0.9375rem 1rem;
@@ -692,6 +729,7 @@
                 <p class="pgbl__price-label">RRP</p>
                 <p class="pgbl__rrp-val">{{ rrp_cents | money }}</p>
               </div>
+              {%- if is_wholesale -%}
               <div class="pgbl__price-row">
                 <p class="pgbl__price-label pgbl__price-label--wsp">Your Price</p>
                 <div style="text-align:right;">
@@ -708,9 +746,26 @@
                   <span class="pgbl__margin-badge">+{{ margin }}% Margin</span>
                 </div>
               {%- endif -%}
+              {%- endif -%}
             </div><!-- /.pgbl__prices -->
 
+            {%- unless is_wholesale -%}
+            <!-- Guest: B2B price locked behind partner login -->
+            <a class="pgbl__lock-btn" href="/pages/partner-login">
+              <span class="pgbl__lock-left">
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+                Log in for B2B price
+              </span>
+              <svg class="pgbl__lock-arrow" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+              </svg>
+            </a>
+            {%- endunless -%}
+
             <!-- Add to cart or OOS -->
+            {%- if is_wholesale -%}
             {%- if product.available -%}
               <div class="pgbl__atc-wrap">
                 <div class="pgbl__qty-row">
@@ -762,6 +817,7 @@
               <button type="button" class="pgbl__oos-btn" disabled aria-disabled="true">
                 {{ oos_label }}
               </button>
+            {%- endif -%}
             {%- endif -%}
 
           </div><!-- /.pgbl__foot -->
@@ -974,8 +1030,6 @@
   applyFilters();
 })();
 </script>
-
-{%- endunless -%}
 
 {% schema %}
 {

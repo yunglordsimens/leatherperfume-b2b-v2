@@ -8,8 +8,8 @@
     assign heading = section.settings.heading_wholesale | default: 'Create Order'
     assign sub_html = section.settings.description_wholesale
   else
-    assign heading = section.settings.heading_default | default: collection.title
-    assign sub_text = section.settings.subheading_default | default: collection.description
+    assign heading = section.settings.heading_default | default: collection.title | default: 'Wholesale Catalog'
+    assign sub_text = section.settings.subheading_default | default: collection.description | default: 'Explore our complete range of niche perfumes, premium leather accessories, and B2B tester sets.'
   endif
 
   assign filter_btn = section.settings.filter_button_text | default: 'Filters'

@@ -1,9 +1,4 @@
 {%- liquid
-  assign is_wholesale = false
-  if customer and customer.tags contains 'wholesale'
-    assign is_wholesale = true
-  endif
-
   assign search_label       = section.settings.search_label       | default: 'Search'
   assign search_placeholder = section.settings.search_placeholder | default: 'SKU or product name'
   assign category_label     = section.settings.category_label     | default: 'Categories'
@@ -23,7 +18,6 @@
   assign type_array = type_list | split: '|'
 -%}
 
-{%- if is_wholesale -%}
 <style>
   /* ── Sidebar layout integration ──────────────────────
      Floats next to the product grid via :has() when on desktop.
@@ -292,7 +286,6 @@
   }
 })();
 </script>
-{%- endif -%}
 
 {% schema %}
 {

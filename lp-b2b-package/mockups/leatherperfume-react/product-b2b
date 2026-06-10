@@ -1,0 +1,432 @@
+import React, { useState, useEffect } from 'react';
+import { 
+  ArrowRight, User, ShoppingBag, Phone, Accessibility, X, Type, Contrast, 
+  Link as LinkIcon, Menu, ChevronDown, CheckCircle2,
+  MapPin, Sparkles, Globe, ChevronUp, Package, FileText, 
+  LayoutDashboard, Settings, Download, Repeat, Truck, Clock, Search,
+  Plus, LogOut, Mail, ChevronRight, Lock, Image as ImageIcon, ShoppingCart, Minus, Star
+} from 'lucide-react';
+
+// --- MOCK PRODUCT DATA ---
+const mockProduct = {
+  id: 'PF-001',
+  sku: 'PF-001-50ML',
+  title: 'Amber Royale EDP',
+  category: 'Perfume',
+  description: 'A deep oriental woody fragrance with notes of amber, oud, and Madagascar vanilla. Designed for maximum longevity and projection. A proven bestseller in concept stores and high-end boutiques across Europe.',
+  size: '50ml',
+  rrp: 2500,
+  wsp: 1250,
+  stock: 'In Stock',
+  stockQty: 450,
+  badge: 'Bestseller',
+  features: [
+    'High concentration (25% Parfum)',
+    'Ingredients sourced from Grasse, France',
+    'Retail-ready luxury packaging',
+    'Includes 1 complimentary 2ml tester per 5 units'
+  ]
+};
+
+export default function App() {
+  // --- STATE MANAGEMENT ---
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeMegaMenu, setActiveMegaMenu] = useState(null);
+  const [langMenuOpen, setLangMenuOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [currentLang, setCurrentLang] = useState('EN');
+  
+  // Navigation State - Set to 'product' directly for this preview
+  const [currentPage, setCurrentPage] = useState('product'); 
+  
+  // Product State
+  const [quantity, setQuantity] = useState(5); // Default B2B quantity suggestion
+  const [isAdding, setIsAdding] = useState(false);
+
+  // Language Flag Mapping
+  const langFlags = {
+    'EN': '🇬🇧',
+    'CS': '🇨🇿',
+    'VI': '🇻🇳'
+  };
+
+  // Scroll to Top State
+  const [showScroll, setShowScroll] = useState(false);
+
+  useEffect(() => {
+    const checkScrollTop = () => {
+      setShowScroll(window.scrollY > 500);
+    };
+    window.addEventListener('scroll', checkScrollTop);
+    return () => window.removeEventListener('scroll', checkScrollTop);
+  }, []);
+
+  // Accessibility State
+  const [a11yOpen, setA11yOpen] = useState(false);
+  const [textSize, setTextSize] = useState('standard'); 
+  const [highContrast, setHighContrast] = useState(false);
+  const [highlightLinks, setHighlightLinks] = useState(false);
+
+  // --- DYNAMIC ACCESSIBILITY CLASSES ---
+  const getBodyTextSize = () => {
+    switch(textSize) {
+      case 'small': return 'text-sm';
+      case 'large': return 'text-lg md:text-xl';
+      default: return 'text-base';
+    }
+  };
+
+  const getHeadingSize = (baseClass, largeClass) => {
+    return textSize === 'large' ? largeClass : baseClass;
+  };
+
+  const appClasses = `min-h-screen font-sans transition-all duration-300 ease-in-out flex flex-col ${highContrast ? 'bg-white text-black' : 'bg-[#FAFAF9] text-stone-900'}`;
+  const linkClasses = highlightLinks ? 'underline decoration-2 underline-offset-4 font-bold' : '';
+  const btnClasses = highContrast 
+    ? 'bg-black text-white hover:bg-stone-800 border-2 border-black disabled:opacity-50' 
+    : 'bg-stone-900 text-white hover:bg-amber-700 shadow-md transition-colors duration-300 disabled:opacity-50 disabled:bg-stone-300 disabled:shadow-none';
+  
+  // Margin Calculation
+  const marginPercent = Math.round(((mockProduct.rrp - mockProduct.wsp) / mockProduct.wsp) * 100);
+
+  const handleAddToCart = () => {
+    setIsAdding(true);
+    setTimeout(() => {
+      setIsAdding(false);
+      alert(`Successfully added ${quantity} units of ${mockProduct.title} to your wholesale order.`);
+    }, 800);
+  };
+
+  return (
+    <div className={appClasses}>
+      
+      {/* --- ACCESSIBILITY PANEL --- */}
+      <div className={`fixed inset-y-0 right-0 w-80 md:w-96 bg-stone-900 text-white z-[100] transform transition-transform duration-300 shadow-2xl ${a11yOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+        <div className="p-6 flex items-center justify-between border-b border-stone-800">
+          <h2 className="text-xl font-bold flex items-center gap-2"><Accessibility className="w-6 h-6 text-amber-500" /> Accessibility</h2>
+          <button onClick={() => setA11yOpen(false)} className="p-2 hover:bg-stone-800 rounded-md transition-colors"><X className="w-6 h-6" /></button>
+        </div>
+        <div className="p-6 space-y-8">
+          <div>
+            <h3 className="font-bold text-sm uppercase tracking-widest text-stone-300 mb-4 flex items-center gap-3"><Type className="w-5 h-5"/> Text Size</h3>
+            <div className="flex flex-col gap-2 bg-stone-800 rounded-xl p-2 font-bold">
+              <button onClick={() => setTextSize('small')} className={`w-full py-3 rounded-lg transition-colors ${textSize === 'small' ? 'bg-amber-600 text-white' : 'text-stone-400 hover:text-white'}`}>Small</button>
+              <button onClick={() => setTextSize('standard')} className={`w-full py-3 rounded-lg transition-colors ${textSize === 'standard' ? 'bg-amber-600 text-white' : 'text-stone-400 hover:text-white'}`}>Standard</button>
+              <button onClick={() => setTextSize('large')} className={`w-full py-3 rounded-lg transition-colors ${textSize === 'large' ? 'bg-amber-600 text-white' : 'text-stone-400 hover:text-white'}`}>Large</button>
+            </div>
+          </div>
+          <div>
+            <h3 className="font-bold text-sm uppercase tracking-widest text-stone-300 mb-4 flex items-center gap-3"><Contrast className="w-5 h-5"/> Contrast</h3>
+            <label className="flex items-center justify-between cursor-pointer bg-stone-800 p-5 rounded-xl font-bold hover:bg-stone-700 transition-colors">
+              <span>High Contrast (B/W)</span>
+              <div className={`w-14 h-8 rounded-full relative transition-colors ${highContrast ? 'bg-amber-500' : 'bg-stone-600'}`}>
+                <div className={`absolute top-1 left-1 w-6 h-6 rounded-full bg-white transition-transform ${highContrast ? 'translate-x-6' : ''}`}></div>
+              </div>
+              <input type="checkbox" className="hidden" checked={highContrast} onChange={() => setHighContrast(!highContrast)}/>
+            </label>
+          </div>
+          <div>
+            <h3 className="font-bold text-sm uppercase tracking-widest text-stone-300 mb-4 flex items-center gap-3"><LinkIcon className="w-5 h-5"/> Navigation</h3>
+            <label className="flex items-center justify-between cursor-pointer bg-stone-800 p-5 rounded-xl font-bold hover:bg-stone-700 transition-colors">
+              <span>Highlight Links</span>
+              <div className={`w-14 h-8 rounded-full relative transition-colors ${highlightLinks ? 'bg-amber-500' : 'bg-stone-600'}`}>
+                <div className={`absolute top-1 left-1 w-6 h-6 rounded-full bg-white transition-transform ${highlightLinks ? 'translate-x-6' : ''}`}></div>
+              </div>
+              <input type="checkbox" className="hidden" checked={highlightLinks} onChange={() => setHighlightLinks(!highlightLinks)}/>
+            </label>
+          </div>
+        </div>
+      </div>
+      {a11yOpen && <div className="fixed inset-0 bg-black/60 z-[90] backdrop-blur-sm transition-opacity" onClick={() => setA11yOpen(false)}></div>}
+
+      {/* --- TOP B2B NOTIFICATION (LOGGED IN) --- */}
+      <div className={`py-2.5 px-6 flex justify-between items-center text-xs font-bold uppercase tracking-widest ${highContrast ? 'bg-black text-white border-b-2 border-white' : 'bg-amber-900 text-amber-50'}`}>
+        <span>Partner: Luxury Retail s.r.o.</span>
+        <span className="hidden sm:inline">Discount Tier: Gold (15%)</span>
+      </div>
+
+      {/* --- HEADER --- */}
+      <header className={`sticky top-0 z-50 transition-colors ${highContrast ? 'bg-white border-black border-b-4' : 'bg-white border-b border-stone-200 shadow-sm'}`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-20 sm:h-24 flex items-center justify-between">
+          <div className="flex items-center gap-4 lg:gap-12">
+            <button className="lg:hidden p-2" onClick={() => setMobileMenuOpen(true)}><Menu className="w-8 h-8" /></button>
+            <h1 className="font-serif text-2xl sm:text-3xl font-bold cursor-pointer">Leather Parfum</h1>
+            
+            <nav className="hidden lg:flex items-center gap-8 font-bold h-24 text-sm uppercase tracking-wider">
+              <div className="relative h-full flex items-center cursor-pointer group" onMouseEnter={() => setActiveMegaMenu('catalog')} onMouseLeave={() => setActiveMegaMenu(null)}>
+                <button className={`flex items-center gap-1 text-amber-700 transition-colors border-b-2 ${highContrast ? 'border-black' : 'border-amber-700'} pb-1 ${linkClasses}`}>
+                  Order Portal <ChevronDown className="w-5 h-5"/>
+                </button>
+                {activeMegaMenu === 'catalog' && (
+                  <div className={`absolute top-24 left-0 w-[700px] rounded-b-2xl p-10 grid grid-cols-2 gap-12 shadow-2xl cursor-default ${highContrast ? 'bg-white border-4 border-t-0 border-black' : 'bg-white border border-t-0 border-stone-200'}`}>
+                    <div>
+                      <h3 className="font-bold text-sm uppercase tracking-widest mb-6 pb-3 border-b border-stone-200 text-stone-900">Perfumes</h3>
+                      <ul className="space-y-4 text-base normal-case tracking-normal font-medium text-stone-600">
+                        <li><a href="#" className={`hover:text-amber-700 ${linkClasses}`}>All Fragrances</a></li>
+                        <li><a href="#" className={`hover:text-amber-700 ${linkClasses}`}>Women's Collection</a></li>
+                        <li><a href="#" className={`hover:text-amber-700 ${linkClasses}`}>Men's Collection</a></li>
+                      </ul>
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-sm uppercase tracking-widest mb-6 pb-3 border-b border-stone-200 text-stone-900">Leather Goods</h3>
+                      <ul className="space-y-4 text-base normal-case tracking-normal font-medium text-stone-600">
+                        <li><a href="#" className={`hover:text-amber-700 ${linkClasses}`}>All Leather Goods</a></li>
+                        <li><a href="#" className={`hover:text-amber-700 ${linkClasses}`}>Premium Belts</a></li>
+                      </ul>
+                    </div>
+                  </div>
+                )}
+              </div>
+              <a href="#" className={`hover:text-amber-700 transition-colors ${linkClasses}`}>Quick Reorder</a>
+              <a href="#" className={`hover:text-amber-700 transition-colors ${linkClasses}`}>My Account</a>
+            </nav>
+          </div>
+
+          <div className="flex items-center gap-4 sm:gap-6">
+            <div className="relative hidden md:block" onMouseEnter={() => setLangMenuOpen(true)} onMouseLeave={() => setLangMenuOpen(false)}>
+              <button className={`flex items-center gap-1.5 font-bold text-sm uppercase tracking-wider p-2 hover:text-amber-700 transition-colors ${linkClasses}`}>
+                <span className="text-lg leading-none">{langFlags[currentLang]}</span> {currentLang} <ChevronDown className="w-4 h-4"/>
+              </button>
+            </div>
+            <button onClick={() => setA11yOpen(true)} className={`p-2 sm:px-4 sm:py-2 rounded-xl flex items-center gap-2 font-bold ${highContrast ? 'border-2 border-black hover:bg-gray-100' : 'bg-stone-100 hover:bg-stone-200 transition-colors'}`}>
+              <Accessibility className="w-6 h-6 sm:w-5 sm:h-5" />
+            </button>
+            <div className={`w-px h-8 hidden md:block ${highContrast ? 'bg-black' : 'bg-stone-300'}`}></div>
+            
+            <div className="relative" onMouseEnter={() => setUserMenuOpen(true)} onMouseLeave={() => setUserMenuOpen(false)}>
+              <button className={`hidden sm:flex items-center gap-2 font-bold hover:text-amber-700 transition-colors text-sm uppercase tracking-wider ${linkClasses}`}>
+                <User className="w-5 h-5" /> <span className="hidden xl:inline">Account</span> <ChevronDown className="w-4 h-4"/>
+              </button>
+              {userMenuOpen && (
+                <div className={`absolute top-full right-0 mt-2 w-48 rounded-xl shadow-lg overflow-hidden ${highContrast ? 'bg-white border-4 border-black' : 'bg-white border border-stone-200'}`}>
+                  <button className="w-full text-left px-4 py-3 text-sm font-bold hover:bg-stone-100 transition-colors flex items-center gap-2"><LayoutDashboard className="w-4 h-4"/> Dashboard</button>
+                  <button className="w-full text-left px-4 py-3 text-sm font-bold hover:bg-stone-100 transition-colors flex items-center gap-2 text-red-600"><LogOut className="w-4 h-4"/> Sign Out</button>
+                </div>
+              )}
+            </div>
+
+            <button className={`relative p-2 font-bold hover:text-amber-700 transition-colors ${linkClasses}`}>
+              <ShoppingBag className="w-7 h-7 sm:w-6 sm:h-6" />
+              <span className={`absolute -top-1 -right-1 w-5 h-5 flex items-center justify-center text-xs font-bold rounded-full ${highContrast ? 'bg-black text-white' : 'bg-amber-600 text-white'}`}>
+                3
+              </span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* --- PRODUCT DETAIL PAGE MAIN CONTENT --- */}
+      <main className="flex-grow w-full bg-stone-50">
+        
+        {/* Breadcrumbs */}
+        <div className={`py-4 px-4 sm:px-6 border-b ${highContrast ? 'border-black bg-white' : 'border-stone-200 bg-white'}`}>
+          <div className="max-w-7xl mx-auto flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-stone-400">
+            <a href="#" className={`hover:text-amber-700 transition-colors ${highContrast ? 'text-black underline' : ''}`}>Catalog</a>
+            <ChevronRight className="w-3 h-3" />
+            <a href="#" className={`hover:text-amber-700 transition-colors ${highContrast ? 'text-black underline' : ''}`}>{mockProduct.category}</a>
+            <ChevronRight className="w-3 h-3" />
+            <span className={highContrast ? 'text-black' : 'text-stone-900'}>{mockProduct.title}</span>
+          </div>
+        </div>
+
+        <section className="px-4 sm:px-6 py-8 md:py-12 max-w-7xl mx-auto">
+          <div className="flex flex-col lg:flex-row gap-12 lg:gap-16">
+            
+            {/* LEFT COLUMN: Image Gallery */}
+            <div className="w-full lg:w-1/2">
+              {/* Main Image */}
+              <div className={`relative aspect-[4/5] rounded-3xl flex items-center justify-center overflow-hidden mb-6 ${highContrast ? 'border-4 border-black bg-white' : 'bg-white border border-stone-200 shadow-sm'}`}>
+                <ImageIcon className={`w-32 h-32 ${highContrast ? 'text-black' : 'text-stone-300'}`} strokeWidth={1} />
+                {mockProduct.badge && (
+                  <div className={`absolute top-6 left-6 px-4 py-2 text-xs font-bold uppercase tracking-widest rounded-lg ${highContrast ? 'bg-black text-white border-2 border-black' : 'bg-stone-900 text-white'}`}>
+                    <Star className="w-3 h-3 inline mr-1.5 -mt-0.5 fill-current"/> {mockProduct.badge}
+                  </div>
+                )}
+              </div>
+              
+              {/* Thumbnails */}
+              <div className="grid grid-cols-4 gap-4">
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className={`aspect-square rounded-xl flex items-center justify-center cursor-pointer transition-colors ${i === 1 ? (highContrast ? 'border-4 border-black' : 'border-2 border-amber-600') : (highContrast ? 'border-2 border-black opacity-50' : 'border border-stone-200 bg-white hover:border-amber-600 opacity-60 hover:opacity-100')}`}>
+                    <ImageIcon className="w-8 h-8 text-stone-400" />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* RIGHT COLUMN: Product Info & B2B Purchasing */}
+            <div className="w-full lg:w-1/2 flex flex-col">
+              
+              {/* Basic Info */}
+              <div className="mb-8">
+                <div className="flex items-center justify-between mb-4">
+                  <span className={`text-sm font-bold uppercase tracking-widest ${highContrast ? 'text-black' : 'text-amber-700'}`}>
+                    {mockProduct.category}
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                    <span className={`text-sm font-bold ${highContrast ? 'text-black' : 'text-stone-600'}`}>{mockProduct.stock} ({mockProduct.stockQty} units)</span>
+                  </div>
+                </div>
+                
+                <h1 className={`font-serif ${getHeadingSize('text-4xl', 'text-5xl')} font-bold mb-2`}>{mockProduct.title}</h1>
+                <p className="text-sm font-mono font-bold text-stone-500 mb-6">SKU: {mockProduct.sku}</p>
+                
+                <p className={`${getBodyTextSize()} leading-relaxed ${highContrast ? 'font-medium text-black' : 'text-stone-600'}`}>
+                  {mockProduct.description}
+                </p>
+              </div>
+
+              {/* B2B Pricing Box (Crucial for Wholesale) */}
+              <div className={`p-6 md:p-8 rounded-3xl mb-8 ${highContrast ? 'border-4 border-black bg-white' : 'bg-white border border-stone-200 shadow-lg'}`}>
+                <h3 className={`text-xs font-bold uppercase tracking-widest border-b pb-4 mb-6 ${highContrast ? 'border-black text-black' : 'border-stone-100 text-stone-500'}`}>
+                  Wholesale Pricing
+                </h3>
+                
+                <div className="flex justify-between items-end mb-4">
+                  <p className={`font-bold ${getBodyTextSize()} ${highContrast ? 'text-black' : 'text-stone-500'}`}>Retail Price (RRP)</p>
+                  <p className={`font-bold text-lg line-through ${highContrast ? 'text-black' : 'text-stone-400'}`}>{mockProduct.rrp.toLocaleString()} CZK</p>
+                </div>
+                
+                <div className="flex justify-between items-end mb-6">
+                  <div>
+                    <p className={`font-bold ${getBodyTextSize()} ${highContrast ? 'text-black' : 'text-amber-800'}`}>Your Price (WSP)</p>
+                    <p className="text-xs font-medium text-stone-500 mt-1">Excl. VAT</p>
+                  </div>
+                  <div className="text-right">
+                    <p className={`font-serif ${getHeadingSize('text-4xl', 'text-5xl')} font-bold leading-none ${highContrast ? 'text-black' : 'text-stone-900'}`}>
+                      {mockProduct.wsp.toLocaleString()} <span className="text-2xl font-sans font-bold">CZK</span>
+                    </p>
+                  </div>
+                </div>
+
+                <div className={`p-4 rounded-xl flex justify-between items-center ${highContrast ? 'border-2 border-black bg-white' : 'bg-green-50 border border-green-100'}`}>
+                  <span className={`font-bold text-sm ${highContrast ? 'text-black' : 'text-green-800'}`}>Your Retail Margin</span>
+                  <span className={`font-bold text-lg ${highContrast ? 'text-black' : 'text-green-700'}`}>+{marginPercent}%</span>
+                </div>
+              </div>
+
+              {/* Add to Order Action Box */}
+              <div className="mb-10">
+                <div className="flex flex-col sm:flex-row gap-4">
+                  
+                  {/* Quantity Picker */}
+                  <div className={`flex items-center justify-between p-2 rounded-xl sm:w-1/3 ${highContrast ? 'border-4 border-black bg-white' : 'bg-white border border-stone-200 shadow-sm'}`}>
+                    <button 
+                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                      className={`w-12 h-12 flex items-center justify-center rounded-lg transition-colors ${highContrast ? 'hover:bg-black hover:text-white' : 'hover:bg-stone-100 text-stone-600'}`}
+                      aria-label="Decrease quantity"
+                    >
+                      <Minus className="w-5 h-5" />
+                    </button>
+                    <input 
+                      type="number" 
+                      value={quantity}
+                      onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                      className="w-16 text-center font-bold text-xl bg-transparent border-none focus:ring-0 p-0"
+                      min="1"
+                    />
+                    <button 
+                      onClick={() => setQuantity(quantity + 1)}
+                      className={`w-12 h-12 flex items-center justify-center rounded-lg transition-colors ${highContrast ? 'hover:bg-black hover:text-white' : 'hover:bg-stone-100 text-stone-600'}`}
+                      aria-label="Increase quantity"
+                    >
+                      <Plus className="w-5 h-5" />
+                    </button>
+                  </div>
+
+                  {/* Add Button */}
+                  <button 
+                    onClick={handleAddToCart}
+                    disabled={isAdding}
+                    className={`sm:w-2/3 py-5 rounded-xl font-bold flex items-center justify-center gap-3 transition-all ${getHeadingSize('text-lg', 'text-xl')} ${btnClasses}`}
+                  >
+                    {isAdding ? (
+                      <div className="flex items-center gap-3">
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        Adding...
+                      </div>
+                    ) : (
+                      <>Add to Order <ShoppingCart className="w-6 h-6" /></>
+                    )}
+                  </button>
+                </div>
+                <p className="text-sm font-medium text-stone-500 mt-4 text-center sm:text-left">
+                  Subtotal for {quantity} units: <strong>{(mockProduct.wsp * quantity).toLocaleString()} CZK</strong>
+                </p>
+              </div>
+
+              {/* Product Features List */}
+              <div className="pt-8 border-t border-stone-200">
+                <h4 className="font-bold text-sm uppercase tracking-widest text-stone-500 mb-6">Product Details</h4>
+                <ul className="space-y-4">
+                  {mockProduct.features.map((feature, idx) => (
+                    <li key={idx} className={`flex items-start gap-3 ${getBodyTextSize()} ${highContrast ? 'font-bold text-black' : 'font-medium text-stone-700'}`}>
+                      <CheckCircle2 className={`w-6 h-6 shrink-0 mt-0.5 ${highContrast ? 'text-black' : 'text-amber-700'}`} />
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+      </main>
+
+      {/* --- SCROLL TO TOP BUTTON --- */}
+      {showScroll && (
+        <button 
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          className={`fixed bottom-8 right-8 z-[80] p-4 rounded-full shadow-2xl transition-all hover:-translate-y-1 focus:outline-none ${highContrast ? 'bg-black text-white border-2 border-white' : 'bg-stone-900 text-white hover:bg-amber-700'}`}
+          aria-label="Scroll to top"
+        >
+          <ChevronUp className="w-6 h-6" />
+        </button>
+      )}
+
+      {/* --- FOOTER --- */}
+      <footer className={`${highContrast ? 'bg-white border-t-4 border-black text-black' : 'bg-stone-900 text-stone-300'} py-16 md:py-24 mt-auto`}>
+        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 mb-16">
+          <div className="lg:col-span-1">
+            <h4 className="font-serif text-3xl font-bold mb-6 text-white">Leather Parfum</h4>
+            <p className={`${getBodyTextSize()} font-medium opacity-80 mb-8`}>
+              Your premium wholesale partner. Exclusive terms for retail businesses.
+            </p>
+          </div>
+          <div>
+            <h4 className="text-sm font-bold mb-8 uppercase tracking-widest text-stone-500">Navigation</h4>
+            <ul className={`space-y-5 font-bold ${getBodyTextSize()}`}>
+              <li><a href="#" className={`text-amber-500 transition-colors ${linkClasses}`}>Order Portal</a></li>
+              <li><a href="#" className={`hover:text-amber-500 transition-colors ${linkClasses}`}>Quick Reorder</a></li>
+              <li><a href="#" className={`hover:text-amber-500 transition-colors ${linkClasses}`}>Invoices & Documents</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="text-sm font-bold mb-8 uppercase tracking-widest text-stone-500">Contact Manager</h4>
+            <ul className={`space-y-5 font-bold ${getBodyTextSize()}`}>
+              <li className="flex items-center gap-3"><User className="w-5 h-5 opacity-50"/> Anna Dvořáková</li>
+              <li className="flex items-center gap-3"><Phone className="w-5 h-5 opacity-50"/> +420 123 456 789</li>
+              <li className="flex items-center gap-3">anna@leatherparfum.com</li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="text-sm font-bold mb-8 uppercase tracking-widest text-stone-500">Legal</h4>
+            <ul className={`space-y-5 font-bold ${getBodyTextSize()}`}>
+              <li><a href="#" className={`hover:text-amber-500 transition-colors ${linkClasses}`}>B2B Terms of Service</a></li>
+              <li><a href="#" className={`hover:text-amber-500 transition-colors ${linkClasses}`}>Returns & Claims</a></li>
+            </ul>
+          </div>
+        </div>
+        <div className={`max-w-7xl mx-auto px-6 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm font-bold uppercase tracking-wider ${highContrast ? 'border-t-2 border-black' : 'border-t border-stone-800'}`}>
+          <p className="opacity-60">&copy; 2026 Leather Parfum Wholesale. All rights reserved.</p>
+          <div className="flex gap-6 opacity-60">
+            <span>Made in Europe</span>
+          </div>
+        </div>
+      </footer>
+
+    </div>
+  );
+}

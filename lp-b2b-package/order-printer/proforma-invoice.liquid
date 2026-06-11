@@ -1,0 +1,163 @@
+{%- comment -%}
+  ════════════════════════════════════════════════════════════════
+  PROFORMA INVOICE — Order Printer template (Leather Parfum B2B)
+  ────────────────────────────────────────────────────────────────
+  HOW TO INSTALL
+  1. Shopify Admin → Apps → Order Printer → Templates → "Add template"
+  2. Name it "Proforma Invoice", paste this whole file, Save.
+  3. To print: Admin → Orders → open an order → "More actions" →
+     "Print with Order Printer" → choose "Proforma Invoice".
+
+  NOTES
+  • Totals come straight from the order (Shopify-computed), so the
+    invoice always matches the real order regardless of the store's
+    tax configuration. See CLIENT-QUESTIONS.md (tax setup).
+  • PO number / notes are read from the order Note and note attributes
+    (the cart writes "PO Number: … / Notes: …" on submit).
+  • Replace the SELLER DETAILS placeholders below with real values.
+  ════════════════════════════════════════════════════════════════
+{%- endcomment -%}
+
+<style>
+  .pf { font-family: Arial, Helvetica, sans-serif; color: #1c1917; font-size: 12px; line-height: 1.5; }
+  .pf h1 { font-size: 26px; margin: 0 0 4px; letter-spacing: 0.02em; }
+  .pf .muted { color: #78716c; }
+  .pf .row { display: flex; justify-content: space-between; gap: 24px; }
+  .pf .box { width: 48%; }
+  .pf table { width: 100%; border-collapse: collapse; margin-top: 18px; }
+  .pf th { text-align: left; border-bottom: 2px solid #1c1917; padding: 6px 4px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .pf td { padding: 8px 4px; border-bottom: 1px solid #e7e5e4; vertical-align: top; }
+  .pf .num { text-align: right; white-space: nowrap; }
+  .pf .totals { width: 280px; margin-left: auto; margin-top: 14px; }
+  .pf .totals td { border: none; padding: 4px; }
+  .pf .totals .grand { border-top: 2px solid #1c1917; font-size: 15px; font-weight: bold; }
+  .pf .pay { margin-top: 26px; padding: 14px 16px; border: 1px solid #e7e5e4; background: #faf9f7; }
+  .pf .pay strong { display: inline-block; min-width: 130px; }
+  .pf .foot { margin-top: 28px; font-size: 11px; color: #78716c; }
+  .pf hr { border: none; border-top: 1px solid #e7e5e4; margin: 18px 0; }
+</style>
+
+<div class="pf">
+
+  {%- comment -%} ── Header ── {%- endcomment -%}
+  <div class="row">
+    <div class="box">
+      <h1>PROFORMA INVOICE</h1>
+      <div class="muted">Proforma / Zálohová faktura</div>
+    </div>
+    <div class="box" style="text-align:right;">
+      <div><strong>No.:</strong> PF-{{ order.name | remove: '#' }}</div>
+      <div><strong>Date:</strong> {{ order.created_at | date: "%d.%m.%Y" }}</div>
+      {%- assign po = order.note_attributes.po_number -%}
+      {%- if po != blank -%}<div><strong>PO:</strong> {{ po }}</div>{%- endif -%}
+    </div>
+  </div>
+
+  <hr>
+
+  {%- comment -%} ── Seller / Buyer ── {%- endcomment -%}
+  <div class="row">
+    <div class="box">
+      <div class="muted">Supplier / Dodavatel</div>
+      {%- comment -%}── SELLER DETAILS — replace placeholders ──{%- endcomment -%}
+      <strong>Leather Parfum s.r.o.</strong><br>
+      Václavské náměstí 1<br>
+      110 00 Praha, Czech Republic<br>
+      IČO: ________________<br>
+      DIČ: CZ________________<br>
+      Bank: ________________<br>
+      IBAN: ________________<br>
+      SWIFT/BIC: ________________
+    </div>
+    <div class="box">
+      <div class="muted">Bill to / Odběratel</div>
+      <strong>{{ order.billing_address.company | default: order.customer.name }}</strong><br>
+      {%- if order.billing_address -%}
+        {{ order.billing_address.name }}<br>
+        {{ order.billing_address.address1 }}<br>
+        {%- if order.billing_address.address2 != blank %}{{ order.billing_address.address2 }}<br>{%- endif -%}
+        {{ order.billing_address.zip }} {{ order.billing_address.city }}<br>
+        {{ order.billing_address.country }}<br>
+      {%- endif -%}
+      {{ order.email }}
+      {%- assign vat = order.note_attributes.vat_number -%}
+      {%- if vat != blank %}<br>VAT/DIČ: {{ vat }}{%- endif -%}
+    </div>
+  </div>
+
+  {%- comment -%} ── Line items ── {%- endcomment -%}
+  <table>
+    <thead>
+      <tr>
+        <th>SKU</th>
+        <th>Item</th>
+        <th class="num">Qty</th>
+        <th class="num">Unit price</th>
+        <th class="num">Line total</th>
+      </tr>
+    </thead>
+    <tbody>
+      {%- for line in order.line_items -%}
+        <tr>
+          <td>{{ line.sku }}</td>
+          <td>{{ line.title }}</td>
+          <td class="num">{{ line.quantity }}</td>
+          <td class="num">{{ line.price | money }}</td>
+          <td class="num">{{ line.line_price | money }}</td>
+        </tr>
+      {%- endfor -%}
+    </tbody>
+  </table>
+
+  {%- comment -%} ── Totals (Shopify-computed, matches the order) ── {%- endcomment -%}
+  <table class="totals">
+    <tr>
+      <td>Subtotal</td>
+      <td class="num">{{ order.line_items_subtotal_price | money }}</td>
+    </tr>
+    {%- if order.total_discounts > 0 -%}
+      <tr>
+        <td>Discount</td>
+        <td class="num">- {{ order.total_discounts | money }}</td>
+      </tr>
+    {%- endif -%}
+    {%- for tax_line in order.tax_lines -%}
+      <tr>
+        <td>{{ tax_line.title }} ({{ tax_line.rate | times: 100 }}%)</td>
+        <td class="num">{{ tax_line.price | money }}</td>
+      </tr>
+    {%- endfor -%}
+    {%- if order.shipping_price > 0 -%}
+      <tr>
+        <td>Shipping</td>
+        <td class="num">{{ order.shipping_price | money }}</td>
+      </tr>
+    {%- endif -%}
+    <tr class="grand">
+      <td>Total due</td>
+      <td class="num">{{ order.total_price | money }}</td>
+    </tr>
+  </table>
+
+  {%- comment -%} ── Payment instructions ── {%- endcomment -%}
+  <div class="pay">
+    <div><strong>Payment method:</strong> Bank transfer (proforma)</div>
+    <div><strong>Variable symbol:</strong> {{ order.name | remove: '#' }}</div>
+    <div><strong>Due date:</strong> {{ order.created_at | date: "%d.%m.%Y" | default: '' }} + 14 days</div>
+    <div style="margin-top:6px;" class="muted">
+      Goods are dispatched after payment is received. This is a proforma
+      invoice and is not a tax document. A final tax invoice (daňový
+      doklad) will be issued upon payment.
+    </div>
+  </div>
+
+  {%- comment -%} ── Customer note / special instructions ── {%- endcomment -%}
+  {%- if order.note != blank -%}
+    <div class="foot"><strong>Order notes:</strong> {{ order.note }}</div>
+  {%- endif -%}
+
+  <div class="foot">
+    Leather Parfum s.r.o. · b2b@leatherparfum.com · Generated {{ "now" | date: "%d.%m.%Y" }}
+  </div>
+
+</div>

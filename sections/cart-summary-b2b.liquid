@@ -11,7 +11,7 @@
   assign has_discount = false
   if customer and customer.tags contains 'wholesale'
     assign discount_tier = customer.metafields.custom.discount_tier.value | default: 'standard'
-    assign discount_pct  = customer.metafields.custom.discount_percentage.value | default: 0
+    assign discount_pct  = customer.metafields.custom.discount_percent.value | default: customer.metafields.custom.discount_percentage.value | default: 0
     if discount_pct > 0 and discount_tier != 'standard'
       assign has_discount = true
     endif

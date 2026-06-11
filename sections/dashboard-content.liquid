@@ -4,7 +4,7 @@
   assign mgr_phone = section.settings.manager_phone | default: ''
 
   assign tier       = customer.metafields.custom.discount_tier.value        | default: '—'
-  assign disc_pct   = customer.metafields.custom.discount_percentage.value  | default: '0'
+  assign disc_pct   = customer.metafields.custom.discount_percent.value | default: customer.metafields.custom.discount_percentage.value  | default: '0'
   assign company_name = customer.metafields.custom.shop_name.value | default: customer.metafields.custom.company_name.value
 -%}
 

@@ -526,25 +526,30 @@
     updateMoq(initDisplay);
   })();
 
-  /* ── Submit → show success ────────────────────────── */
-  function redirectToThankYou() {
-    window.location.href = '/pages/thank-you';
+  /* ── Submit → save PO/notes onto the cart, then go to checkout ──
+     Shopify checkout collects the shipping address and, with a manual
+     "Pay by invoice" method enabled, creates a real pending order. PO
+     number and notes ride along as cart attributes / order note. */
+  function goToCheckout() {
+    window.location.href = '/checkout';
   }
 
   function handleSubmit() {
-    var poInput = document.querySelector('[data-cib-po]');
-    var poValue = poInput ? poInput.value.trim() : '';
-    if (poValue) {
-      fetch('/cart/update.js', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest'},
-        body: JSON.stringify({attributes: {po_number: poValue}})
-      })
-      .then(function () { redirectToThankYou(); })
-      .catch(function () { redirectToThankYou(); });
-    } else {
-      redirectToThankYou();
-    }
+    var poInput    = document.querySelector('[data-cib-po]');
+    var notesInput = document.querySelector('[data-cib-notes]');
+    var poValue    = poInput ? poInput.value.trim() : '';
+    var notesValue = notesInput ? notesInput.value.trim() : '';
+
+    var payload = { attributes: { po_number: poValue } };
+    if (notesValue) payload.note = notesValue;
+
+    fetch('/cart/update.js', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest'},
+      body: JSON.stringify(payload)
+    })
+    .then(function () { goToCheckout(); })
+    .catch(function () { goToCheckout(); });
   }
 
   wrap.addEventListener('click', function (e) {

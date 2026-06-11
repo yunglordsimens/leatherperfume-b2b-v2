@@ -540,8 +540,15 @@
     var poValue    = poInput ? poInput.value.trim() : '';
     var notesValue = notesInput ? notesInput.value.trim() : '';
 
+    /* Structured attribute (dashboard reads order.attributes.po_number)
+       + a human-readable order Note so PO and instructions are visible
+       at a glance on the order in admin. */
+    var noteParts = [];
+    if (poValue)    noteParts.push('PO Number: ' + poValue);
+    if (notesValue) noteParts.push('Notes: ' + notesValue);
+
     var payload = { attributes: { po_number: poValue } };
-    if (notesValue) payload.note = notesValue;
+    if (noteParts.length) payload.note = noteParts.join('\n');
 
     fetch('/cart/update.js', {
       method: 'POST',

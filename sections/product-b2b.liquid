@@ -745,7 +745,7 @@
 {%- comment -%}── Breadcrumb ──{%- endcomment -%}
 <nav class="pdp-bc" aria-label="{{ 'general.breadcrumbs.title' | t | default: 'Breadcrumb' }}">
   <div class="pdp-bc__inner">
-    <a href="{{ routes.root_url }}" class="pdp-bc__link">Home</a>
+    <a href="{{ routes.root_url }}" class="pdp-bc__link">{{ 'b2b.breadcrumb.home' | t }}</a>
 
     {%- if first_collection -%}
       <span class="pdp-bc__sep" aria-hidden="true">
@@ -838,12 +838,12 @@
             <span class="pdp-stock__dot {% if current_variant.available %}is-in{% else %}is-out{% endif %}"></span>
             <span class="pdp-stock__label">
               {%- if current_variant.available -%}
-                In Stock
+                {{ 'b2b.catalog.in_stock' | t }}
                 {%- if current_variant.inventory_management != blank and current_variant.inventory_quantity > 0 -%}
                   &nbsp;({{ current_variant.inventory_quantity }} units)
                 {%- endif -%}
               {%- else -%}
-                Out of Stock
+                {{ 'b2b.catalog.out_of_stock' | t }}
               {%- endif -%}
             </span>
           </div>

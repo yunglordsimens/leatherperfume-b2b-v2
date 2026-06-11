@@ -526,5 +526,40 @@
       "expanded": "Đã mở rộng biểu mẫu người nhận thẻ quà tặng",
       "collapsed": "Đã thu nhỏ biểu mẫu người nhận thẻ quà tặng"
     }
+  },
+  "b2b": {
+    "breadcrumb": {
+      "home": "Home",
+      "order_portal": "Order Portal"
+    },
+    "catalog": {
+      "rrp": "RRP",
+      "your_price": "Your Price",
+      "login_price": "Log in for B2B price",
+      "in_stock": "In Stock",
+      "low_stock": "Low Stock",
+      "out_of_stock": "Out of Stock",
+      "no_products": "This collection has no products yet.",
+      "adjust_filters": "Try adjusting your filters.",
+      "badge_bestseller": "Bestseller",
+      "badge_new": "New",
+      "badge_b2b_only": "B2B Only",
+      "margin": "{{ pct }}% Margin",
+      "showing": {
+        "one": "Showing {{ count }} item",
+        "other": "Showing {{ count }} items"
+      }
+    },
+    "product": {
+      "wholesale_pricing": "Wholesale Pricing",
+      "retail_margin": "Your Retail Margin"
+    },
+    "cart": {
+      "product": "Product",
+      "quantity": "Quantity",
+      "total_wsp": "Total (WSP)",
+      "subtotal": "Subtotal:",
+      "saved": "Saved"
+    }
   }
 }

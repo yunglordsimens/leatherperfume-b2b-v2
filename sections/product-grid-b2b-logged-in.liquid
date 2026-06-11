@@ -21,7 +21,7 @@
 -%}
 
 {%- comment -%}
-  Guests see the full grid with RRP and a "Log in for B2B price" lock
+  Guests see the full grid with RRP and a "{{ 'b2b.catalog.login_price' | t }}" lock
   button per card (per Catalog-react mockup); wholesale customers see
   WSP, margin and add-to-order controls.
 {%- endcomment -%}
@@ -593,8 +593,9 @@
 
   <!-- Meta bar -->
   <div class="pgbl__meta">
-    <p class="pgbl__count" id="PgblCount-{{ section.id }}">
-      Showing {{ collection.products_count }} item{% if collection.products_count != 1 %}s{% endif %}
+    <p class="pgbl__count" id="PgblCount-{{ section.id }}"
+       data-show-one="{{ 'b2b.catalog.showing.one' | t: count: '{{ count }}' }}" data-show-other="{{ 'b2b.catalog.showing.other' | t: count: '{{ count }}' }}">
+      {{ 'b2b.catalog.showing' | t: count: collection.products_count }}
     </p>
     <button
       class="pgbl__active-filter"
@@ -617,14 +618,14 @@
         if product.available
           assign inv_qty = product.variants.first.inventory_quantity | default: 99
           if inv_qty > 0 and inv_qty < 5
-            assign stock_label = 'Low Stock'
+            assign stock_label = 'b2b.catalog.low_stock' | t
             assign stock_mod   = 'amber'
           else
-            assign stock_label = 'In Stock'
+            assign stock_label = 'b2b.catalog.in_stock' | t
             assign stock_mod   = 'green'
           endif
         else
-          assign stock_label = 'Out of Stock'
+          assign stock_label = 'b2b.catalog.out_of_stock' | t
           assign stock_mod   = 'red'
         endif
 
@@ -700,11 +701,11 @@
             {%- if badge_meta != blank -%}
               <span class="pgbl__badge">{{ badge_meta }}</span>
             {%- elsif product.tags contains 'Bestseller' -%}
-              <span class="pgbl__badge">Bestseller</span>
+              <span class="pgbl__badge">{{ 'b2b.catalog.badge_bestseller' | t }}</span>
             {%- elsif product.tags contains 'New' -%}
-              <span class="pgbl__badge pgbl__badge--amber">New</span>
+              <span class="pgbl__badge pgbl__badge--amber">{{ 'b2b.catalog.badge_new' | t }}</span>
             {%- elsif product.tags contains 'B2B Only' -%}
-              <span class="pgbl__badge">B2B Only</span>
+              <span class="pgbl__badge">{{ 'b2b.catalog.badge_b2b_only' | t }}</span>
             {%- endif -%}
           </div>
         </a>
@@ -736,12 +737,12 @@
             <!-- Prices -->
             <div class="pgbl__prices">
               <div class="pgbl__price-row">
-                <p class="pgbl__price-label">RRP</p>
+                <p class="pgbl__price-label">{{ 'b2b.catalog.rrp' | t }}</p>
                 <p class="pgbl__rrp-val">{{ rrp_cents | money }}</p>
               </div>
               {%- if is_wholesale -%}
               <div class="pgbl__price-row">
-                <p class="pgbl__price-label pgbl__price-label--wsp">Your Price</p>
+                <p class="pgbl__price-label pgbl__price-label--wsp">{{ 'b2b.catalog.your_price' | t }}</p>
                 <div style="text-align:right;">
                   {%- if has_discount -%}
                     <span style="font-family:var(--font-body-family);font-size:0.8125rem;color:#a8a29e;text-decoration:line-through;display:block;line-height:1.3;">{{ wsp_cents | money }}</span>
@@ -753,7 +754,7 @@
               </div>
               {%- if margin > 0 -%}
                 <div class="pgbl__margin">
-                  <span class="pgbl__margin-badge">+{{ margin }}% Margin</span>
+                  <span class="pgbl__margin-badge">+{{ 'b2b.catalog.margin' | t: pct: margin }}</span>
                 </div>
               {%- endif -%}
               {%- endif -%}
@@ -766,7 +767,7 @@
                 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
                 </svg>
-                Log in for B2B price
+                {{ 'b2b.catalog.login_price' | t }}
               </span>
               <svg class="pgbl__lock-arrow" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
@@ -842,7 +843,7 @@
           </svg>
         </div>
         <h3 class="pgbl__empty-heading">{{ empty_heading }}</h3>
-        <p class="pgbl__empty-text">This collection has no products yet.</p>
+        <p class="pgbl__empty-text">{{ 'b2b.catalog.no_products' | t }}</p>
       </div>
     {%- endfor -%}
 
@@ -854,7 +855,7 @@
         </svg>
       </div>
       <h3 class="pgbl__empty-heading">{{ empty_heading }}</h3>
-      <p class="pgbl__empty-text" id="PgblEmptyMsg-{{ section.id }}">Try adjusting your filters.</p>
+      <p class="pgbl__empty-text" id="PgblEmptyMsg-{{ section.id }}" data-adjust="{{ 'b2b.catalog.adjust_filters' | t }}">{{ 'b2b.catalog.adjust_filters' | t }}</p>
       <button class="pgbl__empty-btn" id="PgblClearBtn-{{ section.id }}" type="button">
         {{ clear_label }}
       </button>
@@ -994,7 +995,7 @@
     });
 
     if (countEl) {
-      countEl.textContent = 'Showing ' + visible + ' item' + (visible !== 1 ? 's' : '');
+      countEl.textContent = (visible === 1 ? countEl.dataset.showOne : countEl.dataset.showOther).replace('{{ count }}', visible);
     }
 
     if (filterPill) {
@@ -1016,7 +1017,7 @@
         if (emptyMsg && f.search) {
           emptyMsg.textContent = 'No products matched “' + f.search + '”.';
         } else if (emptyMsg) {
-          emptyMsg.textContent = 'Try adjusting your filters.';
+          emptyMsg.textContent = emptyMsg.dataset.adjust || emptyMsg.textContent;
         }
       } else {
         emptyEl.classList.remove('is-visible');

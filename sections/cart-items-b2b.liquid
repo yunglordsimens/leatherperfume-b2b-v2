@@ -537,9 +537,9 @@
     <!-- Items card -->
     <div class="cib__card" id="CibItemsList">
       <div class="cib__thead">
-        <span class="cib__th">Product</span>
-        <span class="cib__th cib__th--center">Quantity</span>
-        <span class="cib__th cib__th--right">Total (WSP)</span>
+        <span class="cib__th">{{ 'b2b.cart.product' | t }}</span>
+        <span class="cib__th cib__th--center">{{ 'b2b.cart.quantity' | t }}</span>
+        <span class="cib__th cib__th--right">{{ 'b2b.cart.total_wsp' | t }}</span>
       </div>
 
       {%- for item in cart.items -%}
@@ -601,7 +601,7 @@
 
           <!-- Line total + remove -->
           <div class="cib__price-wrap">
-            <span class="cib__mobile-label">Subtotal:</span>
+            <span class="cib__mobile-label">{{ 'b2b.cart.subtotal' | t }}</span>
             <span class="cib__line-price" id="CibLineTotal-{{ item.key }}" data-cib-line-total>
               {{ item.line_price | money }}
             </span>
@@ -642,7 +642,7 @@
             value="{{ cart.attributes.po_number | escape }}"
             data-cib-po
           >
-          <span class="cib__saved" id="CibPoSaved" aria-live="polite">Saved</span>
+          <span class="cib__saved" id="CibPoSaved" aria-live="polite">{{ 'b2b.cart.saved' | t }}</span>
         </div>
         <p class="cib__hint">{{ section.settings.po_hint | default: 'This reference will appear on your invoice.' }}</p>
       </div>
@@ -663,7 +663,7 @@
             placeholder="{{ section.settings.notes_placeholder | default: 'Delivery instructions, requests, etc.' }}"
             data-cib-notes
           >{{ cart.attributes.order_notes | escape }}</textarea>
-          <span class="cib__saved" id="CibNotesSaved" aria-live="polite">Saved</span>
+          <span class="cib__saved" id="CibNotesSaved" aria-live="polite">{{ 'b2b.cart.saved' | t }}</span>
         </div>
       </div>
     </div>

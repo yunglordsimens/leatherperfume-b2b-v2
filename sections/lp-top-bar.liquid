@@ -197,7 +197,7 @@
         {%- endif -%}
         <span class="lp-top-bar__tier">{{ discount_tier | default: 'standard' | upcase | escape }}</span>
         {%- if discount_percentage != blank and discount_percentage != 0 -%}
-          <span class="lp-top-bar__discount">({{ discount_percentage | escape }}%)</span>
+          <span class="lp-top-bar__discount">(−{{ discount_percentage | escape }}%)</span>
         {%- endif -%}
       </div>
 

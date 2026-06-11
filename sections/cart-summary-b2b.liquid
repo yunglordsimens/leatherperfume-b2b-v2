@@ -392,7 +392,7 @@
       </div>
       {%- if has_discount -%}
         <div class="csb__line">
-          <span class="csb__line-label">Tier Discount ({{ discount_pct }}%)</span>
+          <span class="csb__line-label">Tier Discount (−{{ discount_pct }}%)</span>
           <span class="csb__line-value" style="color:#15803d;" id="CsbDiscount">-{{ cart.items_subtotal_price | minus: discounted_subtotal | money }}</span>
         </div>
       {%- endif -%}

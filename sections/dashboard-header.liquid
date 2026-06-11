@@ -153,7 +153,7 @@
 <div class="dh{{ section_mod }}" id="DashboardHeader-{{ section.id }}">
   <div class="dh__inner">
     <div class="dh__text">
-      <span class="dh__eyebrow">Partner Dashboard</span>
+      <span class="dh__eyebrow">{{ 'b2b.dashboard.eyebrow' | t }}</span>
       <h1 class="dh__heading">
         {%- if customer.first_name != blank -%}
           {{ section.settings.welcome_prefix | default: 'Welcome back,' }} {{ customer.first_name }}!
@@ -164,7 +164,7 @@
       {%- if section.settings.welcome_text != blank -%}
         <p class="dh__sub">{{ section.settings.welcome_text }}</p>
       {%- else -%}
-        <p class="dh__sub">Manage your orders, invoices and account settings.</p>
+        <p class="dh__sub">{{ 'b2b.dashboard.manage' | t }}</p>
       {%- endif -%}
     </div>
 

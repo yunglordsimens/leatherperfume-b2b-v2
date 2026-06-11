@@ -631,7 +631,7 @@
           {%- comment -%} Email {%- endcomment -%}
           <div class="wl__field">
             <div class="wl__label-row">
-              <label class="wl__label" for="CustomerEmail-{{ section.id }}">Email Address</label>
+              <label class="wl__label" for="CustomerEmail-{{ section.id }}">{{ 'b2b.login.email' | t }}</label>
             </div>
             <div class="wl__input-wrap">
               <span class="wl__input-icon" aria-hidden="true">
@@ -659,8 +659,8 @@
           {%- comment -%} Password {%- endcomment -%}
           <div class="wl__field">
             <div class="wl__label-row">
-              <label class="wl__label" for="CustomerPassword-{{ section.id }}">Password</label>
-              <a href="{{ routes.account_url }}#recover" class="wl__forgot">Forgot password?</a>
+              <label class="wl__label" for="CustomerPassword-{{ section.id }}">{{ 'b2b.login.password' | t }}</label>
+              <a href="{{ routes.account_url }}#recover" class="wl__forgot">{{ 'b2b.login.forgot' | t }}</a>
             </div>
             <div class="wl__input-wrap">
               <span class="wl__input-icon" aria-hidden="true">
@@ -706,7 +706,7 @@
               id="RememberMe-{{ section.id }}"
               value="true"
             >
-            <span class="wl__remember-label">Remember me for 30 days</span>
+            <span class="wl__remember-label">{{ 'b2b.login.remember' | t }}</span>
           </label>
 
         </div>
@@ -723,7 +723,7 @@
 
       <div class="wl__apply">
         <p class="wl__apply-text">
-          Don't have a wholesale account yet?&#32;<a href="/pages/wholesale-application" class="wl__apply-link">Apply for partnership</a>
+          Don't have a wholesale account yet?&#32;<a href="/pages/wholesale-application" class="wl__apply-link">{{ 'b2b.login.apply' | t }}</a>
         </p>
       </div>
 

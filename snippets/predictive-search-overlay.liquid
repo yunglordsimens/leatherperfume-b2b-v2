@@ -533,9 +533,9 @@
 
   {%- comment -%} ── Top bar ── {%- endcomment -%}
   <div class="pso__bar">
-    <span class="pso__bar-label">Predictive Search</span>
+    <span class="pso__bar-label">{{ 'b2b.search.title' | t }}</span>
     <button class="pso__close" id="PsoClose" type="button" aria-label="Close search">
-      <span class="pso__close-text">Close</span>
+      <span class="pso__close-text">{{ 'b2b.search.close' | t }}</span>
       <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
       </svg>
@@ -570,6 +570,11 @@
 (function () {
   if (window.lpPsoReady) return;
   window.lpPsoReady = true;
+  var PSO_I18N = {
+    popular: {{ 'b2b.search.popular' | t | json }},
+    no_results: {{ 'b2b.search.no_results' | t | json }},
+    products: {{ 'b2b.search.products_count' | t: count: '{{ count }}' | json }}
+  };
 
   var overlay   = document.getElementById('PredictiveOverlay');
   var closeBtn  = document.getElementById('PsoClose');
@@ -701,7 +706,7 @@
   function showEmpty() {
     if (!results) return;
     var html = '<div class="pso-state">';
-    html += '<p class="pso-popular-heading">Popular B2B Searches</p>';
+    html += '<p class="pso-popular-heading">' + PSO_I18N.popular + '</p>';
     html += '<div class="pso-pills">';
     popularTerms.forEach(function (term) {
       html += '<button class="pso-pill" type="button" data-pso-term="' + escAttr(term) + '">' + escHtml(term) + '</button>';
@@ -722,7 +727,7 @@
     if (!results) return;
     var html = '<div class="pso-state">';
     html += '<div class="pso-results-header">';
-    html +=   '<span class="pso-results-count">Products (' + products.length + ')</span>';
+    html +=   '<span class="pso-results-count">' + PSO_I18N.products.replace('{{ count }}', products.length) + '</span>';
     html +=   '<a href="/search?type=product&q=' + encodeURIComponent(q) + '" class="pso-results-all">' +
                 'View all results' +
                 '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>' +
@@ -738,7 +743,7 @@
     if (!results) return;
     results.innerHTML = '<div class="pso-state pso-state--noresults">' +
       '<svg class="pso-noresults-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>' +
-      '<h3 class="pso-noresults-heading">No products found</h3>' +
+      '<h3 class="pso-noresults-heading">' + PSO_I18N.no_results + '</h3>' +
       '<p class="pso-noresults-text">We couldn’t find anything matching “' + escHtml(q) + '”. Try checking the spelling or searching by SKU.</p>' +
       '</div>';
   }

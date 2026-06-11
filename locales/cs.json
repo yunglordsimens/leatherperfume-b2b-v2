@@ -584,6 +584,39 @@
       "total_wsp": "Total (WSP)",
       "subtotal": "Subtotal:",
       "saved": "Saved"
+    },
+    "login": {
+      "email": "Email Address",
+      "password": "Password",
+      "forgot": "Forgot password?",
+      "remember": "Remember me for 30 days",
+      "apply": "Apply for partnership"
+    },
+    "password": {
+      "early_access": "Get early access",
+      "notify": "Notify",
+      "on_list": "You're on the list!"
+    },
+    "dashboard": {
+      "eyebrow": "Partner Dashboard",
+      "manage": "Manage your orders, invoices and account settings."
+    },
+    "reorder": {
+      "po_reference": "PO Reference:",
+      "added": "Added!"
+    },
+    "success": {
+      "heading": "Order Submitted!",
+      "text": "Thank you. Your wholesale order has been sent to our team. We will review availability and send a proforma invoice to your registered email shortly.",
+      "reference": "Reference:",
+      "return": "Return to Catalog"
+    },
+    "search": {
+      "title": "Predictive Search",
+      "close": "Close",
+      "popular": "Popular B2B Searches",
+      "no_results": "No products found",
+      "products_count": "Products ({{ count }})"
     }
   }
 }

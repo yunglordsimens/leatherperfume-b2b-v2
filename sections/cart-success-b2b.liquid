@@ -159,12 +159,12 @@
       </svg>
     </div>
 
-    <h1 class="css-heading">Order Submitted!</h1>
+    <h1 class="css-heading">{{ 'b2b.success.heading' | t }}</h1>
 
-    <p class="css-text">Thank you. Your wholesale order has been sent to our team. We will review availability and send a proforma invoice to your registered email shortly.</p>
+    <p class="css-text">{{ 'b2b.success.text' | t }}</p>
 
     <div class="css-ref">
-      <span class="css-ref__label">Reference:</span><span id="css-po-ref">PO-{%- if po_number != blank -%}{{ po_number }}{%- else -%}{{ 'now' | date: '%s' | modulo: 900000 | plus: 100000 }}{%- endif -%}</span>
+      <span class="css-ref__label">{{ 'b2b.success.reference' | t }}</span><span id="css-po-ref">PO-{%- if po_number != blank -%}{{ po_number }}{%- else -%}{{ 'now' | date: '%s' | modulo: 900000 | plus: 100000 }}{%- endif -%}</span>
     </div>
 
     <a href="/collections/all" class="css-cta">
@@ -172,7 +172,7 @@
         <line x1="19" y1="12" x2="5" y2="12"/>
         <polyline points="12 19 5 12 12 5"/>
       </svg>
-      Return to Catalog
+      {{ 'b2b.success.return' | t }}
     </a>
 
   </div>

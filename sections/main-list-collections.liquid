@@ -1,3 +1,10 @@
+{%- comment -%}
+  B2B: the standard collections-list gallery isn't used in this wholesale
+  theme — redirect to the B2B product grid at /collections/all.
+{%- endcomment -%}
+<script>window.location.replace({{ routes.all_products_collection_url | json }});</script>
+<noscript><meta http-equiv="refresh" content="0;url={{ routes.all_products_collection_url }}"></noscript>
+
 {{ 'component-card.css' | asset_url | stylesheet_tag }}
 {{ 'section-collection-list.css' | asset_url | stylesheet_tag }}
 

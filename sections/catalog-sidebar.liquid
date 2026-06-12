@@ -306,6 +306,23 @@
       window.dispatchEvent(new CustomEvent('catalog:filter'));
     });
   }
+
+  /* Deep-link from mega menu: /collections/all?category=Perfume
+     pre-selects the matching category filter on load. */
+  (function () {
+    var wanted = new URLSearchParams(window.location.search).get('category');
+    if (!wanted) return;
+    wanted = wanted.toLowerCase();
+    var match = null;
+    document.querySelectorAll('[data-catalog-category]').forEach(function (radio) {
+      var val = (radio.getAttribute('data-catalog-category') || '').toLowerCase();
+      if (val === wanted) match = radio;
+    });
+    if (match && !match.checked) {
+      match.checked = true;
+      match.dispatchEvent(new Event('change'));
+    }
+  })();
 })();
 </script>
 

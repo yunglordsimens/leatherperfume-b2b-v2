@@ -639,9 +639,8 @@
                             <li><a href="{{ sub.url }}" class="lp-mega__link">{{ sub.title | escape }}</a></li>
                           {%- endfor -%}
                         {%- else -%}
-                          <li><a href="{{ routes.all_products_collection_url }}" class="lp-mega__link">All Fragrances</a></li>
-                          <li><a href="/collections/women" class="lp-mega__link">Women's Collection</a></li>
-                          <li><a href="/collections/men" class="lp-mega__link">Men's Collection</a></li>
+                          <li><a href="{{ routes.all_products_collection_url }}?category=Perfume" class="lp-mega__link">All Perfumes</a></li>
+                          <li><a href="{{ routes.all_products_collection_url }}?category=Tester Sets" class="lp-mega__link">Tester Sets</a></li>
                         {%- endif -%}
                       </ul>
                     </div>
@@ -657,9 +656,8 @@
                             <li><a href="{{ sub.url }}" class="lp-mega__link">{{ sub.title | escape }}</a></li>
                           {%- endfor -%}
                         {%- else -%}
-                          <li><a href="/collections/leather-goods" class="lp-mega__link">All Leather Goods</a></li>
-                          <li><a href="/collections/belts" class="lp-mega__link">Premium Belts</a></li>
-                          <li><a href="/collections/wallets" class="lp-mega__link">Wallets & Purses</a></li>
+                          <li><a href="{{ routes.all_products_collection_url }}?category=Leather Goods" class="lp-mega__link">All Leather Goods</a></li>
+                          <li><a href="{{ routes.all_products_collection_url }}" class="lp-mega__link">View Everything</a></li>
                         {%- endif -%}
                       </ul>
                     </div>

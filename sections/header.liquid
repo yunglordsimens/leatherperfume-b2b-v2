@@ -640,7 +640,8 @@
                           {%- endfor -%}
                         {%- else -%}
                           <li><a href="{{ routes.all_products_collection_url }}?category=Perfume" class="lp-mega__link">All Perfumes</a></li>
-                          <li><a href="{{ routes.all_products_collection_url }}?category=Tester Sets" class="lp-mega__link">Tester Sets</a></li>
+                          <li><a href="{{ routes.all_products_collection_url }}?filter=women" class="lp-mega__link">Women</a></li>
+                          <li><a href="{{ routes.all_products_collection_url }}?filter=men" class="lp-mega__link">Men</a></li>
                         {%- endif -%}
                       </ul>
                     </div>
@@ -657,7 +658,8 @@
                           {%- endfor -%}
                         {%- else -%}
                           <li><a href="{{ routes.all_products_collection_url }}?category=Leather Goods" class="lp-mega__link">All Leather Goods</a></li>
-                          <li><a href="{{ routes.all_products_collection_url }}" class="lp-mega__link">View Everything</a></li>
+                          <li><a href="{{ routes.all_products_collection_url }}?filter=belts" class="lp-mega__link">Belts</a></li>
+                          <li><a href="{{ routes.all_products_collection_url }}?filter=wallets" class="lp-mega__link">Wallets</a></li>
                         {%- endif -%}
                       </ul>
                     </div>

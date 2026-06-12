@@ -711,6 +711,7 @@
         data-title="{{ product.title | downcase | escape }}"
         data-sku="{{ sku | downcase | escape }}"
         data-category="{{ product.type | escape }}"
+        data-tags="{{ product.tags | join: '|' | downcase | escape }}"
         data-available="{{ product.available }}"
       >
         <!-- Image -->
@@ -1002,9 +1003,14 @@
     var searchInput = document.querySelector('[data-catalog-search]');
     var catChecked  = document.querySelector('[data-catalog-category]:checked');
     var stockCheck  = document.querySelector('[data-catalog-instock]');
+    var tags = [];
+    document.querySelectorAll('[data-catalog-tag]:checked').forEach(function (cb) {
+      tags.push((cb.getAttribute('data-catalog-tag') || '').toLowerCase());
+    });
     return {
       search:   searchInput ? searchInput.value.trim().toLowerCase() : '',
       category: catChecked  ? catChecked.value : 'all',
+      tags:     tags,
       inStock:  stockCheck  ? stockCheck.checked : false
     };
   }
@@ -1017,13 +1023,15 @@
       var title     = card.getAttribute('data-title')    || '';
       var sku       = card.getAttribute('data-sku')      || '';
       var category  = card.getAttribute('data-category') || '';
+      var cardTags  = (card.getAttribute('data-tags') || '').split('|');
       var available = card.getAttribute('data-available');
 
       var matchSearch   = !f.search   || title.includes(f.search) || sku.includes(f.search);
       var matchCategory = f.category === 'all' || category.toLowerCase() === f.category.toLowerCase();
       var matchStock    = !f.inStock  || available === 'true';
+      var matchTags     = f.tags.length === 0 || f.tags.some(function (t) { return cardTags.indexOf(t) !== -1; });
 
-      var show = matchSearch && matchCategory && matchStock;
+      var show = matchSearch && matchCategory && matchStock && matchTags;
       card.hidden = !show;
       if (show) visible++;
     });
@@ -1067,6 +1075,7 @@
       if (searchInput) searchInput.value = '';
       if (allRadio)   { allRadio.checked = true; allRadio.dispatchEvent(new Event('change')); }
       if (stockCheck) stockCheck.checked = false;
+      document.querySelectorAll('[data-catalog-tag]:checked').forEach(function (cb) { cb.checked = false; });
       applyFilters();
     });
   }

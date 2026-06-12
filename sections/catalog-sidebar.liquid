@@ -2,6 +2,7 @@
   assign search_label       = section.settings.search_label       | default: 'Search'
   assign search_placeholder = section.settings.search_placeholder | default: 'SKU or product name'
   assign category_label     = section.settings.category_label     | default: 'Categories'
+  assign refine_label       = section.settings.refine_label       | default: 'Refine'
   assign avail_label        = section.settings.avail_label        | default: 'Availability'
 
   comment
@@ -251,6 +252,26 @@
       </div>
     </div>
 
+    {%- if collection.all_tags.size > 0 -%}
+      <hr class="cat-sb__divider">
+
+      <!-- Refine by tags (Men / Women / Belts / Wallets …) -->
+      <div class="cat-sb__group">
+        <span class="cat-sb__group-label" id="CatalogRefineLabel">{{ refine_label }}</span>
+        <div class="cat-sb__options" aria-labelledby="CatalogRefineLabel">
+          {%- for tag in collection.all_tags -%}
+            <label class="cat-sb__option">
+              <input
+                type="checkbox"
+                data-catalog-tag="{{ tag | downcase | escape }}"
+              >
+              {{ tag }}
+            </label>
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
+
     <hr class="cat-sb__divider">
 
     <!-- Availability -->
@@ -307,20 +328,48 @@
     });
   }
 
-  /* Deep-link from mega menu: /collections/all?category=Perfume
-     pre-selects the matching category filter on load. */
-  (function () {
-    var wanted = new URLSearchParams(window.location.search).get('category');
-    if (!wanted) return;
-    wanted = wanted.toLowerCase();
-    var match = null;
-    document.querySelectorAll('[data-catalog-category]').forEach(function (radio) {
-      var val = (radio.getAttribute('data-catalog-category') || '').toLowerCase();
-      if (val === wanted) match = radio;
+  /* Tag checkboxes (Men / Women / Belts / Wallets …) */
+  document.querySelectorAll('[data-catalog-tag]').forEach(function (cb) {
+    cb.addEventListener('change', function () {
+      cb.closest('.cat-sb__option').classList.toggle('is-active', cb.checked);
+      window.dispatchEvent(new CustomEvent('catalog:filter'));
     });
-    if (match && !match.checked) {
-      match.checked = true;
-      match.dispatchEvent(new Event('change'));
+  });
+
+  /* Deep-link from mega menu:
+       /collections/all?category=Perfume   → product-type radio
+       /collections/all?filter=men,women   → tag checkbox(es), comma-separated
+     pre-selects the matching filters on load. */
+  (function () {
+    var params = new URLSearchParams(window.location.search);
+
+    var wantedCat = params.get('category');
+    if (wantedCat) {
+      wantedCat = wantedCat.toLowerCase();
+      document.querySelectorAll('[data-catalog-category]').forEach(function (radio) {
+        if ((radio.getAttribute('data-catalog-category') || '').toLowerCase() === wantedCat && !radio.checked) {
+          radio.checked = true;
+          radio.dispatchEvent(new Event('change')); /* updates active label + fires filter */
+        }
+      });
+    }
+
+    var wantedTags = params.get('filter');
+    if (wantedTags) {
+      wantedTags.toLowerCase().split(',').forEach(function (want) {
+        want = want.trim();
+        if (!want) return;
+        document.querySelectorAll('[data-catalog-tag]').forEach(function (cb) {
+          if ((cb.getAttribute('data-catalog-tag') || '').toLowerCase() === want) {
+            cb.checked = true;
+            cb.closest('.cat-sb__option').classList.add('is-active');
+          }
+        });
+      });
+    }
+
+    if (wantedCat || wantedTags) {
+      window.dispatchEvent(new CustomEvent('catalog:filter'));
     }
   })();
 })();
@@ -352,6 +401,12 @@
       "id": "category_label",
       "label": "Category label",
       "default": "Categories"
+    },
+    {
+      "type": "text",
+      "id": "refine_label",
+      "label": "Refine (tags) label",
+      "default": "Refine"
     },
     {
       "type": "text",

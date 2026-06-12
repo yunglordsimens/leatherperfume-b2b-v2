@@ -529,7 +529,7 @@
       <h1 class="cib__heading">{{ section.settings.page_heading | default: 'Your Order' }}</h1>
       <p class="cib__heading-sub">{{ section.settings.page_subheading | default: 'Review your items and provide internal purchase details before submitting.' }}</p>
     </div>
-    <a class="cib__continue" href="/collections/all">{{ section.settings.continue_label | default: 'Continue Shopping' }}</a>
+    <a class="cib__continue" href="{{ routes.all_products_collection_url }}">{{ section.settings.continue_label | default: 'Continue Shopping' }}</a>
   </div>
 
   {%- if cart.item_count > 0 -%}

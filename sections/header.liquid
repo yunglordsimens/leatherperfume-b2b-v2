@@ -801,7 +801,7 @@
       <div class="header__divider" aria-hidden="true"></div>
 
       {%- if shop.customer_accounts_enabled -%}
-        <a href="{%- if customer -%}/pages/partner-dashboard{%- else -%}/pages/partner-login{%- endif -%}" class="header__icon header__icon--account link focus-inset{% if section.settings.menu != blank %} small-hide{% endif %}" rel="nofollow">
+        <a href="{%- if customer -%}{{ pages['partner-dashboard'].url | default: '/pages/partner-dashboard' }}{%- else -%}{{ pages['partner-login'].url | default: '/pages/partner-login' }}{%- endif -%}" class="header__icon header__icon--account link focus-inset{% if section.settings.menu != blank %} small-hide{% endif %}" rel="nofollow">
           <svg class="icon icon-account" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
             <circle cx="12" cy="7" r="4"/>

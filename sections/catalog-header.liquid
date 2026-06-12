@@ -178,7 +178,7 @@
       </a>
     </li>
     <li class="cat-crumbs__sep" aria-hidden="true">›</li>
-    <li><a href="/collections/all">{{ 'b2b.breadcrumb.order_portal' | t }}</a></li>
+    <li><a href="{{ routes.all_products_collection_url }}">{{ 'b2b.breadcrumb.order_portal' | t }}</a></li>
     {%- if collection.handle != 'all' and collection.title != blank -%}
       <li class="cat-crumbs__sep" aria-hidden="true">›</li>
       <li class="cat-crumbs__current" aria-current="page">{{ collection.title }}</li>

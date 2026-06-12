@@ -940,7 +940,7 @@
                 </svg>
               </span>
               <p class="pdp-pricing__login-text">{{ section.settings.login_cta_text | default: 'Log in to see your B2B price' }}</p>
-              <a href="/pages/partner-login" class="pdp-pricing__login-btn">{{ section.settings.login_cta_button | default: 'Log In as Partner' }}</a>
+              <a href="{{ pages['partner-login'].url | default: '/pages/partner-login' }}" class="pdp-pricing__login-btn">{{ section.settings.login_cta_button | default: 'Log In as Partner' }}</a>
             </div>
 
           {%- endif -%}

@@ -643,7 +643,7 @@
 
       <div class="wl__apply">
         <p class="wl__apply-text">
-          Don't have a wholesale account yet?&#32;<a href="/pages/wholesale-application" class="wl__apply-link">{{ 'b2b.login.apply' | t }}</a>
+          Don't have a wholesale account yet?&#32;<a href="{{ pages['wholesale-application'].url | default: '/pages/wholesale-application' }}" class="wl__apply-link">{{ 'b2b.login.apply' | t }}</a>
         </p>
       </div>
 

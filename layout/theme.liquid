@@ -321,6 +321,82 @@
         font-display: swap;
       }
     </style>
+
+    {%- comment -%} Brand styling for Shopify's cookie consent banner {%- endcomment -%}
+    <style>
+      #shopify-pc__banner {
+        font-family: var(--font-body-family);
+      }
+      #shopify-pc__banner .shopify-pc__banner__dialog {
+        background: #1c1917;
+        color: #e7e5e4;
+        border: none;
+        border-top: 3px solid #b45309;
+        border-radius: 1rem 1rem 0 0;
+        box-shadow: 0 -10px 30px rgba(0,0,0,0.25);
+        padding: 1.5rem 1.75rem;
+        max-width: 64rem;
+        margin: 0 auto;
+      }
+      #shopify-pc__banner .shopify-pc__banner__body {
+        color: #d6d3d1;
+        font-size: 0.9375rem;
+        line-height: 1.6;
+      }
+      #shopify-pc__banner .shopify-pc__banner__body a,
+      #shopify-pc__banner a { color: #f59e0b; text-decoration: underline; }
+      #shopify-pc__banner .shopify-pc__banner__btns { gap: 0.625rem; }
+      #shopify-pc__banner button {
+        font-family: var(--font-body-family);
+        font-weight: 700;
+        font-size: 0.875rem;
+        letter-spacing: 0.03em;
+        border-radius: 0.625rem;
+        padding: 0.75rem 1.5rem;
+        transition: background-color .15s ease, color .15s ease, border-color .15s ease;
+      }
+      /* Accept — amber primary */
+      #shopify-pc__banner .shopify-pc__banner__btn-accept {
+        background: #b45309 !important;
+        color: #ffffff !important;
+        border: 2px solid #b45309 !important;
+      }
+      #shopify-pc__banner .shopify-pc__banner__btn-accept:hover {
+        background: #92400e !important;
+        border-color: #92400e !important;
+      }
+      /* Decline / Manage — outlined on dark */
+      #shopify-pc__banner .shopify-pc__banner__btn-decline,
+      #shopify-pc__banner .shopify-pc__banner__btn-manage-prefs,
+      #shopify-pc__banner .shopify-pc__banner__btn:not(.shopify-pc__banner__btn-accept) {
+        background: transparent !important;
+        color: #e7e5e4 !important;
+        border: 2px solid #57534e !important;
+      }
+      #shopify-pc__banner .shopify-pc__banner__btn-decline:hover,
+      #shopify-pc__banner .shopify-pc__banner__btn-manage-prefs:hover,
+      #shopify-pc__banner .shopify-pc__banner__btn:not(.shopify-pc__banner__btn-accept):hover {
+        border-color: #e7e5e4 !important;
+        background: rgba(255,255,255,0.06) !important;
+      }
+      /* Preferences modal matches */
+      #shopify-pc__prefs .shopify-pc__prefs__dialog { border-radius: 1rem; }
+      #shopify-pc__prefs .shopify-pc__prefs__header,
+      #shopify-pc__prefs button.shopify-pc__prefs__btn-confirm {
+        font-family: var(--font-body-family);
+      }
+      #shopify-pc__prefs button.shopify-pc__prefs__btn-confirm {
+        background: #b45309 !important;
+        color: #fff !important;
+        border-color: #b45309 !important;
+        border-radius: 0.625rem;
+      }
+
+      html.a11y-high-contrast #shopify-pc__banner .shopify-pc__banner__dialog {
+        background: #000 !important;
+        border-top-color: #fff !important;
+      }
+    </style>
   </head>
 
   <body class="gradient{% if settings.animations_hover_elements != 'none' %} animate--hover-{{ settings.animations_hover_elements }}{% endif %}">

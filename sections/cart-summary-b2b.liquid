@@ -454,22 +454,13 @@
       <span class="csb__total-value" id="CsbTotal">{{ discounted_subtotal | plus: vat_cents | money }}</span>
     </div>
 
-    <!-- Submit -->
-    {%- if moq_reached -%}
-      <a href="/checkout" class="csb__submit-btn" id="CsbSubmitBtn">
-        {{ submit_btn }}
-        <svg class="csb__submit-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-        </svg>
-      </a>
-    {%- else -%}
-      <button type="button" class="csb__submit-btn is-disabled" disabled id="CsbSubmitBtn" aria-disabled="true">
-        {{ submit_btn }}
-        <svg class="csb__submit-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-        </svg>
-      </button>
-    {%- endif -%}
+    <!-- Submit (always a link; .is-disabled toggled by JS, no DOM swap) -->
+    <a href="/checkout" class="csb__submit-btn{% unless moq_reached %} is-disabled{% endunless %}" id="CsbSubmitBtn"{% unless moq_reached %} aria-disabled="true"{% endunless %}>
+      {{ submit_btn }}
+      <svg class="csb__submit-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+      </svg>
+    </a>
 
     <p class="csb__submit-note">{{ submit_note }}</p>
   </div>
@@ -526,37 +517,12 @@
     if (moqMsg)       moqMsg.style.display = reached ? 'none' : '';
     if (moqRemaining) moqRemaining.textContent = fmtMoney(remaining * 100);
 
-    /* Enable / disable submit */
+    /* Enable / disable submit — just toggle the class, no DOM swap */
     var submitBtn = document.getElementById('CsbSubmitBtn');
-    if (!submitBtn) return;
-    if (reached) {
-      if (submitBtn.tagName === 'BUTTON') {
-        var link    = document.createElement('a');
-        link.href      = '#';
-        link.className = submitBtn.className.replace(/\bis-disabled\b/g, '').trim();
-        link.id        = 'CsbSubmitBtn';
-        link.innerHTML = submitBtn.innerHTML;
-        submitBtn.parentNode.replaceChild(link, submitBtn);
-      } else {
-        submitBtn.classList.remove('is-disabled');
-        submitBtn.removeAttribute('disabled');
-        submitBtn.removeAttribute('aria-disabled');
-      }
-    } else {
-      if (submitBtn.tagName === 'A') {
-        var btn     = document.createElement('button');
-        btn.type      = 'button';
-        btn.className = submitBtn.className + ' is-disabled';
-        btn.id        = 'CsbSubmitBtn';
-        btn.disabled  = true;
-        btn.setAttribute('aria-disabled', 'true');
-        btn.innerHTML = submitBtn.innerHTML;
-        submitBtn.parentNode.replaceChild(btn, submitBtn);
-      } else {
-        submitBtn.disabled = true;
-        submitBtn.classList.add('is-disabled');
-        submitBtn.setAttribute('aria-disabled', 'true');
-      }
+    if (submitBtn) {
+      submitBtn.classList.toggle('is-disabled', !reached);
+      if (reached) { submitBtn.removeAttribute('aria-disabled'); }
+      else { submitBtn.setAttribute('aria-disabled', 'true'); }
     }
   }
 
@@ -611,8 +577,10 @@
 
   /* ── React to cart changes ─────────────────────────── */
   function onCartChange(cart) {
-    if (!cart) return;
-    var subtotal   = cart.items_subtotal_price || 0;
+    /* Ignore malformed events (e.g. a bare cart:changed with no totals) —
+       otherwise the summary would zero out on every qty change. */
+    if (!cart || typeof cart.items_subtotal_price !== 'number') return;
+    var subtotal   = cart.items_subtotal_price;
     var discFactor = (100 - discountPct) / 100;
     var discounted = Math.round(subtotal * discFactor);
     var vat        = Math.round(discounted * vatRate / 100);

@@ -197,6 +197,7 @@
     background-color: #e7e5e4;
     border-radius: 9999px;
     overflow: hidden;
+    width: 100%;
   }
 
   html.a11y-high-contrast .csb__track {
@@ -205,13 +206,15 @@
   }
 
   .csb__fill {
-    height: 100%;
+    display: block;
+    height: 0.75rem;
     border-radius: 9999px;
     background-color: #f59e0b;
     transition: width 0.4s ease;
   }
 
-  .csb__fill--reached { background-color: #22c55e; }
+  .csb__fill--reached,
+  .moq-bar.csb__fill--reached { background-color: #22c55e !important; }
 
   html.a11y-high-contrast .csb__fill { background-color: #000000 !important; }
 

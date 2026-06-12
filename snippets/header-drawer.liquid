@@ -22,10 +22,10 @@
           <nav class="menu-drawer__navigation">
             <ul class="menu-drawer__menu has-submenu list-menu" role="list">
               {%- if customer and customer.tags contains 'wholesale' -%}
-                <li><a href="/pages/partner-dashboard" class="menu-drawer__menu-item list-menu__item link link--text focus-inset">Dashboard</a></li>
-                <li><a href="/collections/all" class="menu-drawer__menu-item list-menu__item link link--text focus-inset">Order Portal</a></li>
-                <li><a href="/pages/partner-dashboard?tab=reorder" class="menu-drawer__menu-item list-menu__item link link--text focus-inset">Quick Reorder</a></li>
-                <li><a href="/pages/partner-dashboard?tab=invoices" class="menu-drawer__menu-item list-menu__item link link--text focus-inset">Invoices</a></li>
+                <li><a href="{{ pages['partner-dashboard'].url | default: '/pages/partner-dashboard' }}" class="menu-drawer__menu-item list-menu__item link link--text focus-inset">Dashboard</a></li>
+                <li><a href="{{ routes.all_products_collection_url }}" class="menu-drawer__menu-item list-menu__item link link--text focus-inset">Order Portal</a></li>
+                <li><a href="{{ pages['partner-dashboard'].url | default: '/pages/partner-dashboard' }}?tab=reorder" class="menu-drawer__menu-item list-menu__item link link--text focus-inset">Quick Reorder</a></li>
+                <li><a href="{{ pages['partner-dashboard'].url | default: '/pages/partner-dashboard' }}?tab=invoices" class="menu-drawer__menu-item list-menu__item link link--text focus-inset">Invoices</a></li>
               {%- else -%}
               {%- for link in section.settings.menu.links -%}
                 <li>
@@ -139,7 +139,7 @@
                   {%- endif -%}
                 </li>
               {%- endfor -%}
-                <li><a href="/pages/wholesale-application" class="menu-drawer__menu-item list-menu__item link link--text focus-inset">Apply</a></li>
+                <li><a href="{{ pages['wholesale-application'].url | default: '/pages/wholesale-application' }}" class="menu-drawer__menu-item list-menu__item link link--text focus-inset">Apply</a></li>
               {%- endif -%}
             </ul>
           </nav>

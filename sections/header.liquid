@@ -596,16 +596,16 @@
           {%- if customer and customer.tags contains 'wholesale' -%}
 
             <li class="lp-nav__item">
-              <a href="/pages/partner-dashboard" class="lp-nav__link"{% if request.path == '/pages/partner-dashboard' %} aria-current="page"{% endif %}>Dashboard</a>
+              <a href="{{ pages['partner-dashboard'].url | default: '/pages/partner-dashboard' }}" class="lp-nav__link"{% if request.path == '/pages/partner-dashboard' %} aria-current="page"{% endif %}>Dashboard</a>
             </li>
             <li class="lp-nav__item">
-              <a href="/collections/all" class="lp-nav__link"{% if request.path contains '/collections' %} aria-current="page"{% endif %}>Order Portal</a>
+              <a href="{{ routes.all_products_collection_url }}" class="lp-nav__link"{% if request.path contains '/collections' %} aria-current="page"{% endif %}>Order Portal</a>
             </li>
             <li class="lp-nav__item">
-              <a href="/pages/partner-dashboard?tab=reorder" class="lp-nav__link">Quick Reorder</a>
+              <a href="{{ pages['partner-dashboard'].url | default: '/pages/partner-dashboard' }}?tab=reorder" class="lp-nav__link">Quick Reorder</a>
             </li>
             <li class="lp-nav__item">
-              <a href="/pages/partner-dashboard?tab=invoices" class="lp-nav__link">Invoices</a>
+              <a href="{{ pages['partner-dashboard'].url | default: '/pages/partner-dashboard' }}?tab=invoices" class="lp-nav__link">Invoices</a>
             </li>
 
           {%- else -%}
@@ -639,7 +639,7 @@
                             <li><a href="{{ sub.url }}" class="lp-mega__link">{{ sub.title | escape }}</a></li>
                           {%- endfor -%}
                         {%- else -%}
-                          <li><a href="/collections/all" class="lp-mega__link">All Fragrances</a></li>
+                          <li><a href="{{ routes.all_products_collection_url }}" class="lp-mega__link">All Fragrances</a></li>
                           <li><a href="/collections/women" class="lp-mega__link">Women's Collection</a></li>
                           <li><a href="/collections/men" class="lp-mega__link">Men's Collection</a></li>
                         {%- endif -%}
@@ -683,7 +683,7 @@
             {%- endfor -%}
 
             <li class="lp-nav__item">
-              <a href="/pages/wholesale-application" class="lp-nav__link lp-nav__link--apply">Apply</a>
+              <a href="{{ pages['wholesale-application'].url | default: '/pages/wholesale-application' }}" class="lp-nav__link lp-nav__link--apply">Apply</a>
             </li>
 
           {%- endif -%}

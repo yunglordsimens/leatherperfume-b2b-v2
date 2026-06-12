@@ -21,6 +21,12 @@
         <div class="menu-drawer__navigation-container">
           <nav class="menu-drawer__navigation">
             <ul class="menu-drawer__menu has-submenu list-menu" role="list">
+              {%- if customer and customer.tags contains 'wholesale' -%}
+                <li><a href="/pages/partner-dashboard" class="menu-drawer__menu-item list-menu__item link link--text focus-inset">Dashboard</a></li>
+                <li><a href="/collections/all" class="menu-drawer__menu-item list-menu__item link link--text focus-inset">Order Portal</a></li>
+                <li><a href="/pages/partner-dashboard?tab=reorder" class="menu-drawer__menu-item list-menu__item link link--text focus-inset">Quick Reorder</a></li>
+                <li><a href="/pages/partner-dashboard?tab=invoices" class="menu-drawer__menu-item list-menu__item link link--text focus-inset">Invoices</a></li>
+              {%- else -%}
               {%- for link in section.settings.menu.links -%}
                 <li>
                   {%- if link.links != blank -%}
@@ -133,12 +139,14 @@
                   {%- endif -%}
                 </li>
               {%- endfor -%}
+                <li><a href="/pages/wholesale-application" class="menu-drawer__menu-item list-menu__item link link--text focus-inset">Apply</a></li>
+              {%- endif -%}
             </ul>
           </nav>
           <div class="menu-drawer__utility-links">
             {%- if shop.customer_accounts_enabled -%}
               <a
-                href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}"
+                href="{%- if customer and customer.tags contains 'wholesale' -%}/pages/partner-dashboard{%- elsif customer -%}{{ routes.account_url }}{%- else -%}/pages/partner-login{%- endif -%}"
                 class="menu-drawer__account link focus-inset h5 medium-hide large-up-hide"
                 rel="nofollow"
               >

@@ -232,6 +232,10 @@
         box-sizing: border-box;
         font-size: calc(var(--font-body-scale) * 62.5%);
         height: 100%;
+        /* Always reserve the scrollbar gutter so margin:auto layouts don't
+           shift sideways when navigating between short/tall pages. */
+        scrollbar-gutter: stable;
+        overflow-y: scroll;
       }
 
       body {

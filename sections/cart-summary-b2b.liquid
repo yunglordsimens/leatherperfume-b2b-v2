@@ -193,7 +193,7 @@
   html.a11y-high-contrast .csb__moq-target { color: #000000 !important; }
 
   .csb__track {
-    height: 0.75rem;
+    height: 12px;
     background-color: #e7e5e4;
     border-radius: 9999px;
     overflow: hidden;
@@ -205,16 +205,21 @@
     background-color: #ffffff !important;
   }
 
-  .csb__fill {
-    display: block;
-    height: 0.75rem;
+  /* Fill — explicit height on BOTH classes so neither overrides to height:100% */
+  .csb__fill,
+  .moq-bar,
+  #CsbMoqFill {
+    display: block !important;
+    height: 12px !important;
+    min-height: 12px;
     border-radius: 9999px;
     background-color: #f59e0b;
     transition: width 0.4s ease;
   }
 
   .csb__fill--reached,
-  .moq-bar.csb__fill--reached { background-color: #22c55e !important; }
+  .moq-bar.csb__fill--reached,
+  #CsbMoqFill.csb__fill--reached { background-color: #22c55e !important; }
 
   html.a11y-high-contrast .csb__fill { background-color: #000000 !important; }
 

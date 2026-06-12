@@ -98,6 +98,18 @@
   }
   .menu-drawer__lang-flag { font-size: 1.75rem; line-height: 1; }
 
+  /* Force the brand body font across the whole mobile menu. Some Dawn
+     bits (e.g. the .h5 account link) default to the heading font
+     (Yeseva One), which looked out of place next to the nav items. */
+  .menu-drawer__menu-item,
+  .menu-drawer__menu-item.h5,
+  .menu-drawer__account,
+  .menu-drawer__account.h5,
+  .menu-drawer__close-button,
+  .menu-drawer .list-menu__item {
+    font-family: var(--font-body-family) !important;
+  }
+
   .list-menu {
     list-style: none;
     padding: 0;

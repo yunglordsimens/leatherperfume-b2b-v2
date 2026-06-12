@@ -319,7 +319,14 @@
     {%- comment -%} ── Content column ── {%- endcomment -%}
     <div class="hero-b2b__content">
 
-      {%- if section.settings.badge_text != blank -%}
+      {%- if customer and customer.tags contains 'wholesale' -%}
+        <div class="hero-b2b__badge">
+          <svg class="hero-b2b__badge-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+          {{ section.settings.member_badge | default: 'Welcome back' | escape }}{% if customer.first_name != blank %}, {{ customer.first_name | escape }}{% endif %}
+        </div>
+      {%- elsif section.settings.badge_text != blank -%}
         <div class="hero-b2b__badge">
           <svg class="hero-b2b__badge-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
             <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
@@ -337,26 +344,40 @@
       {%- endif -%}
 
       <div class="hero-b2b__buttons">
-        {%- if section.settings.button_primary_label != blank -%}
-          <a
-            href="{{ section.settings.button_primary_link | default: '#' }}"
-            class="hero-b2b__btn hero-b2b__btn--primary"
-          >
-            {{- section.settings.button_primary_label | escape -}}
+        {%- if customer and customer.tags contains 'wholesale' -%}
+          {%- comment -%} Logged-in partner: portal + dashboard {%- endcomment -%}
+          <a href="/collections/all" class="hero-b2b__btn hero-b2b__btn--primary">
+            {{ section.settings.member_primary_label | default: 'Go to Order Portal' | escape }}
             <svg class="hero-b2b__btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
               <line x1="5" y1="12" x2="19" y2="12"/>
               <polyline points="12 5 19 12 12 19"/>
             </svg>
           </a>
-        {%- endif -%}
-
-        {%- if section.settings.button_secondary_label != blank -%}
-          <a
-            href="{{ section.settings.button_secondary_link | default: '#' }}"
-            class="hero-b2b__btn hero-b2b__btn--secondary"
-          >
-            {{- section.settings.button_secondary_label | escape -}}
+          <a href="/pages/partner-dashboard" class="hero-b2b__btn hero-b2b__btn--secondary">
+            {{ section.settings.member_secondary_label | default: 'My Dashboard' | escape }}
           </a>
+        {%- else -%}
+          {%- if section.settings.button_primary_label != blank -%}
+            <a
+              href="{{ section.settings.button_primary_link | default: '#' }}"
+              class="hero-b2b__btn hero-b2b__btn--primary"
+            >
+              {{- section.settings.button_primary_label | escape -}}
+              <svg class="hero-b2b__btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <line x1="5" y1="12" x2="19" y2="12"/>
+                <polyline points="12 5 19 12 12 19"/>
+              </svg>
+            </a>
+          {%- endif -%}
+
+          {%- if section.settings.button_secondary_label != blank -%}
+            <a
+              href="{{ section.settings.button_secondary_link | default: '#' }}"
+              class="hero-b2b__btn hero-b2b__btn--secondary"
+            >
+              {{- section.settings.button_secondary_label | escape -}}
+            </a>
+          {%- endif -%}
         {%- endif -%}
       </div>
 
@@ -475,6 +496,28 @@
       "type": "url",
       "id": "button_secondary_link",
       "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Logged-in partner view"
+    },
+    {
+      "type": "text",
+      "id": "member_badge",
+      "label": "Welcome badge",
+      "default": "Welcome back"
+    },
+    {
+      "type": "text",
+      "id": "member_primary_label",
+      "label": "Primary button (→ catalog)",
+      "default": "Go to Order Portal"
+    },
+    {
+      "type": "text",
+      "id": "member_secondary_label",
+      "label": "Secondary button (→ dashboard)",
+      "default": "My Dashboard"
     }
   ],
   "presets": [

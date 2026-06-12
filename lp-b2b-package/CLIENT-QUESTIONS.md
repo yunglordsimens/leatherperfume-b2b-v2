@@ -139,7 +139,18 @@
   тему она не использует — это нормально, не баг. Кастомная видна в **превью темы**.
 - 📦 При переходе на платный план проверить, что показывается наша страница.
 
-## Запуск
+## Запуск (чек-лист)
 - ❓ Перевод магазина на **платный план** (снимает лимит заказов dev-store,
-  включает реальный checkout-флоу).
+  включает реальный checkout-флоу, показывает нашу кастомную password-страницу).
 - 📦 Домен.
+- 📦 **SEO:** заполнить Home page title + Meta description (EN/CS) — Online Store → Preferences.
+- 📦 **Social sharing image** 1200×628 — Preferences.
+- 📦 **Выключить пароль магазина** (Preferences → Password protection) при запуске.
+- 📦 **Включить авто-язык** (Preferences → Automatic redirection → Language) —
+  ПОСЛЕ того, как переводы CS/VI готовы в Translate & Adapt.
+- 📦 **hCaptcha** на контакт-форме (Preferences → Spam protection) — можно включить уже сейчас.
+- 📦 **Типографика / шрифты:** Theme settings → Typography → задать Heading/Body
+  fonts (системные или нужные), чтобы Shopify не предзагружал неиспользуемые
+  Roboto/Abril (убирает console-warning, мелкий перф). Косметика, не срочно.
+- 📦 (опц.) Поднять **Body/Heading scale** в Theme settings → Typography до ~108–112%,
+  если сайт кажется мелковатым на ноутбуках.

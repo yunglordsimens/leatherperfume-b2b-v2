@@ -715,42 +715,47 @@
     var rmBtn    = row.querySelector('[data-cib-remove]');
     var totalEl  = row.querySelector('[data-cib-line-total]');
 
+    var syncTimer = null;
+
+    /* Optimistic qty: update the number + line total instantly, sync to
+       Shopify in the background (debounced so a burst of clicks = 1 request). */
     function setQty(newQty) {
       if (newQty < 1) newQty = 1;
       qtyInput.value = newQty;
       if (totalEl) totalEl.textContent = fmtMoney(unitP * newQty);
-      [decBtn, incBtn, rmBtn].forEach(function (b) { if (b) b.disabled = true; });
 
-      fetch('/cart/change.js', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest'},
-        body: JSON.stringify({line: line, quantity: newQty})
-      })
-      .then(function (r) { return r.json(); })
-      .then(function (cart) {
-        window.dispatchEvent(new CustomEvent('cart:updated', {detail: cart}));
-        [decBtn, incBtn, rmBtn].forEach(function (b) { if (b) b.disabled = false; });
-      })
-      .catch(function () {
-        [decBtn, incBtn, rmBtn].forEach(function (b) { if (b) b.disabled = false; });
-      });
+      clearTimeout(syncTimer);
+      syncTimer = setTimeout(function () {
+        fetch('/cart/change.js', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest'},
+          body: JSON.stringify({id: key, quantity: parseInt(qtyInput.value) || 1})
+        })
+        .then(function (r) { return r.json(); })
+        .then(function (cart) {
+          window.dispatchEvent(new CustomEvent('cart:updated', {detail: cart}));
+        })
+        .catch(function () {});
+      }, 350);
     }
 
+    /* Optimistic remove: hide the row immediately, sync in background;
+       restore it only if the request fails. */
     function removeItem() {
-      if (rmBtn) rmBtn.disabled = true;
+      clearTimeout(syncTimer);
+      row.style.display = 'none';
       fetch('/cart/change.js', {
         method: 'POST',
         headers: {'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest'},
-        body: JSON.stringify({line: line, quantity: 0})
+        body: JSON.stringify({id: key, quantity: 0})
       })
       .then(function (r) { return r.json(); })
       .then(function (cart) {
         row.remove();
         window.dispatchEvent(new CustomEvent('cart:updated', {detail: cart}));
-        /* If list is now empty, reload to show empty state */
         if (cart.item_count === 0) { location.reload(); }
       })
-      .catch(function () { if (rmBtn) rmBtn.disabled = false; });
+      .catch(function () { row.style.display = ''; });
     }
 
     if (decBtn)   decBtn.addEventListener('click',  function () { setQty((parseInt(qtyInput.value) || 1) - 1); });

@@ -16,7 +16,10 @@
       "name": "LP Top Bar",
       "settings": {
         "high_contrast": false,
-        "text": "For verified wholesale partners only"
+        "apply_text": "Apply for wholesale access",
+        "apply_url": "",
+        "pending_text": "Application under review",
+        "partner_prefix": "Welcome,"
       }
     },
     "header": {

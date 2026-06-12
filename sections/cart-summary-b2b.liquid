@@ -388,7 +388,7 @@
     <div class="csb__breakdown">
       <div class="csb__line">
         <span class="csb__line-label">{{ section.settings.subtotal_label | default: 'Subtotal (WSP)' }}</span>
-        <span class="csb__line-value" id="CsbSubtotal">{{ discounted_subtotal | money }}</span>
+        <span class="csb__line-value" id="CsbSubtotal">{{ cart.items_subtotal_price | money }}</span>
       </div>
       {%- if has_discount -%}
         <div class="csb__line">
@@ -576,7 +576,7 @@
     var vat        = Math.round(discounted * vatRate / 100);
     var total      = discounted + vat;
 
-    if (subtotEl) subtotEl.textContent = fmtMoney(discounted);
+    if (subtotEl) subtotEl.textContent = fmtMoney(subtotal);
     if (vatEl)    vatEl.textContent    = fmtMoney(vat);
     if (totalEl)  totalEl.textContent  = fmtMoney(total);
 

@@ -623,9 +623,10 @@
 <div class="pgbl" id="ProductGridLoggedIn-{{ section.id }}">
 
   <!-- Meta bar -->
+  {%- assign cph = '{' | append: '{ count }' | append: '}' -%}
   <div class="pgbl__meta">
     <p class="pgbl__count" id="PgblCount-{{ section.id }}"
-       data-show-one="{{ 'b2b.catalog.showing.one' | t: count: '{{ count }}' }}" data-show-other="{{ 'b2b.catalog.showing.other' | t: count: '{{ count }}' }}">
+       data-show-one="{{ 'b2b.catalog.showing.one' | t: count: cph }}" data-show-other="{{ 'b2b.catalog.showing.other' | t: count: cph }}">
       {{ 'b2b.catalog.showing' | t: count: collection.products_count }}
     </p>
     <button

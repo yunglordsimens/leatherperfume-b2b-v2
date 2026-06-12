@@ -570,10 +570,11 @@
 (function () {
   if (window.lpPsoReady) return;
   window.lpPsoReady = true;
+  {%- assign cph = '{' | append: '{ count }' | append: '}' -%}
   var PSO_I18N = {
     popular: {{ 'b2b.search.popular' | t | json }},
     no_results: {{ 'b2b.search.no_results' | t | json }},
-    products: {{ 'b2b.search.products_count' | t: count: '{{ count }}' | json }}
+    products: {{ 'b2b.search.products_count' | t: count: cph | json }}
   };
 
   var overlay   = document.getElementById('PredictiveOverlay');

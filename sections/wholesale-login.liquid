@@ -631,7 +631,7 @@
         Shopify's hosted login (email + 6-digit code). This page is the
         branded gateway; the button hands off to that flow.
       {%- endcomment -%}
-      <p class="wl__signin-note">{{ section.settings.signin_note | default: 'Enter your partner email and we'll send a one-time code — no password to remember. No email yet? Your account manager will set you up.' }}</p>
+      <p class="wl__signin-note">{{ section.settings.signin_note | default: 'Enter your partner email and we will send a one-time code - no password to remember. No email yet? Your account manager will set you up.' }}</p>
 
       <a href="{{ routes.account_login_url }}" class="wl__submit wl__submit--link">
         {{ section.settings.signin_button | default: 'Sign in' }}

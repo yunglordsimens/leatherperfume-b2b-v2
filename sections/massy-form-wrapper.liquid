@@ -63,7 +63,24 @@
 
   /* Massy App Block container — card look (bottom half) */
   #MainContent:has(.app-info) .shopify-section:has(.shopify-app-block) {
-    padding: 0 1.5rem 4rem;
+    padding: 3rem 1.5rem 4rem;
+  }
+
+  @media screen and (min-width: 990px) {
+    #MainContent:has(.app-info) .shopify-section:has(.shopify-app-block) {
+      padding: 4rem 1.5rem 4rem;
+    }
+  }
+
+  /* Force the theme body font onto the Massy form (it ships unstyled) */
+  #MainContent:has(.app-info) .shopify-app-block,
+  #MainContent:has(.app-info) .shopify-app-block * {
+    font-family: var(--font-body-family) !important;
+  }
+  #MainContent:has(.app-info) .shopify-app-block h1,
+  #MainContent:has(.app-info) .shopify-app-block h2,
+  #MainContent:has(.app-info) .shopify-app-block h3 {
+    font-family: var(--font-heading-family) !important;
   }
 
   #MainContent:has(.app-info) .shopify-app-block {

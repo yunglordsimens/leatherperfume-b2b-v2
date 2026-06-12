@@ -26,8 +26,39 @@
   assign discount_pct = 0
   assign has_discount = false
   if is_wholesale
-    assign discount_tier = customer.metafields.custom.discount_tier.value | default: 'standard'
-    assign discount_pct  = customer.metafields.custom.discount_percent.value | default: customer.metafields.custom.discount_percentage.value | default: 0
+    assign discount_tier = 'standard'
+    assign discount_pct = 0
+    assign tier_rank = 0
+    for t in customer.tags
+      assign tl = t | downcase
+      if tl contains 'platinum' and tier_rank < 5
+        assign discount_tier = 'platinum'
+        assign discount_pct = 15
+        assign tier_rank = 5
+      elsif tl contains 'gold' and tier_rank < 4
+        assign discount_tier = 'gold'
+        assign discount_pct = 10
+        assign tier_rank = 4
+      elsif tl contains 'silver' and tier_rank < 3
+        assign discount_tier = 'silver'
+        assign discount_pct = 5
+        assign tier_rank = 3
+      elsif tl contains 'bronze' and tier_rank < 2
+        assign discount_tier = 'bronze'
+        assign discount_pct = 2
+        assign tier_rank = 2
+      endif
+    endfor
+    if tier_rank == 0
+      assign mf_tier = customer.metafields.custom.discount_tier.value
+      assign mf_pct = customer.metafields.custom.discount_percent.value | default: customer.metafields.custom.discount_percentage.value
+      if mf_pct
+        assign discount_pct = mf_pct
+      endif
+      if mf_tier != blank
+        assign discount_tier = mf_tier
+      endif
+    endif
     if discount_pct > 0 and discount_tier != 'standard'
       assign has_discount = true
     endif

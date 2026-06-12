@@ -29,19 +29,24 @@
     }
   {%- endif -%}
 
-  @media screen and (min-width: 990px) {
+  /* Switch desktop nav ⇄ burger at 1200px: below this the inline nav
+     doesn't fit next to logo + search + language + account, so it would
+     overlap the right-side icons. Use the burger until there's room. */
+  @media screen and (min-width: 1200px) {
     header-drawer {
       display: none;
     }
   }
 
-  @media screen and (min-width: 990px) {
-  .header__lp-nav {
-    display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
+  .header__lp-nav { display: none !important; }
+
+  @media screen and (min-width: 1200px) {
+    .header__lp-nav {
+      display: flex !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
   }
-}
 
   .menu-drawer-container {
     display: flex;

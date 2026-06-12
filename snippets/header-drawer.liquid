@@ -174,35 +174,28 @@
                 -%}
               </a>
             {%- endif -%}
-            {%- if localization.available_countries or localization.available_languages -%}
-              <div class="menu-drawer__localization header-localization">
-                {%- if localization.available_countries and localization.available_countries.size > 1 -%}
-                  <localization-form>
-                    {%- form 'localization', id: 'HeaderCountryMobileForm', class: 'localization-form' -%}
-                      <div>
-                        <h2 class="visually-hidden" id="HeaderCountryMobileLabel">
-                          {{ 'localization.country_label' | t }}
-                        </h2>
-                        {%- render 'country-localization', localPosition: 'HeaderCountryMobile' -%}
-                      </div>
-                    {%- endform -%}
-                  </localization-form>
-                {% endif %}
-
-                {%- if localization.available_languages and localization.available_languages.size > 1 -%}
-                  <localization-form>
-                    {%- form 'localization', id: 'HeaderLanguageMobileForm', class: 'localization-form' -%}
-                      <div>
-                        <h2 class="visually-hidden" id="HeaderLanguageMobileLabel">
-                          {{ 'localization.language_label' | t }}
-                        </h2>
-                        {%- render 'language-localization', localPosition: 'HeaderLanguageMobile' -%}
-                      </div>
-                    {%- endform -%}
-                  </localization-form>
-                {%- endif -%}
-              </div>
-            {%- endif -%}
+            {%- comment -%}── LP: custom language switcher (matches desktop), under account ──{%- endcomment -%}
+            {%- assign drawer_locale = request.locale.iso_code | downcase -%}
+            <div class="menu-drawer__lang" role="group" aria-label="Language">
+              {%- form 'localization', id: 'DrawerLangEN' -%}
+                <input type="hidden" name="locale_code" value="en">
+                <button type="submit" class="menu-drawer__lang-btn{% unless drawer_locale == 'cs' or drawer_locale == 'vi' %} is-active{% endunless %}" data-lang-submit>
+                  <span class="menu-drawer__lang-flag">🇬🇧</span> English
+                </button>
+              {%- endform -%}
+              {%- form 'localization', id: 'DrawerLangCS' -%}
+                <input type="hidden" name="locale_code" value="cs">
+                <button type="submit" class="menu-drawer__lang-btn{% if drawer_locale == 'cs' %} is-active{% endif %}" data-lang-submit>
+                  <span class="menu-drawer__lang-flag">🇨🇿</span> Čeština
+                </button>
+              {%- endform -%}
+              {%- form 'localization', id: 'DrawerLangVI' -%}
+                <input type="hidden" name="locale_code" value="vi">
+                <button type="submit" class="menu-drawer__lang-btn{% if drawer_locale == 'vi' %} is-active{% endif %}" data-lang-submit>
+                  <span class="menu-drawer__lang-flag">🇻🇳</span> Tiếng Việt
+                </button>
+              {%- endform -%}
+            </div>
             <ul class="list list-social list-unstyled" role="list">
               {%- if settings.social_twitter_link != blank -%}
                 <li class="list-social__item">

@@ -545,10 +545,8 @@
       "badge_new": "New",
       "badge_b2b_only": "B2B Only",
       "margin": "{{ pct }}% Margin",
-      "showing": {
-        "one": "Showing {{ count }} item",
-        "other": "Showing {{ count }} items"
-      }
+      "showing": "Showing",
+      "results": "results"
     },
     "product": {
       "wholesale_pricing": "Wholesale Pricing",

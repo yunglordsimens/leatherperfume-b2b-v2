@@ -65,7 +65,7 @@
   ─────────────────────────────────────────────────── */
   @media screen and (min-width: 990px) {
     #MainContent:not(:has(.cat-sb)) .pgbl {
-      max-width: var(--page-width, 144rem);
+      max-width: var(--page-width, 90rem);
       margin: 0 auto;
       padding: 2.5rem 1.5rem;
     }
@@ -623,11 +623,10 @@
 <div class="pgbl" id="ProductGridLoggedIn-{{ section.id }}">
 
   <!-- Meta bar -->
-  {%- assign cph = '{' | append: '{ count }' | append: '}' -%}
   <div class="pgbl__meta">
     <p class="pgbl__count" id="PgblCount-{{ section.id }}"
-       data-show-one="{{ 'b2b.catalog.showing.one' | t: count: cph }}" data-show-other="{{ 'b2b.catalog.showing.other' | t: count: cph }}">
-      {{ 'b2b.catalog.showing' | t: count: collection.products_count }}
+       data-showing="{{ 'b2b.catalog.showing' | t }}" data-results="{{ 'b2b.catalog.results' | t }}">
+      {{ 'b2b.catalog.showing' | t }} {{ collection.products_count }} {{ 'b2b.catalog.results' | t }}
     </p>
     <button
       class="pgbl__active-filter"
@@ -1027,7 +1026,7 @@
     });
 
     if (countEl) {
-      countEl.textContent = (visible === 1 ? countEl.dataset.showOne : countEl.dataset.showOther).replace('{{ count }}', visible);
+      countEl.textContent = countEl.dataset.showing + ' ' + visible + ' ' + countEl.dataset.results;
     }
 
     if (filterPill) {

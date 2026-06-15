@@ -148,6 +148,15 @@
   html.a11y-high-contrast .dh__divider {
     background-color: #555555;
   }
+
+  /* Mobile: scale the header up so it reads big on phones, not desktop-tiny */
+  @media screen and (max-width: 989px) {
+    .dh__eyebrow { font-size: 1rem; }
+    .dh__heading { font-size: 2.4rem; }
+    .dh__sub     { font-size: 1.25rem; }
+    .dh__btn     { font-size: 1.1rem; padding: 1.1rem 1.75rem; }
+    .dh__btn-icon { width: 1.4rem; height: 1.4rem; }
+  }
 </style>
 
 <div class="dh{{ section_mod }}" id="DashboardHeader-{{ section.id }}">

@@ -475,6 +475,34 @@
 
   /* table scroll on mobile */
   .dc__table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+  /* Mobile: bump all dashboard panel text up (it was sized for the
+     desktop sidebar layout and read too small on phones). */
+  @media screen and (max-width: 989px) {
+    .dc__section-title  { font-size: 1.6rem; }
+    .dc__card-label     { font-size: 0.9rem; }
+    .dc__card-value     { font-size: 2.2rem; }
+    .dc__card-sub       { font-size: 1rem; }
+    .dc__tier-badge     { font-size: 0.9rem; }
+    .dc__table          { font-size: 1.05rem; }
+    .dc__table th       { font-size: 0.9rem; }
+    .dc__badge          { font-size: 0.9rem; }
+    .dc__btn            { font-size: 1rem; }
+    .dc__set-label      { font-size: 0.9rem; }
+    .dc__set-value      { font-size: 1.25rem; }
+    .dc__set-sub        { font-size: 1.05rem; }
+    .dc__set-note       { font-size: 1rem; }
+    .dc__reorder-date   { font-size: 1rem; }
+    .dc__reorder-items  { font-size: 1.05rem; }
+    .dc__reorder-total  { font-size: 1.35rem; }
+    .dc__mgr-label      { font-size: 0.9rem; }
+    .dc__mgr-name       { font-size: 1.35rem; }
+    .dc__coming-soon h3 { font-size: 1.5rem; }
+    .dc__coming-soon p  { font-size: 1.15rem; }
+    .dc__empty          { font-size: 1.15rem; }
+    .dc__auth-gate h2   { font-size: 1.85rem; }
+    .dc__auth-gate p    { font-size: 1.15rem; }
+  }
 </style>
 
 {%- unless customer -%}

@@ -193,6 +193,16 @@
     color: #1c1917;
     font-weight: 700;
   }
+
+  /* Mobile: bigger sidebar text + touch targets */
+  @media screen and (max-width: 989px) {
+    .cat-sb__group-label { font-size: 0.95rem; }
+    .cat-sb__search-input { font-size: 1.1rem; padding-top: 1rem; padding-bottom: 1rem; }
+    .cat-sb__option { font-size: 1.15rem; gap: 0.875rem; }
+    .cat-sb__option input[type="radio"],
+    .cat-sb__option input[type="checkbox"] { width: 1.35rem; height: 1.35rem; }
+    .cat-sb__options { gap: 0.9rem; }
+  }
 </style>
 
 <aside

@@ -67,7 +67,10 @@
 
     details.menu-drawer-container[open] > .menu-drawer {
       position: fixed;
-      top: var(--header-height, 7rem);
+      /* --header-bottom-position is the real bottom of the whole header
+         (incl. the top bar); --header-height is only the nav bar, which left
+         the drawer overlapping the header for guests. */
+      top: var(--header-bottom-position, var(--header-height, 7rem));
       bottom: 0;
       left: 0;
       width: 100%;

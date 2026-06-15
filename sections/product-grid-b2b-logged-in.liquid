@@ -131,6 +131,12 @@
   @media screen and (min-width: 600px) { .pgbl__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media screen and (min-width: 1200px) { .pgbl__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 
+  /* Mobile: bigger results count + active-filter pill */
+  @media screen and (max-width: 989px) {
+    .pgbl__count { font-size: 1.1rem; }
+    .pgbl__active-filter { font-size: 1rem; }
+  }
+
   /* ── Card ─────────────────────────────────────────── */
   .pgbl__card {
     background-color: #ffffff;

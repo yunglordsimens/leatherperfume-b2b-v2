@@ -34,6 +34,10 @@
       margin-inline: auto;
       padding-inline: 1.5rem;
       box-sizing: border-box;
+      /* Keep the catalog at least viewport-tall so filtering (which hides
+         cards and shrinks the page) never toggles the vertical scrollbar,
+         which would re-center the page and make the side padding "jump". */
+      min-height: 100vh;
     }
 
     /* full-width rows (e.g. catalog header) span both columns */

@@ -52,6 +52,32 @@
     display: flex;
   }
 
+  /* Mobile: when the menu is open, overlay it on the current screen
+     (not the top of the document) and let it scroll on its own.
+     Without this the drawer dropped to where the header sits in the
+     document, so on a scrolled page it appeared "up at the top". */
+  @media screen and (max-width: 989px) {
+    .section-header:has(details.menu-drawer-container[open]) {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 6;
+    }
+
+    details.menu-drawer-container[open] > .menu-drawer {
+      position: fixed;
+      top: var(--header-height, 7rem);
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: auto;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      z-index: 5;
+    }
+  }
+
   /* Mobile drawer account link: space between icon and label */
   .menu-drawer__account {
     display: inline-flex;

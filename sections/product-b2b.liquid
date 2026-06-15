@@ -771,6 +771,29 @@
   .pdp-features__icon svg { width: 1.25rem; height: 1.25rem; }
 
   html.a11y-high-contrast .pdp-features__icon { color: #000000 !important; }
+
+  /* Mobile: bump product page text (titles/prices use clamp already) */
+  @media screen and (max-width: 989px) {
+    .pdp-bc__inner          { font-size: 0.9rem; }
+    .pdp-badge              { font-size: 0.85rem; }
+    .pdp-category           { font-size: 1.05rem; }
+    .pdp-stock__label       { font-size: 1.05rem; }
+    .pdp-sku                { font-size: 1rem; }
+    .pdp-desc               { font-size: 1.2rem; }
+    .pdp-pricing__head      { font-size: 0.9rem; }
+    .pdp-pricing__lbl       { font-size: 1.1rem; }
+    .pdp-pricing__excl      { font-size: 0.9rem; }
+    .pdp-pricing__rrp       { font-size: 1.3rem; }
+    .pdp-pricing__margin    { font-size: 1.1rem; }
+    .pdp-pricing__margin strong { font-size: 1.3rem; }
+    .pdp-pricing__login-text { font-size: 1.2rem; }
+    .pdp-pricing__login-btn { font-size: 1.1rem; }
+    .pdp-qty__input         { font-size: 1.4rem; }
+    .pdp-add-btn            { font-size: 1.2rem; }
+    .pdp-subtotal           { font-size: 1.1rem; }
+    .pdp-features__head     { font-size: 0.9rem; }
+    .pdp-features__item     { font-size: 1.1rem; }
+  }
 </style>
 
 {%- comment -%}── Breadcrumb ──{%- endcomment -%}

@@ -65,12 +65,17 @@
       z-index: 6;
     }
 
+    /* Hide the orange top bar while the menu is open: it disappears on scroll
+       anyway, and leaving its height in --header-bottom-position created a
+       transparent gap between the header and the drawer. With it hidden the
+       visible header is just the nav bar, so --header-height lines up exactly. */
+    .section-header:has(details.menu-drawer-container[open]) .lp-top-bar {
+      display: none;
+    }
+
     details.menu-drawer-container[open] > .menu-drawer {
       position: fixed;
-      /* --header-bottom-position is the real bottom of the whole header
-         (incl. the top bar); --header-height is only the nav bar, which left
-         the drawer overlapping the header for guests. */
-      top: var(--header-bottom-position, var(--header-height, 7rem));
+      top: var(--header-height, 6rem);
       bottom: 0;
       left: 0;
       width: 100%;

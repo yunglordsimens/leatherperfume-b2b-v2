@@ -389,6 +389,20 @@
   }
 
   html.a11y-high-contrast .csb__submit-note { color: #000000 !important; }
+
+  /* Mobile: bump summary text (totals/breakdown read too small on phones) */
+  @media screen and (max-width: 989px) {
+    .csb__heading        { font-size: 1.6rem; }
+    .csb__moq-title      { font-size: 0.95rem; }
+    .csb__moq-target     { font-size: 0.95rem; }
+    .moq-text            { font-size: 1.05rem; }
+    .csb__moq-msg        { font-size: 1.05rem; }
+    .csb__line           { font-size: 1.15rem; }
+    .csb__line-value--muted { font-size: 1rem; }
+    .csb__total-label    { font-size: 1.2rem; }
+    .csb__submit-btn     { font-size: 1.2rem; }
+    .csb__submit-note    { font-size: 1rem; }
+  }
 </style>
 
 <div

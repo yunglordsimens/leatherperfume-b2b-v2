@@ -200,6 +200,30 @@
     transition: opacity 0.2s;
   }
 
+  /* Swipe track: scroll-snap carousel of all product images */
+  .pdp-gallery__track {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .pdp-gallery__track::-webkit-scrollbar { display: none; }
+
+  .pdp-gallery__slide {
+    flex: 0 0 100%;
+    width: 100%;
+    height: 100%;
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   .pdp-gallery__placeholder {
     color: #d6d3d1;
     display: flex;
@@ -826,16 +850,21 @@
       <div class="pdp-gallery" id="PdpGallery-{{ section.id }}">
 
         <div class="pdp-gallery__main-wrap">
-          {%- if product.featured_media -%}
-            <img
-              id="PdpMainImg-{{ section.id }}"
-              src="{{ product.featured_media | image_url: width: 900 }}"
-              alt="{{ product.featured_media.alt | escape }}"
-              width="900"
-              height="1125"
-              loading="eager"
-              class="pdp-gallery__main-img"
-            >
+          {%- if product.media.size > 0 -%}
+            <div class="pdp-gallery__track" id="PdpTrack-{{ section.id }}">
+              {%- for media in product.media -%}
+                <div class="pdp-gallery__slide">
+                  <img
+                    src="{{ media | image_url: width: 900 }}"
+                    alt="{{ media.alt | escape }}"
+                    width="900"
+                    height="1125"
+                    loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                    class="pdp-gallery__main-img"
+                  >
+                </div>
+              {%- endfor -%}
+            </div>
           {%- else -%}
             <div class="pdp-gallery__placeholder" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
@@ -1088,24 +1117,32 @@
 <script>
 (function () {
   var sid     = '{{ section.id }}';
-  var mainImg = document.getElementById('PdpMainImg-' + sid);
-  var thumbs  = document.querySelectorAll('#PdpThumbs-' + sid + ' .pdp-gallery__thumb');
+  var track  = document.getElementById('PdpTrack-' + sid);
+  var thumbs = document.querySelectorAll('#PdpThumbs-' + sid + ' .pdp-gallery__thumb');
+  var slides = track ? track.querySelectorAll('.pdp-gallery__slide') : [];
 
-  /* Gallery */
-  thumbs.forEach(function (thumb) {
+  /* Gallery: thumbs scroll the swipe track to that image */
+  thumbs.forEach(function (thumb, i) {
     thumb.addEventListener('click', function () {
-      var src = this.dataset.mainSrc;
-      var alt = this.dataset.alt || '';
-      if (mainImg && src) {
-        mainImg.style.opacity = '0.4';
-        mainImg.src = src;
-        mainImg.alt = alt;
-        mainImg.onload = function () { mainImg.style.opacity = '1'; };
+      if (track && slides[i]) {
+        track.scrollTo({ left: slides[i].offsetLeft, behavior: 'smooth' });
       }
       thumbs.forEach(function (t) { t.classList.remove('is-active'); });
       this.classList.add('is-active');
     });
   });
+
+  /* Keep the active thumb in sync while swiping */
+  if (track) {
+    var galScrollTimer;
+    track.addEventListener('scroll', function () {
+      clearTimeout(galScrollTimer);
+      galScrollTimer = setTimeout(function () {
+        var idx = Math.round(track.scrollLeft / track.clientWidth);
+        thumbs.forEach(function (t, i) { t.classList.toggle('is-active', i === idx); });
+      }, 60);
+    });
+  }
 
   /* Quantity + subtotal */
   var qtyInput = document.getElementById('PdpQtyInput-' + sid);

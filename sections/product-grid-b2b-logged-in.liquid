@@ -124,12 +124,24 @@
   /* ── Grid ─────────────────────────────────────────── */
   .pgbl__grid {
     display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 1.5rem;
+    /* 2-up on mobile (Zara-style) instead of one giant column */
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
   }
 
-  @media screen and (min-width: 600px) { .pgbl__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media screen and (min-width: 750px) { .pgbl__grid { gap: 1.5rem; } }
   @media screen and (min-width: 1200px) { .pgbl__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+  /* Compact card on small phones (2-up) */
+  @media screen and (max-width: 599px) {
+    .pgbl__card { padding: 0.75rem; border-radius: 1rem; }
+    .pgbl__img-wrap { margin-bottom: 0.875rem; }
+    .pgbl__title { font-size: 1rem; }
+    .pgbl__prices { padding-top: 0.75rem; }
+    .pgbl__atc-wrap { gap: 0.5rem; }
+    .pgbl__qty-btn { width: 2rem; }
+    .pgbl__atc-btn { padding: 0.625rem; font-size: 0.9375rem; }
+  }
 
   /* Mobile: bigger results count + active-filter pill */
   @media screen and (max-width: 989px) {

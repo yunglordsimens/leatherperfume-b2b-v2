@@ -26,7 +26,8 @@
                 <li><a href="{{ routes.all_products_collection_url }}" class="menu-drawer__menu-item list-menu__item link link--text focus-inset">Order Portal</a></li>
                 <li><a href="{{ pages['partner-dashboard'].url | default: '/pages/partner-dashboard' }}?tab=reorder" class="menu-drawer__menu-item list-menu__item link link--text focus-inset">Quick Reorder</a></li>
                 <li><a href="{{ pages['partner-dashboard'].url | default: '/pages/partner-dashboard' }}?tab=invoices" class="menu-drawer__menu-item list-menu__item link link--text focus-inset">Invoices</a></li>
-              {%- else -%}
+                <li class="menu-drawer__sep" aria-hidden="true"></li>
+              {%- endif -%}
               {%- for link in section.settings.menu.links -%}
                 <li>
                   {%- if link.links != blank -%}
@@ -139,8 +140,9 @@
                   {%- endif -%}
                 </li>
               {%- endfor -%}
+              {%- unless customer and customer.tags contains 'wholesale' -%}
                 <li><a href="{{ pages['wholesale-application'].url | default: '/pages/wholesale-application' }}" class="menu-drawer__menu-item list-menu__item link link--text focus-inset">Apply</a></li>
-              {%- endif -%}
+              {%- endunless -%}
             </ul>
           </nav>
           <div class="menu-drawer__utility-links">

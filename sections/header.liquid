@@ -152,6 +152,47 @@
     letter-spacing: 0.06em;
   }
 
+  /* "Account" link in the same style as the menu items */
+  .menu-drawer__account {
+    font-size: 1.4rem !important;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  /* Divider between B2B links and the public pages */
+  .menu-drawer__sep {
+    height: 1px;
+    margin: 0.85rem 3rem;
+    background: rgba(var(--color-foreground), 0.14);
+    list-style: none;
+  }
+
+  /* Subtle, fast staggered fade-in of menu items when the drawer opens */
+  @media (prefers-reduced-motion: no-preference) {
+    details[open].menu-opening .menu-drawer__menu > li {
+      animation: lpDrawerItemIn 0.3s ease both;
+    }
+    details[open].menu-opening .menu-drawer__menu > li:nth-child(1) { animation-delay: 0.02s; }
+    details[open].menu-opening .menu-drawer__menu > li:nth-child(2) { animation-delay: 0.05s; }
+    details[open].menu-opening .menu-drawer__menu > li:nth-child(3) { animation-delay: 0.08s; }
+    details[open].menu-opening .menu-drawer__menu > li:nth-child(4) { animation-delay: 0.11s; }
+    details[open].menu-opening .menu-drawer__menu > li:nth-child(5) { animation-delay: 0.14s; }
+    details[open].menu-opening .menu-drawer__menu > li:nth-child(6) { animation-delay: 0.17s; }
+    details[open].menu-opening .menu-drawer__menu > li:nth-child(7) { animation-delay: 0.20s; }
+    details[open].menu-opening .menu-drawer__menu > li:nth-child(n+8) { animation-delay: 0.22s; }
+
+    details[open].menu-opening .menu-drawer__utility-links {
+      animation: lpDrawerItemIn 0.3s ease both;
+      animation-delay: 0.24s;
+    }
+  }
+
+  @keyframes lpDrawerItemIn {
+    from { opacity: 0; transform: translateX(-8px); }
+    to   { opacity: 1; transform: none; }
+  }
+
   .list-menu {
     list-style: none;
     padding: 0;

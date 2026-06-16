@@ -774,6 +774,8 @@
 
   /* Mobile: bump product page text (titles/prices use clamp already) */
   @media screen and (max-width: 989px) {
+    .pdp-bc                 { display: none; }   /* breadcrumbs off on mobile */
+    .pdp-gallery            { max-width: none; } /* photo stretches to the text edges */
     .pdp-bc__inner          { font-size: 0.9rem; }
     .pdp-badge              { font-size: 0.85rem; }
     .pdp-category           { font-size: 1.05rem; }
@@ -909,8 +911,6 @@
           <p class="pdp-sku">SKU: {{ current_variant.sku }}</p>
         {%- endif -%}
 
-        <div class="pdp-desc">{{ product.description }}</div>
-
         {%- comment -%}── Pricing ──{%- endcomment -%}
         <div class="pdp-pricing">
           <h3 class="pdp-pricing__head">{{ section.settings.pricing_heading | default: 'Wholesale Pricing' }}</h3>
@@ -1019,6 +1019,11 @@
               <strong id="PdpSubPrice-{{ section.id }}">{{ final_price | times: 5 | money_without_trailing_zeros }}</strong>
             </p>
           </div>
+        {%- endif -%}
+
+        {%- comment -%}── Description (after the buy action) ──{%- endcomment -%}
+        {%- if product.description != blank -%}
+          <div class="pdp-desc">{{ product.description }}</div>
         {%- endif -%}
 
         {%- comment -%}── Features list ──{%- endcomment -%}

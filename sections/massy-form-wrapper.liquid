@@ -501,6 +501,43 @@
     margin-bottom: 0.5rem !important;
   }
 
+  /* Section headings ("Representative Details" / "Company Details") in the
+     serif heading font, like the reference. These are the only .massy-text
+     that are a direct child of a .massy-box. */
+  .massy-wrap__card .massy-box > .massy-text,
+  .shopify-app-block .massy-box > .massy-text,
+  .massy-form-container .massy-box > .massy-text {
+    font-family: var(--font-heading-family) !important;
+    font-weight: var(--font-heading-weight) !important;
+    font-size: 1.4rem !important;
+    color: #1c1917 !important;
+  }
+
+  /* Store Type: its label uses .massy-text in a block-stack (gap 4px) instead
+     of .massy-input-label, so the select box sat a few px higher than the
+     neighbouring input. Match the label spacing/style and kill the extra gap. */
+  #StoreType .massy-block-stack { gap: 0 !important; }
+  #StoreType .massy-text {
+    font-family: var(--font-body-family) !important;
+    font-weight: 700 !important;
+    color: #44403c !important;
+    margin-bottom: 0.5rem !important;
+  }
+  .massy-wrap__card .massy-select-input-form,
+  .shopify-app-block .massy-select-input-form {
+    min-height: 3.4rem !important;
+    align-items: center !important;
+  }
+
+  /* Phone: drop our injected phone icon (it overlapped the "+420" placeholder);
+     the placeholder already shows the dial code, so no icon needed. */
+  .massy-wrap__card .massy-input-phone input,
+  .shopify-app-block .massy-input-phone input,
+  .massy-form-container .massy-input-phone input {
+    background-image: none !important;
+    padding-left: 1.25rem !important;
+  }
+
   html.a11y-high-contrast .massy-wrap__card input[type="submit"],
   html.a11y-high-contrast .massy-wrap__card button[type="submit"],
   html.a11y-high-contrast .shopify-app-block input[type="submit"],

@@ -940,6 +940,11 @@
           <p class="pdp-sku">SKU: {{ current_variant.sku }}</p>
         {%- endif -%}
 
+        {%- assign pdp_dims = product.metafields.custom.dimensions -%}
+        {%- if pdp_dims != blank -%}
+          <p class="pdp-sku pdp-dims">{{ section.settings.dimensions_label | default: 'Dimensions' }}: {{ pdp_dims }}</p>
+        {%- endif -%}
+
         {%- comment -%}── Pricing ──{%- endcomment -%}
         <div class="pdp-pricing">
           <h3 class="pdp-pricing__head">{{ section.settings.pricing_heading | default: 'Wholesale Pricing' }}</h3>
@@ -1286,6 +1291,12 @@
       "id": "features_heading",
       "label": "Features section heading",
       "default": "Product Details"
+    },
+    {
+      "type": "text",
+      "id": "dimensions_label",
+      "label": "Dimensions label",
+      "default": "Dimensions"
     },
     {
       "type": "text",

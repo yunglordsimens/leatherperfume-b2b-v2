@@ -192,13 +192,17 @@
   html.a11y-high-contrast .cib__sku { color: #000000 !important; }
 
   .cib__name {
+    display: block;
     font-family: var(--font-heading-family);
     font-weight: var(--font-heading-weight);
     font-size: 1rem;
     color: #1c1917;
     margin: 0 0 0.25rem;
     line-height: 1.3;
+    text-decoration: none;
+    transition: color 0.15s ease;
   }
+  a.cib__name:hover { color: #b45309; }
 
   html.a11y-high-contrast .cib__name { color: #000000 !important; }
 
@@ -572,7 +576,7 @@
         >
           <!-- Product -->
           <div class="cib__product">
-            <div class="cib__thumb">
+            <a class="cib__thumb" href="{{ item.url }}" aria-label="{{ item.product.title | escape }}">
               {%- if item.image -%}
                 {{ item.image | image_url: width: 160 | image_tag:
                   alt: item.product.title,
@@ -585,12 +589,12 @@
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                 </div>
               {%- endif -%}
-            </div>
+            </a>
             <div>
               {%- if item.sku != blank -%}
                 <p class="cib__sku">{{ item.sku }}</p>
               {%- endif -%}
-              <p class="cib__name">{{ item.product.title }}</p>
+              <a class="cib__name" href="{{ item.url }}">{{ item.product.title }}</a>
               {%- unless item.variant.title == 'Default Title' -%}
                 <p class="cib__variant">{{ item.variant.title }} &bull; {{ item.price | money }}/ea</p>
               {%- else -%}

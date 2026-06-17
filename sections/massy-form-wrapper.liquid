@@ -317,6 +317,33 @@
     padding: 1rem 1.25rem 1rem 3.5rem !important;
   }
 
+  /* 3. Massy's own phone widget: .massy-input-phone wraps an inline-stack
+        around <input type="tel">. The wrapper carries Massy's box, and our
+        generic input rule boxes the <input> too -> double box. Strip the
+        wrapper's box and let the <input> be the single field box. */
+  .massy-wrap__card .massy-input-phone,
+  .shopify-app-block .massy-input-phone,
+  .massy-form-container .massy-input-phone {
+    display: block !important;
+    width: 100% !important;
+    border: none !important;
+    background: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+  }
+  .massy-wrap__card .massy-input-phone .massy-inline-stack,
+  .shopify-app-block .massy-input-phone .massy-inline-stack,
+  .massy-form-container .massy-input-phone .massy-inline-stack {
+    width: 100% !important;
+    display: block !important;
+  }
+  .massy-wrap__card .massy-input-phone input,
+  .shopify-app-block .massy-input-phone input,
+  .massy-form-container .massy-input-phone input {
+    width: 100% !important;
+  }
+
   /* 2. Plain select + tel input sharing one wrapper: lay out as a row */
   .massy-wrap__card div:has(> select):has(> input[type="tel"]),
   .shopify-app-block div:has(> select):has(> input[type="tel"]) {

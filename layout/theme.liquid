@@ -510,6 +510,8 @@
     {%- endif -%}
     {%- render 'scroll-to-top' -%}
     {%- render 'predictive-search-overlay' -%}
+    {%- comment -%} LP: slide-over cart drawer at body level (above the header, no clipping) {%- endcomment -%}
+    {%- render 'cart-drawer-b2b' -%}
 
     {%- comment -%} LP: subtle scroll-reveal of section content {%- endcomment -%}
     <script>

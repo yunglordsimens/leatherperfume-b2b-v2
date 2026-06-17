@@ -29,10 +29,10 @@
     }
   {%- endif -%}
 
-  /* Switch desktop nav ⇄ burger at 1200px: below this the inline nav
+  /* Switch desktop nav ⇄ burger at 1400px: below this the inline nav
      doesn't fit next to logo + search + language + account, so it would
      overlap the right-side icons. Use the burger until there's room. */
-  @media screen and (min-width: 1200px) {
+  @media screen and (min-width: 1400px) {
     header-drawer {
       display: none;
     }
@@ -40,11 +40,14 @@
 
   .header__lp-nav { display: none !important; }
 
-  @media screen and (min-width: 1200px) {
+  @media screen and (min-width: 1400px) {
     .header__lp-nav {
       display: flex !important;
       visibility: visible !important;
       opacity: 1 !important;
+      align-items: stretch;
+      grid-area: navigation;
+      height: 100%;
     }
   }
 
@@ -250,14 +253,8 @@
     .header__submenu {
       display: none !important;
     }
-
-    .header__lp-nav {
-      display: flex !important;
-      align-items: stretch;
-      grid-area: navigation;
-      height: 100%;
-    }
   }
+  /* (.header__lp-nav visibility is controlled solely by the 1400px gate above) */
 
   /* LP Desktop nav */
   .lp-nav {

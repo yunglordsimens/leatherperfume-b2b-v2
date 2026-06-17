@@ -591,7 +591,10 @@
       "total_wsp": "Total (WSP)",
       "subtotal": "Subtotal:",
       "saved": "Saved",
-      "checkout": "Předat k fakturaci"
+      "checkout": "Předat k fakturaci",
+      "title": "Vaše objednávka",
+      "vat_note": "Bez DPH · Minimální objednávkové množství a cenová hladina se zobrazí v košíku",
+      "view": "Zobrazit celý košík"
     },
     "login": {
       "email": "Email Address",

@@ -566,7 +566,11 @@
       "quantity": "Quantity",
       "total_wsp": "Total (WSP)",
       "subtotal": "Subtotal:",
-      "saved": "Saved"
+      "saved": "Saved",
+      "title": "Your Order",
+      "vat_note": "Excl. VAT · MOQ & tier shown at cart",
+      "checkout": "Submit for Invoicing",
+      "view": "View Full Cart"
     },
     "login": {
       "email": "Email Address",

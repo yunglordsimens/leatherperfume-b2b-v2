@@ -129,7 +129,9 @@
     padding: 2rem 1.5rem;
     box-shadow: 0 8px 24px rgba(0,0,0,.08);
     position: sticky;
-    top: 9rem;
+    /* clear the full sticky header (nav bar + orange top bar) so it isn't
+       overlapped by the welcome banner when it sticks */
+    top: calc(var(--header-height, 7rem) + 3rem);
   }
 
   @media screen and (min-width: 600px) { .csb__card { padding: 2.5rem; } }

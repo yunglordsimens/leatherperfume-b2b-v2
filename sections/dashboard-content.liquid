@@ -545,27 +545,11 @@
     <div class="dc__inner" style="justify-content: center;">
       <div class="dc__auth-gate">
         {%- if customer -%}
-          {%- liquid
-            assign has_applied = false
-            if customer.metafields.custom.company_name != blank or customer.metafields.custom.shop_name != blank
-              assign has_applied = true
-            endif
-            if customer.tags contains 'pending' or customer.tags contains 'applied'
-              assign has_applied = true
-            endif
-          -%}
-          {%- if has_applied -%}
-            {%- comment -%} Applied, awaiting approval {%- endcomment -%}
-            <span class="dc__gate-badge">{{ section.settings.review_badge | default: 'Application under review' }}</span>
-            <h2>{{ section.settings.review_heading | default: 'Your wholesale application is under review' }}</h2>
-            <p>{{ section.settings.review_text | default: 'Thanks for registering! Our team is reviewing your application. Once approved you will get an email and your wholesale prices, ordering and dashboard will unlock here. This usually takes 1-2 business days.' }}</p>
-          {%- else -%}
-            {%- comment -%} Signed in with email only — never completed the application {%- endcomment -%}
-            <span class="dc__gate-badge">{{ section.settings.complete_badge | default: 'Application incomplete' }}</span>
-            <h2>{{ section.settings.complete_heading | default: 'Finish your wholesale application' }}</h2>
-            <p>{{ section.settings.complete_text | default: 'You are signed in, but we do not have your wholesale application yet. Complete it to request partner access and pricing.' }}</p>
-            <a href="{{ pages['wholesale-application'].url | default: '/pages/wholesale-application' }}">{{ section.settings.complete_btn | default: 'Complete application' }}</a>
-          {%- endif -%}
+          {%- comment -%} Logged in but not yet approved (no wholesale tag) {%- endcomment -%}
+          <span class="dc__gate-badge">{{ section.settings.review_badge | default: 'Access pending' }}</span>
+          <h2>{{ section.settings.review_heading | default: 'Your wholesale access is pending' }}</h2>
+          <p>{{ section.settings.review_text | default: 'If you have submitted your application, our team is reviewing it and you will get an email once approved (usually 1-2 business days). Not applied yet? Complete your application below.' }}</p>
+          <a href="{{ pages['wholesale-application'].url | default: '/pages/wholesale-application' }}">{{ section.settings.complete_btn | default: 'Complete / review application' }}</a>
           <div class="dc__gate-links">
             <a class="dc__gate-secondary" href="{{ routes.root_url }}">{{ section.settings.review_btn | default: 'Back to store' }}</a>
             <a class="dc__gate-secondary" href="{{ routes.account_logout_url }}">{{ section.settings.signout_label | default: 'Sign out' }}</a>

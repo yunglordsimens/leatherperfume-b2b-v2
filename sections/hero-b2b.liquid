@@ -365,30 +365,14 @@
             {{ section.settings.member_secondary_label | default: 'My Dashboard' | escape }}
           </a>
         {%- elsif customer -%}
-          {%- comment -%} Logged in but not approved yet {%- endcomment -%}
-          {%- liquid
-            assign has_applied = false
-            if customer.metafields.custom.company_name != blank or customer.metafields.custom.shop_name != blank
-              assign has_applied = true
-            endif
-            if customer.tags contains 'pending' or customer.tags contains 'applied'
-              assign has_applied = true
-            endif
-          -%}
-          {%- if has_applied -%}
-            <a href="{{ pages['partner-dashboard'].url | default: '/pages/partner-dashboard' }}" class="hero-b2b__btn hero-b2b__btn--primary">
-              {{ section.settings.status_label | default: 'Check application status' | escape }}
-              <svg class="hero-b2b__btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </a>
-          {%- else -%}
-            <a href="{{ pages['wholesale-application'].url | default: '/pages/wholesale-application' }}" class="hero-b2b__btn hero-b2b__btn--primary">
-              {{ section.settings.complete_label | default: 'Complete your application' | escape }}
-              <svg class="hero-b2b__btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </a>
-            <a href="{{ pages['partner-dashboard'].url | default: '/pages/partner-dashboard' }}" class="hero-b2b__btn hero-b2b__btn--secondary">
-              {{ section.settings.status_label | default: 'Check application status' | escape }}
-            </a>
-          {%- endif -%}
+          {%- comment -%} Logged in but not approved yet (pending or just registered) {%- endcomment -%}
+          <a href="{{ pages['partner-dashboard'].url | default: '/pages/partner-dashboard' }}" class="hero-b2b__btn hero-b2b__btn--primary">
+            {{ section.settings.status_label | default: 'Check application status' | escape }}
+            <svg class="hero-b2b__btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+          <a href="{{ pages['wholesale-application'].url | default: '/pages/wholesale-application' }}" class="hero-b2b__btn hero-b2b__btn--secondary">
+            {{ section.settings.complete_label | default: 'Complete application' | escape }}
+          </a>
         {%- else -%}
           {%- if section.settings.button_primary_label != blank -%}
             <a

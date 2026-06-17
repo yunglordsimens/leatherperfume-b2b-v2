@@ -195,15 +195,41 @@
 
   html.a11y-high-contrast .pgbl__img-wrap { border: 2px solid #000000 !important; }
 
+  /* Skeleton shimmer while the product image loads */
+  .pgbl__img-wrap::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(100deg, #f5f5f4 30%, #ececea 50%, #f5f5f4 70%);
+    background-size: 200% 100%;
+    animation: pgblShimmer 1.3s ease-in-out infinite;
+    z-index: 0;
+  }
+  .pgbl__img-wrap.is-loaded::after { display: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .pgbl__img-wrap::after { animation: none; }
+  }
+  @keyframes pgblShimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
   .pgbl__img {
+    position: relative;
+    z-index: 1;
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
-    transition: transform 0.5s ease;
+    opacity: 0;
+    transition: transform 0.5s ease, opacity 0.45s ease;
   }
+  .pgbl__img.is-loaded { opacity: 1; }
 
   .pgbl__card:hover .pgbl__img { transform: scale(1.04); }
+
+  /* Subtle dim while filtering re-renders the grid */
+  .pgbl__grid.is-filtering { opacity: 0.45; transition: opacity 0.15s ease; }
 
   .pgbl__img-placeholder { color: #d6d3d1; }
   .pgbl__img-placeholder svg { width: 3rem; height: 3rem; }
@@ -929,6 +955,18 @@
   var emptyMsg   = document.getElementById('PgblEmptyMsg-' + sid);
   var clearBtn   = document.getElementById('PgblClearBtn-' + sid);
   var cards      = Array.from(document.querySelectorAll('#ProductGridLoggedIn-' + sid + ' .pgbl__card'));
+  var gridEl     = document.getElementById('PgblGrid-' + sid);
+
+  /* ── Image skeleton: fade in once loaded, drop the shimmer ── */
+  document.querySelectorAll('#ProductGridLoggedIn-' + sid + ' .pgbl__img').forEach(function (img) {
+    function done() {
+      img.classList.add('is-loaded');
+      var wrap = img.closest('.pgbl__img-wrap');
+      if (wrap) wrap.classList.add('is-loaded');
+    }
+    if (img.complete && img.naturalWidth > 0) done();
+    else { img.addEventListener('load', done); img.addEventListener('error', done); }
+  });
 
   /* ── Quantity controls ──────────────────────────── */
   cards.forEach(function (card) {
@@ -1033,9 +1071,18 @@
     };
   }
 
+  var dimTimer;
+  var filtersReady = false;
   function applyFilters() {
     var f = getFilters();
     var visible = 0;
+
+    /* brief dim so the grid feels like it re-renders (skip on first load) */
+    if (filtersReady && gridEl) {
+      gridEl.classList.add('is-filtering');
+      clearTimeout(dimTimer);
+      dimTimer = setTimeout(function () { gridEl.classList.remove('is-filtering'); }, 160);
+    }
 
     cards.forEach(function (card) {
       var title     = card.getAttribute('data-title')    || '';
@@ -1100,6 +1147,7 @@
 
   window.addEventListener('catalog:filter', applyFilters);
   applyFilters();
+  filtersReady = true;
 })();
 </script>
 

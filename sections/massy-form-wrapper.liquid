@@ -421,11 +421,17 @@
   .massy-wrap__card button[type="submit"],
   .massy-wrap__card [class*="submit"],
   .massy-wrap__card [class*="massy-btn"],
+  .massy-wrap__card .massy-button-form,
+  .massy-wrap__card .massy-button,
   .shopify-app-block input[type="submit"],
   .shopify-app-block button[type="submit"],
   .shopify-app-block [class*="submit"],
+  .shopify-app-block .massy-button-form,
+  .shopify-app-block .massy-button,
+  .massy-form-container .massy-button-form,
   .shopify-app-block [class*="btn"]:not([class*="back"]):not([class*="cancel"]) {
     width: 100% !important;
+    min-width: 0 !important;
     padding: 1.25rem 1.5rem !important;
     font-family: var(--font-body-family) !important;
     font-size: 1.125rem !important;
@@ -452,11 +458,47 @@
   .massy-wrap__card input[type="submit"]:hover,
   .massy-wrap__card button[type="submit"]:hover,
   .massy-wrap__card [class*="submit"]:hover,
+  .massy-wrap__card .massy-button-form:hover,
+  .massy-wrap__card .massy-button:hover,
   .shopify-app-block input[type="submit"]:hover,
   .shopify-app-block button[type="submit"]:hover,
-  .shopify-app-block [class*="submit"]:hover {
+  .shopify-app-block [class*="submit"]:hover,
+  .shopify-app-block .massy-button-form:hover,
+  .shopify-app-block .massy-button:hover {
     background-color: #b45309 !important;
     border-color: #b45309 !important;
+  }
+
+  /* Submit button footer: full width so the button spans (reference = w-full) */
+  .massy-wrap__card .massy-form-footer,
+  .shopify-app-block .massy-form-footer {
+    width: 100% !important;
+  }
+
+  /* Massy custom select (Store Type): same box as the inputs (consistent radius) */
+  .massy-wrap__card .massy-select-input-form,
+  .shopify-app-block .massy-select-input-form,
+  .massy-form-container .massy-select-input-form {
+    background-color: #fafaf9 !important;
+    border: 1.5px solid #e7e5e4 !important;
+    border-radius: 0.5rem !important;
+    padding: 1rem 1.25rem !important;
+    box-sizing: border-box !important;
+    min-height: 0 !important;
+  }
+  .massy-wrap__card .massy-select-input-form:hover,
+  .shopify-app-block .massy-select-input-form:hover {
+    border-color: #d6d3d1 !important;
+  }
+
+  /* Labels: bold, like the reference */
+  .massy-wrap__card .massy-input-label,
+  .shopify-app-block .massy-input-label,
+  .massy-form-container .massy-input-label {
+    font-family: var(--font-body-family) !important;
+    font-weight: 700 !important;
+    color: #44403c !important;
+    margin-bottom: 0.5rem !important;
   }
 
   html.a11y-high-contrast .massy-wrap__card input[type="submit"],

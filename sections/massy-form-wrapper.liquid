@@ -305,14 +305,15 @@
     border-color: #b45309 !important;
     box-shadow: 0 0 0 3px rgba(180, 83, 9, 0.12) !important;
   }
-  .massy-wrap__card .iti input[type="tel"],
-  .shopify-app-block .iti input[type="tel"],
-  .massy-form-container .iti input[type="tel"] {
+  .massy-wrap__card .iti input:not([type="checkbox"]):not([type="radio"]),
+  .shopify-app-block .iti input:not([type="checkbox"]):not([type="radio"]),
+  .massy-form-container .iti input:not([type="checkbox"]):not([type="radio"]) {
     border: none !important;
     background: transparent !important;
     box-shadow: none !important;
     border-radius: 0 !important;
     width: 100% !important;
+    height: auto !important;
     padding: 1rem 1.25rem 1rem 3.5rem !important;
   }
 

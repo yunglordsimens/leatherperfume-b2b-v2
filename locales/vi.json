@@ -566,7 +566,8 @@
       "quantity": "Quantity",
       "total_wsp": "Total (WSP)",
       "subtotal": "Subtotal:",
-      "saved": "Saved"
+      "saved": "Saved",
+      "checkout": "Gửi thanh toán"
     },
     "login": {
       "email": "Email Address",

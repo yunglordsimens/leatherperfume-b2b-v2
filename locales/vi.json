@@ -567,7 +567,10 @@
       "total_wsp": "Total (WSP)",
       "subtotal": "Subtotal:",
       "saved": "Saved",
-      "checkout": "Gửi thanh toán"
+      "checkout": "Gửi thanh toán",
+      "title": "Đơn hàng của bạn",
+      "vat_note": "Chưa bao gồm VAT · MOQ và bậc hiển thị tại giỏ hàng",
+      "view": "Xem Toàn Bộ Giỏ Hàng"
     },
     "login": {
       "email": "Email Address",

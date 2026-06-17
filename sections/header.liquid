@@ -52,6 +52,12 @@
     display: flex;
   }
 
+  /* Orange promo bar scrolls away once the header sticks — only the nav stays
+     pinned (standard promo-bar behaviour; nothing overlaps the page). */
+  .section-header.scrolled-past-header .lp-top-bar {
+    display: none;
+  }
+
   /* Mobile: when the menu is open, overlay it on the current screen
      (not the top of the document) and let it scroll on its own.
      Without this the drawer dropped to where the header sits in the

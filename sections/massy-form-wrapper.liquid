@@ -517,7 +517,8 @@
      of .massy-input-label, so the select box sat a few px higher than the
      neighbouring input. Match the label spacing/style and kill the extra gap. */
   #StoreType .massy-block-stack { gap: 0 !important; }
-  #StoreType .massy-text {
+  /* Only the field LABEL (direct child), not the "Select category" text inside the select */
+  #StoreType .massy-block-stack > .massy-text {
     font-family: var(--font-body-family) !important;
     font-weight: 700 !important;
     color: #44403c !important;
@@ -525,7 +526,8 @@
   }
   .massy-wrap__card .massy-select-input-form,
   .shopify-app-block .massy-select-input-form {
-    min-height: 3.4rem !important;
+    padding: 0.75rem 1.25rem !important;
+    min-height: 0 !important;
     align-items: center !important;
   }
 

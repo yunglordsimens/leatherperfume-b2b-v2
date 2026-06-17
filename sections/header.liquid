@@ -29,10 +29,11 @@
     }
   {%- endif -%}
 
-  /* Switch desktop nav ⇄ burger at 1400px: below this the inline nav
+  /* Switch desktop nav ⇄ burger at 1200px: below this the inline nav
      doesn't fit next to logo + search + language + account, so it would
-     overlap the right-side icons. Use the burger until there's room. */
-  @media screen and (min-width: 1400px) {
+     overlap the right-side icons. Header is also compressed (smaller gap +
+     nav padding) so the menu fits at a lower width. Tune the px if needed. */
+  @media screen and (min-width: 1200px) {
     header-drawer {
       display: none;
     }
@@ -40,7 +41,7 @@
 
   .header__lp-nav { display: none !important; }
 
-  @media screen and (min-width: 1400px) {
+  @media screen and (min-width: 1200px) {
     .header__lp-nav {
       display: flex !important;
       visibility: visible !important;
@@ -278,7 +279,7 @@
     display: flex;
     align-items: center;
     gap: 0.375rem;
-    padding: 0 0.875rem;
+    padding: 0 0.55rem;
     height: 100%;
     font-family: var(--font-body-family);
     font-size: 0.8125rem;
@@ -541,7 +542,7 @@
       padding-right: 1.5rem;
       display: flex;
       align-items: center;
-      gap: 2.5rem;
+      gap: 1.25rem;
     }
 
     .header.page-width .header__heading,

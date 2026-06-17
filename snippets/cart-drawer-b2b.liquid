@@ -1,0 +1,267 @@
+{%- comment -%}
+  Slide-over cart drawer (B2B). Opens on cart-icon click and after add-to-order
+  (listens for the `cart:updated` event the add handlers dispatch). Quick view:
+  line items + subtotal + actions. Full MOQ/tier breakdown lives on /cart.
+{%- endcomment -%}
+
+<style>
+  .cd__overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(28, 25, 23, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+    z-index: 110;
+  }
+  .cd__overlay.is-open { opacity: 1; visibility: visible; }
+
+  .cd__panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 100%;
+    max-width: 30rem;
+    background: #ffffff;
+    box-shadow: -8px 0 32px rgba(0, 0, 0, 0.18);
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 111;
+    display: flex;
+    flex-direction: column;
+  }
+  .cd__panel.is-open { transform: translateX(0); }
+
+  .cd__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem;
+    border-bottom: 1px solid #e7e5e4;
+    flex-shrink: 0;
+  }
+  .cd__title {
+    font-family: var(--font-body-family);
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #1c1917;
+    margin: 0;
+  }
+  .cd__close {
+    width: 2.5rem; height: 2.5rem;
+    display: flex; align-items: center; justify-content: center;
+    background: #f5f5f4; border: none; border-radius: 999px;
+    cursor: pointer; color: #1c1917;
+  }
+  .cd__close svg { width: 1.25rem; height: 1.25rem; }
+
+  .cd__body { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 1rem 1.5rem; }
+  .cd__empty { text-align: center; color: #78716c; font-family: var(--font-body-family); padding: 3rem 1rem; font-size: 1rem; }
+
+  .cd__item { display: flex; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid #f5f5f4; }
+  .cd__item-img {
+    width: 4.5rem; height: 4.5rem; flex-shrink: 0; border-radius: 0.625rem;
+    overflow: hidden; background: #f5f5f4; border: 1px solid #e7e5e4;
+  }
+  .cd__item-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .cd__item-info { flex: 1; min-width: 0; }
+  .cd__item-title {
+    font-family: var(--font-body-family); font-size: 0.95rem; font-weight: 700;
+    color: #1c1917; margin: 0 0 0.15rem; text-decoration: none; display: block;
+  }
+  .cd__item-title:hover { color: #b45309; }
+  .cd__item-variant { font-family: var(--font-body-family); font-size: 0.8rem; color: #78716c; margin: 0 0 0.6rem; }
+  .cd__item-bottom { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
+  .cd__qty { display: inline-flex; align-items: center; border: 1px solid #d6d3d1; border-radius: 0.625rem; overflow: hidden; }
+  .cd__qty-btn {
+    width: 2rem; height: 2rem; display: flex; align-items: center; justify-content: center;
+    background: #ffffff; border: none; cursor: pointer; color: #1c1917; font-size: 1.1rem; line-height: 1;
+  }
+  .cd__qty-btn:hover { background: #f5f5f4; }
+  .cd__qty-val { min-width: 2rem; text-align: center; font-family: var(--font-body-family); font-size: 0.95rem; font-weight: 700; }
+  .cd__item-price { font-family: var(--font-body-family); font-size: 0.95rem; font-weight: 700; color: #1c1917; white-space: nowrap; }
+  .cd__item-remove {
+    background: none; border: none; color: #a8a29e; cursor: pointer; font-family: var(--font-body-family);
+    font-size: 0.75rem; text-decoration: underline; padding: 0; margin-top: 0.4rem;
+  }
+  .cd__item-remove:hover { color: #b91c1c; }
+
+  .cd__foot { border-top: 1px solid #e7e5e4; padding: 1.5rem; flex-shrink: 0; }
+  .cd__subtotal { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 1rem; }
+  .cd__subtotal-lbl { font-family: var(--font-body-family); font-size: 0.95rem; color: #57534e; }
+  .cd__subtotal-val { font-family: var(--font-heading-family); font-weight: var(--font-heading-weight); font-size: 1.5rem; color: #1c1917; }
+  .cd__note { font-family: var(--font-body-family); font-size: 0.78rem; color: #a8a29e; margin: 0 0 1rem; }
+  .cd__actions { display: flex; flex-direction: column; gap: 0.6rem; }
+  .cd__btn {
+    display: flex; align-items: center; justify-content: center; height: 3.25rem;
+    font-family: var(--font-body-family); font-size: 1rem; font-weight: 700; letter-spacing: 0.02em;
+    border-radius: 0.75rem; text-decoration: none; cursor: pointer; border: 1.5px solid #1c1917;
+  }
+  .cd__btn--checkout { background: #1c1917; color: #ffffff; }
+  .cd__btn--checkout:hover { background: #ea580c; border-color: #ea580c; }
+  .cd__btn--cart { background: #ffffff; color: #1c1917; }
+  .cd__btn--cart:hover { background: #f5f5f4; }
+</style>
+
+<div class="cd__overlay" id="CartDrawerOverlay" aria-hidden="true"></div>
+<aside class="cd__panel" id="CartDrawer" role="dialog" aria-modal="true" aria-label="Your order" aria-hidden="true">
+  <div class="cd__head">
+    <h2 class="cd__title">{{ 'b2b.cart.title' | t | default: 'Your Order' }}</h2>
+    <button class="cd__close" type="button" id="CartDrawerClose" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="cd__body" id="CartDrawerBody"></div>
+  <div class="cd__foot" id="CartDrawerFoot" hidden>
+    <div class="cd__subtotal">
+      <span class="cd__subtotal-lbl">{{ 'b2b.cart.subtotal' | t | default: 'Subtotal' }}</span>
+      <span class="cd__subtotal-val" id="CartDrawerSubtotal">—</span>
+    </div>
+    <p class="cd__note">{{ 'b2b.cart.vat_note' | t | default: 'Excl. VAT · MOQ & tier shown at cart' }}</p>
+    <div class="cd__actions">
+      <a href="/checkout" class="cd__btn cd__btn--checkout">{{ 'b2b.cart.checkout' | t | default: 'Submit for Invoicing' }}</a>
+      <a href="{{ routes.cart_url }}" class="cd__btn cd__btn--cart">{{ 'b2b.cart.view' | t | default: 'View Full Cart' }}</a>
+    </div>
+  </div>
+</aside>
+
+<script>
+(function () {
+  if (window.lpCartDrawerReady) return;
+  window.lpCartDrawerReady = true;
+
+  var overlay = document.getElementById('CartDrawerOverlay');
+  var panel   = document.getElementById('CartDrawer');
+  var body    = document.getElementById('CartDrawerBody');
+  var foot    = document.getElementById('CartDrawerFoot');
+  var subEl   = document.getElementById('CartDrawerSubtotal');
+  var closeEl = document.getElementById('CartDrawerClose');
+  if (!panel || !body) return;
+
+  var onCartPage = /\/cart$/.test(window.location.pathname.replace(/\/$/, ''));
+
+  function money(cents, currency) {
+    try {
+      return new Intl.NumberFormat(document.documentElement.lang || 'cs', {
+        style: 'currency', currency: currency || 'CZK'
+      }).format((cents || 0) / 100);
+    } catch (e) {
+      return ((cents || 0) / 100).toFixed(2);
+    }
+  }
+
+  function open() {
+    overlay.classList.add('is-open');
+    panel.classList.add('is-open');
+    panel.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+  function close() {
+    overlay.classList.remove('is-open');
+    panel.classList.remove('is-open');
+    panel.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  function render(cart) {
+    if (!cart || !cart.items || cart.items.length === 0) {
+      body.innerHTML = '<p class="cd__empty">Your order is empty.</p>';
+      foot.hidden = true;
+      return;
+    }
+    var html = '';
+    cart.items.forEach(function (item) {
+      var img = item.image
+        ? '<img src="' + item.image.replace(/(\.[^.\/]+)(\?|$)/, '_120x$1$2') + '" alt="">'
+        : '';
+      var variant = (item.variant_title && item.variant_title !== 'Default Title')
+        ? '<p class="cd__item-variant">' + item.variant_title + '</p>' : '';
+      html +=
+        '<div class="cd__item" data-key="' + item.key + '">' +
+          '<a class="cd__item-img" href="' + item.url + '">' + img + '</a>' +
+          '<div class="cd__item-info">' +
+            '<a class="cd__item-title" href="' + item.url + '">' + item.product_title + '</a>' +
+            variant +
+            '<div class="cd__item-bottom">' +
+              '<span class="cd__qty">' +
+                '<button class="cd__qty-btn" type="button" data-cd-dec aria-label="Decrease">&minus;</button>' +
+                '<span class="cd__qty-val">' + item.quantity + '</span>' +
+                '<button class="cd__qty-btn" type="button" data-cd-inc aria-label="Increase">+</button>' +
+              '</span>' +
+              '<span class="cd__item-price">' + money(item.final_line_price, cart.currency) + '</span>' +
+            '</div>' +
+            '<button class="cd__item-remove" type="button" data-cd-remove>Remove</button>' +
+          '</div>' +
+        '</div>';
+    });
+    body.innerHTML = html;
+    subEl.textContent = money(cart.items_subtotal_price, cart.currency);
+    foot.hidden = false;
+  }
+
+  function updateBubbles(count) {
+    document.querySelectorAll('[data-cart-count], .cart-count-bubble span').forEach(function (el) {
+      el.textContent = count;
+    });
+    document.querySelectorAll('.cart-count-bubble').forEach(function (el) {
+      el.style.display = count > 0 ? '' : 'none';
+    });
+  }
+
+  function fetchCart() {
+    return fetch('/cart.js', { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+      .then(function (r) { return r.json(); });
+  }
+
+  function changeQty(key, quantity) {
+    return fetch('/cart/change.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+      body: JSON.stringify({ id: key, quantity: quantity })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (cart) {
+        render(cart);
+        updateBubbles(cart.item_count);
+        return cart;
+      });
+  }
+
+  /* Qty +/- and remove (delegated) */
+  body.addEventListener('click', function (e) {
+    var row = e.target.closest('.cd__item');
+    if (!row) return;
+    var key = row.getAttribute('data-key');
+    var valEl = row.querySelector('.cd__qty-val');
+    var current = parseInt(valEl.textContent, 10) || 1;
+    if (e.target.closest('[data-cd-inc]')) changeQty(key, current + 1);
+    else if (e.target.closest('[data-cd-dec]')) changeQty(key, Math.max(0, current - 1));
+    else if (e.target.closest('[data-cd-remove]')) changeQty(key, 0);
+  });
+
+  /* Open via cart icon */
+  var cartIcon = document.getElementById('cart-icon-bubble');
+  if (cartIcon) {
+    cartIcon.addEventListener('click', function (e) {
+      e.preventDefault();
+      fetchCart().then(function (cart) { render(cart); open(); });
+    });
+  }
+
+  /* Open + refresh after add-to-order (event dispatched by add handlers) */
+  window.addEventListener('cart:updated', function (e) {
+    var cart = e.detail;
+    if (cart) { render(cart); updateBubbles(cart.item_count); }
+    if (!onCartPage) open();
+  });
+
+  overlay.addEventListener('click', close);
+  closeEl && closeEl.addEventListener('click', close);
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && panel.classList.contains('is-open')) close();
+  });
+})();
+</script>

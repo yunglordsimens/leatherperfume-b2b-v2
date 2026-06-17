@@ -590,7 +590,8 @@
       "quantity": "Quantity",
       "total_wsp": "Total (WSP)",
       "subtotal": "Subtotal:",
-      "saved": "Saved"
+      "saved": "Saved",
+      "checkout": "Předat k fakturaci"
     },
     "login": {
       "email": "Email Address",

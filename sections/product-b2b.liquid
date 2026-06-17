@@ -819,7 +819,72 @@
     .pdp-subtotal           { font-size: 1.1rem; }
     .pdp-features__head     { font-size: 0.9rem; }
     .pdp-features__item     { font-size: 1.1rem; }
+
+    /* Sticky add-to-order bar pinned to the bottom (app-like) */
+    .pdp-order {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 20;
+      margin: 0;
+      background: #ffffff;
+      border-top: 1px solid #e7e5e4;
+      box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08);
+      padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom));
+    }
+    .pdp-order .pdp-subtotal { margin: 0 0 0.5rem; }
+    /* room so content isn't hidden behind the bar */
+    .pdp-wrap { padding-bottom: 9rem; }
   }
+
+  /* ── Image lightbox (tap to zoom) ───────────────── */
+  .pdp-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(28, 25, 23, 0.94);
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 1rem;
+    box-sizing: border-box;
+  }
+  .pdp-lightbox.is-open { display: flex; }
+  .pdp-lightbox__img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    cursor: zoom-in;
+    transition: transform 0.2s ease;
+    user-select: none;
+  }
+  .pdp-lightbox__img.is-zoomed {
+    max-width: none;
+    max-height: none;
+    width: 175%;
+    cursor: zoom-out;
+  }
+  .pdp-lightbox__close {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    width: 2.75rem;
+    height: 2.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.12);
+    border: none;
+    border-radius: 999px;
+    color: #ffffff;
+    cursor: pointer;
+    z-index: 2;
+  }
+  .pdp-lightbox__close svg { width: 1.5rem; height: 1.5rem; }
+  .pdp-gallery__main-img { cursor: zoom-in; }
 </style>
 
 {%- comment -%}── Breadcrumb ──{%- endcomment -%}
@@ -1119,6 +1184,14 @@
   <span id="PdpToastMsg-{{ section.id }}"></span>
 </div>
 
+{%- comment -%}── Image lightbox (tap to zoom) ──{%- endcomment -%}
+<div class="pdp-lightbox" id="PdpLightbox-{{ section.id }}" role="dialog" aria-modal="true" aria-label="{{ product.title | escape }}">
+  <button class="pdp-lightbox__close" type="button" id="PdpLightboxClose-{{ section.id }}" aria-label="Close">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+  <img class="pdp-lightbox__img" id="PdpLightboxImg-{{ section.id }}" src="" alt="{{ product.title | escape }}">
+</div>
+
 <script>
 (function () {
   var sid     = '{{ section.id }}';
@@ -1146,6 +1219,37 @@
         var idx = Math.round(track.scrollLeft / track.clientWidth);
         thumbs.forEach(function (t, i) { t.classList.toggle('is-active', i === idx); });
       }, 60);
+    });
+  }
+
+  /* Lightbox: tap a gallery image to open fullscreen, tap image to zoom */
+  var lightbox   = document.getElementById('PdpLightbox-' + sid);
+  var lightboxImg = document.getElementById('PdpLightboxImg-' + sid);
+  var lightboxClose = document.getElementById('PdpLightboxClose-' + sid);
+  if (lightbox && lightboxImg) {
+    function openLightbox(src, alt) {
+      lightboxImg.src = src;
+      lightboxImg.alt = alt || '';
+      lightboxImg.classList.remove('is-zoomed');
+      lightbox.classList.add('is-open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeLightbox() {
+      lightbox.classList.remove('is-open');
+      lightboxImg.classList.remove('is-zoomed');
+      document.body.style.overflow = '';
+    }
+    track && track.querySelectorAll('.pdp-gallery__main-img').forEach(function (img) {
+      img.addEventListener('click', function () { openLightbox(img.src, img.alt); });
+    });
+    lightboxImg.addEventListener('click', function (e) {
+      e.stopPropagation();
+      lightboxImg.classList.toggle('is-zoomed');
+    });
+    lightbox.addEventListener('click', closeLightbox);
+    lightboxClose && lightboxClose.addEventListener('click', closeLightbox);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && lightbox.classList.contains('is-open')) closeLightbox();
     });
   }
 

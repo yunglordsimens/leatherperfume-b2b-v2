@@ -885,6 +885,55 @@
   }
   .pdp-lightbox__close svg { width: 1.5rem; height: 1.5rem; }
   .pdp-gallery__main-img { cursor: zoom-in; }
+
+  /* ── Related products ───────────────────────────── */
+  .pdp-rel { background-color: #fafaf9; padding: 0 1.5rem 4rem; }
+  .pdp-rel__inner { max-width: var(--page-width, 90rem); margin: 0 auto; }
+  .pdp-rel__heading {
+    font-family: var(--font-heading-family);
+    font-weight: var(--font-heading-weight);
+    font-size: clamp(1.75rem, 3vw, 2.25rem);
+    color: #1c1917;
+    margin: 0 0 1.75rem;
+  }
+  html.a11y-high-contrast .pdp-rel__heading { color: #000000 !important; }
+  .pdp-rel__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+  @media screen and (min-width: 750px) { .pdp-rel__grid { gap: 1.5rem; } }
+  @media screen and (min-width: 990px) { .pdp-rel__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  .pdp-rel__card { display: block; text-decoration: none; min-width: 0; }
+  .pdp-rel__img {
+    aspect-ratio: 4 / 5;
+    border-radius: 1rem;
+    overflow: hidden;
+    background-color: #ffffff;
+    border: 1px solid #e7e5e4;
+    margin-bottom: 0.875rem;
+    display: flex; align-items: center; justify-content: center;
+  }
+  html.a11y-high-contrast .pdp-rel__img { border: 2px solid #000000 !important; }
+  .pdp-rel__img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
+  .pdp-rel__card:hover .pdp-rel__img img { transform: scale(1.04); }
+  .pdp-rel__cat {
+    display: block;
+    font-family: var(--font-body-family);
+    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    color: #a8a29e; margin-bottom: 0.25rem;
+  }
+  .pdp-rel__title {
+    display: block;
+    font-family: var(--font-body-family);
+    font-size: 0.95rem; font-weight: 600; color: #1c1917; line-height: 1.3;
+  }
+  .pdp-rel__card:hover .pdp-rel__title { color: #b45309; }
+  html.a11y-high-contrast .pdp-rel__title { color: #000000 !important; }
+  @media screen and (max-width: 989px) {
+    .pdp-rel__cat { font-size: 0.8rem; }
+    .pdp-rel__title { font-size: 1.05rem; }
+  }
 </style>
 
 {%- comment -%}── Breadcrumb ──{%- endcomment -%}
@@ -1176,6 +1225,32 @@
   </div>
 </div>
 
+{%- comment -%}── Related products ──{%- endcomment -%}
+{%- if first_collection != blank and first_collection.products.size > 1 -%}
+  <section class="pdp-rel">
+    <div class="pdp-rel__inner">
+      <h2 class="pdp-rel__heading">{{ section.settings.related_heading | default: 'You may also like' }}</h2>
+      <div class="pdp-rel__grid">
+        {%- assign rel_shown = 0 -%}
+        {%- for p in first_collection.products -%}
+          {%- if p.id != product.id and rel_shown < 4 -%}
+            <a class="pdp-rel__card" href="{{ p.url }}">
+              <div class="pdp-rel__img">
+                {%- if p.featured_media -%}
+                  <img src="{{ p.featured_media | image_url: width: 400 }}" alt="{{ p.featured_media.alt | escape }}" loading="lazy" width="400" height="500">
+                {%- endif -%}
+              </div>
+              {%- if p.type != blank -%}<span class="pdp-rel__cat">{{ p.type }}</span>{%- endif -%}
+              <span class="pdp-rel__title">{{ p.title }}</span>
+            </a>
+            {%- assign rel_shown = rel_shown | plus: 1 -%}
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  </section>
+{%- endif -%}
+
 <div class="pdp-toast" id="PdpToast-{{ section.id }}" role="status" aria-live="polite" aria-atomic="true">
   <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
     <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
@@ -1401,6 +1476,12 @@
       "id": "dimensions_label",
       "label": "Dimensions label",
       "default": "Dimensions"
+    },
+    {
+      "type": "text",
+      "id": "related_heading",
+      "label": "Related products heading",
+      "default": "You may also like"
     },
     {
       "type": "text",

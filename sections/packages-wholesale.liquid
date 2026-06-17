@@ -467,7 +467,7 @@
             <p class="pkg-wh__price-label">Investment</p>
             <p class="pkg-wh__price-value">{{ p1_price }}</p>
           </div>
-          <a href="{{ p1_link | default: '#' }}" class="pkg-wh__btn pkg-wh__btn--light">
+          <a href="{{ p1_link | default: routes.all_products_collection_url }}" class="pkg-wh__btn pkg-wh__btn--light">
             {{ p1_btn }}
           </a>
         </footer>
@@ -500,7 +500,7 @@
             <p class="pkg-wh__price-label">Investment</p>
             <p class="pkg-wh__price-value">{{ p2_price }}</p>
           </div>
-          <a href="{{ p2_link | default: '#' }}" class="pkg-wh__btn pkg-wh__btn--dark">
+          <a href="{{ p2_link | default: routes.all_products_collection_url }}" class="pkg-wh__btn pkg-wh__btn--dark">
             {{ p2_btn }}
           </a>
         </footer>
@@ -511,7 +511,7 @@
     <!-- More packages button -->
     {%- if more_label != blank -%}
       <div class="pkg-wh__more-wrap">
-        <a href="{{ more_link | default: '#' }}" class="pkg-wh__more">
+        <a href="{{ more_link | default: routes.all_products_collection_url }}" class="pkg-wh__more">
           {{ more_label }}
           <svg class="pkg-wh__more-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
             <line x1="5" y1="12" x2="19" y2="12"/>

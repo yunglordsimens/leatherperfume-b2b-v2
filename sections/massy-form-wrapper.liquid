@@ -512,6 +512,16 @@
     font-size: 1.4rem !important;
     color: #1c1917 !important;
   }
+  /* ...but NOT the "Select category" text inside the select (also wrapped in a
+     .massy-box). Reset it to a normal placeholder look. */
+  .massy-wrap__card .massy-select-input .massy-text,
+  .shopify-app-block .massy-select-input .massy-text,
+  .massy-form-container .massy-select-input .massy-text {
+    font-family: var(--font-body-family) !important;
+    font-weight: 400 !important;
+    font-size: 1rem !important;
+    color: var(--massy-text-color-subdued, #78716c) !important;
+  }
 
   /* Store Type: its label uses .massy-text in a block-stack (gap 4px) instead
      of .massy-input-label, so the select box sat a few px higher than the

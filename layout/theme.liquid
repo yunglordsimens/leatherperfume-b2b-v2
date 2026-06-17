@@ -7,6 +7,39 @@
     <meta name="theme-color" content="">
     <link rel="canonical" href="{{ canonical_url }}">
 
+    {%- comment -%} LP: enable scroll-reveal early (before paint) to avoid flash {%- endcomment -%}
+    <script>
+      if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.documentElement.classList.add('lp-js-reveal');
+      }
+    </script>
+    <style>
+      html.lp-js-reveal .hero-b2b__content,
+      html.lp-js-reveal .hero-b2b__media,
+      html.lp-js-reveal .trust-bar__item,
+      html.lp-js-reveal .cat-cards__head,
+      html.lp-js-reveal .cat-card,
+      html.lp-js-reveal .editorial__media,
+      html.lp-js-reveal .editorial__body,
+      html.lp-js-reveal .editorial__check-item,
+      html.lp-js-reveal .pkg-wh__head,
+      html.lp-js-reveal .pkg-wh__card,
+      html.lp-js-reveal .how-it-works__head,
+      html.lp-js-reveal .how-it-works__step,
+      html.lp-js-reveal .bottom-cta__inner,
+      html.lp-js-reveal .pdp-rel__card,
+      html.lp-js-reveal .pdp-features {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.7s ease, transform 0.7s ease;
+        will-change: opacity, transform;
+      }
+      html.lp-js-reveal .lp-in {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+    </style>
+
     {%- if settings.favicon != blank -%}
       <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
     {%- endif -%}
@@ -477,5 +510,33 @@
     {%- endif -%}
     {%- render 'scroll-to-top' -%}
     {%- render 'predictive-search-overlay' -%}
+
+    {%- comment -%} LP: subtle scroll-reveal of section content {%- endcomment -%}
+    <script>
+      (function () {
+        if (!document.documentElement.classList.contains('lp-js-reveal')) return;
+        var sels = [
+          '.hero-b2b__content', '.hero-b2b__media', '.trust-bar__item',
+          '.cat-cards__head', '.cat-card', '.editorial__media', '.editorial__body',
+          '.editorial__check-item', '.pkg-wh__head', '.pkg-wh__card',
+          '.how-it-works__head', '.how-it-works__step', '.bottom-cta__inner',
+          '.pdp-rel__card', '.pdp-features'
+        ];
+        var els = [];
+        sels.forEach(function (s) {
+          document.querySelectorAll(s).forEach(function (el) { els.push(el); });
+        });
+        if (!els.length) return;
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (en) {
+            if (en.isIntersecting) { en.target.classList.add('lp-in'); io.unobserve(en.target); }
+          });
+        }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+        els.forEach(function (el, i) {
+          el.style.transitionDelay = (Math.min(i % 6, 5) * 0.06) + 's';
+          io.observe(el);
+        });
+      })();
+    </script>
   </body>
 </html>

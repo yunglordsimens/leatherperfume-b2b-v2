@@ -488,6 +488,25 @@
     text-decoration: none;
   }
   .dc__auth-gate a:hover { background-color: #292524; }
+  /* Secondary links (Back to store / Sign out) — plain, not the dark button */
+  .dc__gate-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+  .dc__auth-gate a.dc__gate-secondary {
+    display: inline;
+    padding: 0;
+    background: none;
+    color: #78716c;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .dc__auth-gate a.dc__gate-secondary:hover { background: none; color: #b45309; }
+  html.a11y-high-contrast .dc__gate-secondary { color: #000000 !important; }
 
   /* table scroll on mobile */
   .dc__table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
@@ -526,11 +545,31 @@
     <div class="dc__inner" style="justify-content: center;">
       <div class="dc__auth-gate">
         {%- if customer -%}
-          {%- comment -%} Logged in but not yet approved as a wholesale partner {%- endcomment -%}
-          <span class="dc__gate-badge">{{ section.settings.review_badge | default: 'Application under review' }}</span>
-          <h2>{{ section.settings.review_heading | default: 'Your wholesale application is under review' }}</h2>
-          <p>{{ section.settings.review_text | default: 'Thanks for registering! Our team is reviewing your application. Once approved you will get an email and your wholesale prices, ordering and dashboard will unlock here. This usually takes 1-2 business days.' }}</p>
-          <a href="{{ routes.root_url }}">{{ section.settings.review_btn | default: 'Back to store' }}</a>
+          {%- liquid
+            assign has_applied = false
+            if customer.metafields.custom.company_name != blank or customer.metafields.custom.shop_name != blank
+              assign has_applied = true
+            endif
+            if customer.tags contains 'pending' or customer.tags contains 'applied'
+              assign has_applied = true
+            endif
+          -%}
+          {%- if has_applied -%}
+            {%- comment -%} Applied, awaiting approval {%- endcomment -%}
+            <span class="dc__gate-badge">{{ section.settings.review_badge | default: 'Application under review' }}</span>
+            <h2>{{ section.settings.review_heading | default: 'Your wholesale application is under review' }}</h2>
+            <p>{{ section.settings.review_text | default: 'Thanks for registering! Our team is reviewing your application. Once approved you will get an email and your wholesale prices, ordering and dashboard will unlock here. This usually takes 1-2 business days.' }}</p>
+          {%- else -%}
+            {%- comment -%} Signed in with email only — never completed the application {%- endcomment -%}
+            <span class="dc__gate-badge">{{ section.settings.complete_badge | default: 'Application incomplete' }}</span>
+            <h2>{{ section.settings.complete_heading | default: 'Finish your wholesale application' }}</h2>
+            <p>{{ section.settings.complete_text | default: 'You are signed in, but we do not have your wholesale application yet. Complete it to request partner access and pricing.' }}</p>
+            <a href="{{ pages['wholesale-application'].url | default: '/pages/wholesale-application' }}">{{ section.settings.complete_btn | default: 'Complete application' }}</a>
+          {%- endif -%}
+          <div class="dc__gate-links">
+            <a class="dc__gate-secondary" href="{{ routes.root_url }}">{{ section.settings.review_btn | default: 'Back to store' }}</a>
+            <a class="dc__gate-secondary" href="{{ routes.account_logout_url }}">{{ section.settings.signout_label | default: 'Sign out' }}</a>
+          </div>
         {%- else -%}
           <h2>{{ section.settings.auth_heading | default: 'Sign in to access your dashboard' }}</h2>
           <p>{{ section.settings.auth_text | default: 'Please log in with your wholesale account to view your dashboard.' }}</p>

@@ -576,6 +576,36 @@
 
   html.a11y-high-contrast .wl__apply-link { color: #000000 !important; }
 
+  /* Big "Apply" button */
+  .wl__apply-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    height: 56px;
+    margin-top: 1rem;
+    padding: 0 1.5rem;
+    font-family: var(--font-body-family);
+    font-size: 1.125rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: #b45309;
+    background-color: #ffffff;
+    border: 2px solid #b45309;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+  }
+  .wl__apply-btn:hover { background-color: #b45309; color: #ffffff; }
+  .wl__apply-btn svg { width: 1.25rem; height: 1.25rem; flex-shrink: 0; }
+  html.a11y-high-contrast .wl__apply-btn {
+    border: 2px solid #000000 !important;
+    color: #000000 !important;
+    background: #ffffff !important;
+  }
+
   /* Back to store link */
   .wl__back {
     display: inline-flex;
@@ -708,9 +738,13 @@
       <p class="wl__steps">{{ section.settings.steps_note | default: 'After you tap Sign in, the secure Shopify page will ask for your email, then send a 6-digit code to type in. It may look a little different - that is the safe login step.' }}</p>
 
       <div class="wl__apply">
-        <p class="wl__apply-text">
-          Don't have a wholesale account yet?&#32;<a href="{{ pages['wholesale-application'].url | default: '/pages/wholesale-application' }}" class="wl__apply-link">{{ 'b2b.login.apply' | t }}</a>
-        </p>
+        <p class="wl__apply-text">Don't have a wholesale account yet?</p>
+        <a href="{{ pages['wholesale-application'].url | default: '/pages/wholesale-application' }}" class="wl__apply-btn">
+          {{ 'b2b.login.apply' | t }}
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </a>
       </div>
 
     </div>

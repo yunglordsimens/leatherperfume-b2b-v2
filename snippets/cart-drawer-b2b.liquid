@@ -122,8 +122,9 @@
     </div>
     <p class="cd__note">{{ 'b2b.cart.vat_note' | t | default: 'Excl. VAT · MOQ & tier shown at cart' }}</p>
     <div class="cd__actions">
-      <a href="/checkout" class="cd__btn cd__btn--checkout">{{ 'b2b.cart.checkout' | t | default: 'Submit for Invoicing' }}</a>
-      <a href="{{ routes.cart_url }}" class="cd__btn cd__btn--cart">{{ 'b2b.cart.view' | t | default: 'View Full Cart' }}</a>
+      {%- comment -%} No direct submit from the drawer — partner must open the full
+        cart (review MOQ/tiers) and submit there. {%- endcomment -%}
+      <a href="{{ routes.cart_url }}" class="cd__btn cd__btn--checkout">{{ 'b2b.cart.view' | t | default: 'Review & Submit Order' }}</a>
     </div>
   </div>
 </aside>

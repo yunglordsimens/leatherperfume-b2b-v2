@@ -17,10 +17,14 @@
         "badge_text": "B2B Partnership",
         "heading": "Your trusted supplier of niche perfumery.",
         "subheading": "<p>Official portal for boutique owners. Recommended retail markup from 100%, dispatch from our Prague warehouse in 24 hours. Catalog access is restricted to verified partners.</p>",
+        "image": "shopify://shop_images/Gemini_Generated_Image_a6f5tga6f5tga6f5.png",
         "button_primary_label": "Apply for Partnership",
         "button_primary_link": "shopify://pages/wholesale-application",
         "button_secondary_label": "Log in to portal",
-        "button_secondary_link": "shopify://pages/partner-login"
+        "button_secondary_link": "shopify://pages/partner-login",
+        "member_badge": "Welcome back",
+        "member_primary_label": "Go to Order Portal",
+        "member_secondary_label": "My Dashboard"
       }
     },
     "trust_bar_HGTr33": {
@@ -151,17 +155,6 @@
         "more_link": "shopify://pages/wholesale-packages"
       }
     },
-    "bottom_cta_rthwmW": {
-      "type": "bottom-cta",
-      "name": "Bottom CTA",
-      "settings": {
-        "high_contrast": false,
-        "heading": "Ready to elevate your retail space?",
-        "subheading": "<p>Join our network of premium retail partners and get access to exclusive wholesale pricing, priority shipping, and dedicated support.</p>",
-        "button_label": "Apply for Partnership",
-        "button_link": ""
-      }
-    },
     "how_it_works_bz6NFL": {
       "type": "how-it-works",
       "name": "How It Works",
@@ -173,6 +166,17 @@
         "step_2_url": "",
         "step_3_url": "",
         "step_4_url": ""
+      }
+    },
+    "bottom_cta_rthwmW": {
+      "type": "bottom-cta",
+      "name": "Bottom CTA",
+      "settings": {
+        "high_contrast": false,
+        "heading": "Ready to elevate your retail space?",
+        "subheading": "<p>Join our network of premium retail partners and get access to exclusive wholesale pricing, priority shipping, and dedicated support.</p>",
+        "button_label": "Apply for Partnership",
+        "button_link": ""
       }
     }
   },
@@ -186,4 +190,3 @@
     "bottom_cta_rthwmW"
   ]
 }
-

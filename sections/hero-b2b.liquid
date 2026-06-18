@@ -318,15 +318,61 @@
     /* Photo stretches to the text edges (no narrow centered cap) */
     .hero-b2b__image-frame { max-width: none; }
   }
+
+  /* ── Full-bleed background variant (image or video + overlaid text) ── */
+  .hero-b2b--fullbleed { position: relative; overflow: hidden; }
+  .hero-b2b--fullbleed .hero-b2b__bg { position: absolute; inset: 0; z-index: 0; }
+  .hero-b2b--fullbleed .hero-b2b__bg-media,
+  .hero-b2b--fullbleed .hero-b2b__bg video,
+  .hero-b2b--fullbleed .hero-b2b__bg img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+  }
+  .hero-b2b--fullbleed .hero-b2b__bg-overlay {
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(to right, rgba(20,17,15,0.82) 0%, rgba(20,17,15,0.5) 45%, rgba(20,17,15,0.2) 100%),
+      linear-gradient(to top, rgba(20,17,15,0.7) 0%, rgba(20,17,15,0) 55%);
+  }
+  .hero-b2b--fullbleed .hero-b2b__orb { display: none; }
+  .hero-b2b--fullbleed .hero-b2b__media { display: none; }
+  .hero-b2b--fullbleed .hero-b2b__container {
+    position: relative;
+    z-index: 1;
+    grid-template-columns: 1fr;
+    align-items: end;
+    min-height: 78vh;
+  }
+  .hero-b2b--fullbleed .hero-b2b__content { order: 1; max-width: 46rem; }
+  .hero-b2b--fullbleed .hero-b2b__heading,
+  .hero-b2b--fullbleed .hero-b2b__subheading { color: #ffffff; }
+  @media screen and (min-width: 990px) {
+    .hero-b2b--fullbleed .hero-b2b__container {
+      grid-template-columns: 1fr;
+      align-items: end;
+      min-height: 86vh;
+      padding: 5rem 1.5rem;
+    }
+  }
 </style>
 
 {% render 'accessibility-panel' %}
 
 <section
-  class="hero-b2b{{ section_mod }}"
+  class="hero-b2b{{ section_mod }}{% if section.settings.hero_style == 'fullbleed' %} hero-b2b--fullbleed{% endif %}"
   id="HeroB2B-{{ section.id }}"
   aria-label="{{ section.settings.heading | strip_html | escape }}"
 >
+
+  {%- if section.settings.hero_style == 'fullbleed' -%}
+    <div class="hero-b2b__bg" aria-hidden="true">
+      {%- if section.settings.hero_video != blank -%}
+        {{ section.settings.hero_video | video_tag: image_size: '1600x', autoplay: true, loop: true, muted: true, controls: false, class: 'hero-b2b__bg-media' }}
+      {%- elsif section.settings.image != blank -%}
+        {{ section.settings.image | image_url: width: 1920 | image_tag: class: 'hero-b2b__bg-media', loading: 'eager', widths: '768, 1200, 1600, 1920', sizes: '100vw' }}
+      {%- endif -%}
+      <div class="hero-b2b__bg-overlay"></div>
+    </div>
+  {%- endif -%}
 
   {%- unless high_contrast -%}
     <div class="hero-b2b__orb" aria-hidden="true"></div>
@@ -458,6 +504,22 @@
       "label": "High contrast mode",
       "info": "White background with black text for maximum readability.",
       "default": false
+    },
+    {
+      "type": "select",
+      "id": "hero_style",
+      "label": "Hero layout",
+      "options": [
+        { "value": "split", "label": "Split (text + image)" },
+        { "value": "fullbleed", "label": "Full-bleed background (image/video)" }
+      ],
+      "default": "split"
+    },
+    {
+      "type": "video",
+      "id": "hero_video",
+      "label": "Background video (full-bleed)",
+      "info": "Used when layout is Full-bleed. Falls back to the image below if empty. Plays muted on loop."
     },
     {
       "type": "header",

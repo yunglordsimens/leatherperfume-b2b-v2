@@ -545,11 +545,30 @@
     <div class="dc__inner" style="justify-content: center;">
       <div class="dc__auth-gate">
         {%- if customer -%}
-          {%- comment -%} Logged in but not yet approved (no wholesale tag) {%- endcomment -%}
-          <span class="dc__gate-badge">{{ section.settings.review_badge | default: 'Access pending' }}</span>
-          <h2>{{ section.settings.review_heading | default: 'Your wholesale access is pending' }}</h2>
-          <p>{{ section.settings.review_text | default: 'If you have submitted your application, our team is reviewing it and you will get an email once approved (usually 1-2 business days). Not applied yet? Complete your application below.' }}</p>
-          <a href="{{ pages['wholesale-application'].url | default: '/pages/wholesale-application' }}">{{ section.settings.complete_btn | default: 'Complete / review application' }}</a>
+          {%- comment -%} Logged in, not approved. Distinguish "applied (pending)"
+            from "signed in but never applied" via the tag Massy adds on submit
+            (configurable) or a filled application metafield. {%- endcomment -%}
+          {%- liquid
+            assign has_applied = false
+            assign ptag = section.settings.pending_tag | default: 'pending' | downcase | strip
+            assign tagstr = customer.tags | join: ',' | downcase
+            if ptag != blank and tagstr contains ptag
+              assign has_applied = true
+            endif
+            if customer.metafields.custom.company_name != blank or customer.metafields.custom.shop_name != blank
+              assign has_applied = true
+            endif
+          -%}
+          {%- if has_applied -%}
+            <span class="dc__gate-badge">{{ section.settings.review_badge | default: 'Application under review' }}</span>
+            <h2>{{ section.settings.review_heading | default: 'Your wholesale application is under review' }}</h2>
+            <p>{{ section.settings.review_text | default: 'Thanks for applying! Our team is reviewing your application and you will get an email once approved (usually 1-2 business days).' }}</p>
+          {%- else -%}
+            <span class="dc__gate-badge">{{ section.settings.notstarted_badge | default: 'Application not started' }}</span>
+            <h2>{{ section.settings.notstarted_heading | default: 'Complete your wholesale application' }}</h2>
+            <p>{{ section.settings.notstarted_text | default: 'You are signed in, but we do not have your wholesale application yet. Complete it to request partner access and pricing.' }}</p>
+            <a href="{{ pages['wholesale-application'].url | default: '/pages/wholesale-application' }}">{{ section.settings.complete_btn | default: 'Complete application' }}</a>
+          {%- endif -%}
           <div class="dc__gate-links">
             <a class="dc__gate-secondary" href="{{ routes.root_url }}">{{ section.settings.review_btn | default: 'Back to store' }}</a>
             <a class="dc__gate-secondary" href="{{ routes.account_logout_url }}">{{ section.settings.signout_label | default: 'Sign out' }}</a>
@@ -1008,6 +1027,13 @@
     {
       "type": "header",
       "content": "Auth gate"
+    },
+    {
+      "type": "text",
+      "id": "pending_tag",
+      "label": "Massy 'applied/pending' tag",
+      "info": "The customer tag Massy adds when someone submits the wholesale application. Find it in Customers → your test applicant → Tags. Used to show 'under review' vs 'complete your application'.",
+      "default": "pending"
     },
     {
       "type": "text",

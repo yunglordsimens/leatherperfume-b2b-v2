@@ -14,7 +14,7 @@
       "name": "Hero B2B",
       "settings": {
         "high_contrast": false,
-        "hero_style": "split",
+        "hero_style": "fullbleed",
         "hero_video": "shopify://files/videos/сдлеай_видно_типо_кто_то_берет.mp4",
         "badge_text": "B2B Partnership",
         "heading": "Your trusted supplier of niche perfumery.",

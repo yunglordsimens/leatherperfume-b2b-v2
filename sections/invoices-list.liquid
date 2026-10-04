@@ -207,6 +207,7 @@
   .inv__badge--paid    { background-color: #d1fae5; color: #065f46; }
   .inv__badge--pending { background-color: #fef3c7; color: #92400e; }
   .inv__badge--overdue { background-color: #fee2e2; color: #991b1b; }
+  .inv__badge--closed  { background-color: #f5f5f4; color: #57534e; }
 
   html.a11y-high-contrast .inv__badge {
     background-color: #ffffff !important;
@@ -391,22 +392,28 @@
   <!-- ── body ────────────────────────────────────────────── -->
   <div class="inv__body">
 
-    {%- unless customer -%}
+{%- liquid
+  assign is_partner = false
+  if customer and customer.b2b? or customer.tags contains 'wholesale'
+    assign is_partner = true
+  endif
+-%}
+    {%- unless is_partner -%}
 
       <div class="inv__auth">
         <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
           <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
           <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
         </svg>
-        <h2>{{ section.settings.auth_heading | default: 'Sign in to view invoices' }}</h2>
-        <p>{{ section.settings.auth_text | default: 'Please log in with your wholesale account to access your billing documents.' }}</p>
-        <a href="/pages/partner-login?return_url={{ request.path | url_encode }}">
+        <h2>{% if customer %}Partner area{% else %}{{ section.settings.auth_heading | default: 'Sign in to view invoices' }}{% endif %}</h2>
+        <p>{% if customer %}This area is for approved wholesale partners. Apply for a partnership to get access.{% else %}{{ section.settings.auth_text | default: 'Please log in with your wholesale account to access your billing documents.' }}{% endif %}</p>
+        <a href="{% if customer %}/pages/wholesale-application{% else %}/pages/partner-login{% endif %}">
           <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
             <polyline points="10 17 15 12 10 7"/>
             <line x1="15" y1="12" x2="3" y2="12"/>
           </svg>
-          {{ section.settings.auth_btn | default: 'Sign in' }}
+          {% if customer %}Apply for partnership{% else %}{{ section.settings.auth_btn | default: 'Sign in' }}{% endif %}
         </a>
       </div>
 
@@ -423,7 +430,7 @@
           <div class="inv__th inv__th--right">{{ section.settings.col_amount | default: 'Amount & Actions' }}</div>
         </div>
 
-        {%- assign orders_list = customer.orders | limit: max_orders -%}
+        {%- assign orders_list = customer.orders -%}
 
         {%- if orders_list.size == 0 -%}
           <div class="inv__empty">
@@ -436,22 +443,23 @@
           </div>
         {%- else -%}
 
-          {%- for order in orders_list -%}
+          {%- for order in orders_list limit: max_orders -%}
             {%- liquid
               assign fin_stat = order.financial_status
 
-              assign status_key = 'overdue'
-              if fin_stat == 'paid' or fin_stat == 'partially_paid'
-                assign status_key = 'paid'
-              elsif fin_stat == 'pending' or fin_stat == 'authorized'
-                assign status_key = 'pending'
-              endif
-
-              assign status_label = 'Overdue'
-              if status_key == 'paid'
+              comment
+                Shopify's own payment status. Due dates for payment terms
+                (e.g. Net 30) live in the customer account, so no guessed
+                "Overdue" here.
+              endcomment
+              assign status_key   = 'closed'
+              assign status_label = order.financial_status_label
+              if fin_stat == 'paid'
+                assign status_key   = 'paid'
                 assign status_label = 'Paid'
-              elsif status_key == 'pending'
-                assign status_label = 'Pending'
+              elsif fin_stat == 'pending' or fin_stat == 'authorized' or fin_stat == 'partially_paid'
+                assign status_key   = 'pending'
+                assign status_label = 'Awaiting payment'
               endif
 
               assign po_num = order.attributes.po_number | default: ''
@@ -465,7 +473,7 @@
               <!-- invoice ref + PO -->
               <div class="inv__cell">
                 <span class="inv__mob-label">Invoice</span>
-                <a class="inv__inv-num" href="/account/orders/{{ order.id }}">{{ order.name }}</a>
+                <a class="inv__inv-num" href="{{ order.customer_url }}">{{ order.name }}</a>
                 {%- if po_num != blank -%}
                   <span class="inv__po">PO: {{ po_num }}</span>
                 {%- endif -%}
@@ -508,7 +516,7 @@
                 <div class="inv__btns">
                   <a
                     class="inv__btn inv__btn--outline"
-                    href="/account/orders/{{ order.id }}"
+                    href="{{ order.customer_url }}"
                     aria-label="View / download invoice {{ order.name }}"
                   >
                     <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -519,10 +527,10 @@
                     {{ section.settings.pdf_btn | default: 'PDF' }}
                   </a>
 
-                  {%- if status_key == 'pending' or status_key == 'overdue' -%}
+                  {%- if status_key == 'pending' -%}
                     <a
                       class="inv__btn inv__btn--dark"
-                      href="/account/orders/{{ order.id }}?checkout=1"
+                      href="{{ order.customer_url }}"
                       aria-label="Pay invoice {{ order.name }}"
                     >
                       <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

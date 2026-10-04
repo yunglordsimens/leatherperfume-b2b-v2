@@ -476,18 +476,24 @@
   </div>
 
   <!-- ── body ────────────────────────────────────────────── -->
-  {%- unless customer -%}
+{%- liquid
+  assign is_partner = false
+  if customer and customer.b2b? or customer.tags contains 'wholesale'
+    assign is_partner = true
+  endif
+-%}
+  {%- unless is_partner -%}
 
     <div class="qro__list">
       <div class="qro__auth">
         <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
           <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
         </svg>
-        <h2>{{ section.settings.auth_heading | default: 'Sign in to view past orders' }}</h2>
-        <p>{{ section.settings.auth_text | default: 'Please log in with your wholesale account to access quick reorder.' }}</p>
-        <a href="/pages/partner-login?return_url={{ request.path | url_encode }}">
+        <h2>{% if customer %}Partner area{% else %}{{ section.settings.auth_heading | default: 'Sign in to view past orders' }}{% endif %}</h2>
+        <p>{% if customer %}This area is for approved wholesale partners. Apply for a partnership to get access.{% else %}{{ section.settings.auth_text | default: 'Please log in with your wholesale account to access quick reorder.' }}{% endif %}</p>
+        <a href="{% if customer %}/pages/wholesale-application{% else %}/pages/partner-login{% endif %}">
           <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
-          {{ section.settings.auth_btn | default: 'Sign in' }}
+          {% if customer %}Apply for partnership{% else %}{{ section.settings.auth_btn | default: 'Sign in' }}{% endif %}
         </a>
       </div>
     </div>
@@ -496,7 +502,7 @@
 
     <div class="qro__list">
 
-      {%- assign orders_shown = customer.orders | limit: max_orders -%}
+      {%- assign orders_shown = customer.orders -%}
 
       {%- if orders_shown.size == 0 -%}
 
@@ -515,7 +521,7 @@
 
       {%- else -%}
 
-        {%- for order in orders_shown -%}
+        {%- for order in orders_shown limit: max_orders -%}
           {%- liquid
             assign po_num = order.attributes.po_number | default: ''
             if po_num == blank
@@ -567,8 +573,14 @@
               <!-- build JSON payload for AJAX reorder -->
               {%- capture items_json -%}
                 [
+                  {%- assign qro_first = true -%}
                   {%- for item in order.line_items -%}
-                    {"id": {{ item.variant_id }}, "quantity": {{ item.quantity }}}{%- unless forloop.last -%},{%- endunless -%}
+                    {%- comment -%} skip lines whose product/variant was deleted {%- endcomment -%}
+                    {%- if item.variant_id != blank -%}
+                      {%- unless qro_first -%},{%- endunless -%}
+                      {"id": {{ item.variant_id }}, "quantity": {{ item.quantity }}}
+                      {%- assign qro_first = false -%}
+                    {%- endif -%}
                   {%- endfor -%}
                 ]
               {%- endcapture -%}

@@ -6,7 +6,7 @@
   endif
 -%}
 
-{%- if customer -%}
+{%- if customer and customer.b2b? or customer.tags contains 'wholesale' -%}
   <script>window.location.replace('/pages/partner-dashboard');</script>
   <noscript>
     <meta http-equiv="refresh" content="0;url=/pages/partner-dashboard">
@@ -592,7 +592,7 @@
 <div class="wl{{ section_mod }}" id="WholesaleLogin-{{ section.id }}">
 
   {%- comment -%} ── Left column ── {%- endcomment -%}
-  <div class="wl__left" aria-hidden="true">
+  <div class="wl__left">
     <div class="wl__blob wl__blob--top"></div>
     <div class="wl__blob wl__blob--bottom"></div>
     <div class="wl__left-inner">

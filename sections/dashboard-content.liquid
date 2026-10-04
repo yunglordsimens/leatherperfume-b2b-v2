@@ -3,8 +3,12 @@
   assign mgr_email = section.settings.manager_email | default: 'wholesale@leatherparfum.com'
   assign mgr_phone = section.settings.manager_phone | default: ''
 
-  assign tier       = customer.metafields.custom.discount_tier        | default: '—'
-  assign disc_pct   = customer.metafields.custom.discount_percentage  | default: '0'
+  comment
+    Prices come from the company's B2B catalog, so the dashboard shows the
+    company / location instead of a manually kept discount tier.
+  endcomment
+  assign company_name = customer.current_company.name | default: customer.metafields.custom.company_name.value
+  assign location_name = customer.current_location.name
 -%}
 
 <style>
@@ -385,13 +389,19 @@
   .dc__table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 </style>
 
-{%- unless customer -%}
+{%- liquid
+  assign is_partner = false
+  if customer and customer.b2b? or customer.tags contains 'wholesale'
+    assign is_partner = true
+  endif
+-%}
+{%- unless is_partner -%}
   <div class="dc">
     <div class="dc__inner" style="justify-content: center;">
       <div class="dc__auth-gate">
-        <h2>{{ section.settings.auth_heading | default: 'Sign in to access your dashboard' }}</h2>
-        <p>{{ section.settings.auth_text | default: 'Please log in with your wholesale account to view your dashboard.' }}</p>
-        <a href="/pages/partner-login?return_url={{ request.path | url_encode }}">{{ section.settings.auth_btn | default: 'Sign in' }}</a>
+        <h2>{% if customer %}Partner area{% else %}{{ section.settings.auth_heading | default: 'Sign in to access your dashboard' }}{% endif %}</h2>
+        <p>{% if customer %}This area is for approved wholesale partners. Apply for a partnership to get access.{% else %}{{ section.settings.auth_text | default: 'Please log in with your wholesale account to view your dashboard.' }}{% endif %}</p>
+        <a href="{% if customer %}/pages/wholesale-application{% else %}/pages/partner-login{% endif %}">{% if customer %}Apply for partnership{% else %}{{ section.settings.auth_btn | default: 'Sign in' }}{% endif %}</a>
       </div>
     </div>
   </div>
@@ -431,21 +441,18 @@
 
           <!-- discount tier -->
           <div class="dc__card">
-            <p class="dc__card-label">{{ section.settings.label_tier | default: 'Discount Tier' }}</p>
-            <p class="dc__card-value">
-              {{ tier }}
-              {%- if tier != '—' -%}
-                <span class="dc__tier-badge">{{ disc_pct }}% off</span>
-              {%- endif -%}
+            <p class="dc__card-label">{{ section.settings.label_company | default: 'Company' }}</p>
+            <p class="dc__card-value">{{ company_name | default: '—' | escape }}</p>
+            <p class="dc__card-sub">
+              {%- if location_name != blank -%}{{ location_name | escape }}{%- else -%}{{ section.settings.sub_company | default: 'Wholesale partner account' }}{%- endif -%}
             </p>
-            <p class="dc__card-sub">{{ section.settings.sub_tier | default: 'Your active wholesale rate' }}</p>
           </div>
 
           <!-- total purchases -->
           <div class="dc__card">
             <p class="dc__card-label">{{ section.settings.label_spent | default: 'Total Purchases' }}</p>
             <p class="dc__card-value">{{ customer.total_spent | money }}</p>
-            <p class="dc__card-sub">{{ section.settings.sub_spent | default: 'Lifetime wholesale spend' }}</p>
+            <p class="dc__card-sub">{{ section.settings.sub_spent | default: 'Orders you placed (lifetime)' }}</p>
           </div>
 
           <!-- orders count -->
@@ -487,12 +494,6 @@
                       elsif fin_stat == 'refunded' or fin_stat == 'voided'
                         assign badge_mod = 'refunded'
                       endif
-
-                      assign reorder_params = ''
-                      for item in order.line_items
-                        assign sep = '&' | unless forloop.first | default: ''
-                        assign reorder_params = reorder_params | append: sep | append: 'items[][id]=' | append: item.variant_id | append: '&items[][quantity]=' | append: item.quantity
-                      endfor
                     -%}
                     <tr>
                       <td>
@@ -501,7 +502,7 @@
                       <td>{{ po_num }}</td>
                       <td>{{ order.created_at | date: '%b %d, %Y' }}</td>
                       <td>
-                        <span class="dc__badge dc__badge--{{ badge_mod }}">{{ fin_stat | replace: '_', ' ' }}</span>
+                        <span class="dc__badge dc__badge--{{ badge_mod }}">{{ order.financial_status_label }}{% if order.fulfillment_status_label != blank %} · {{ order.fulfillment_status_label }}{% endif %}</span>
                       </td>
                       <td>{{ order.total_price | money }}</td>
                       <td>
@@ -511,7 +512,7 @@
                             {{ section.settings.btn_invoice | default: 'Invoice' }}
                           </a>
                           {%- if order.line_items.size > 0 -%}
-                            <a class="dc__btn dc__btn--dark" href="/cart/add?{{ reorder_params }}" aria-label="Reorder {{ order.name }}">
+                            <a class="dc__btn dc__btn--dark" href="/pages/quick-reorder" aria-label="Reorder {{ order.name }}">
                               <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.95"/></svg>
                               {{ section.settings.btn_reorder | default: 'Reorder' }}
                             </a>
@@ -583,17 +584,12 @@
                       elsif fin_stat == 'refunded' or fin_stat == 'voided'
                         assign badge_mod = 'refunded'
                       endif
-                      assign reorder_params = ''
-                      for item in order.line_items
-                        assign sep = '&' | unless forloop.first | default: ''
-                        assign reorder_params = reorder_params | append: sep | append: 'items[][id]=' | append: item.variant_id | append: '&items[][quantity]=' | append: item.quantity
-                      endfor
                     -%}
                     <tr>
                       <td><a class="dc__order-link" href="{{ order.customer_url }}">{{ order.name }}</a></td>
                       <td>{{ po_num }}</td>
                       <td>{{ order.created_at | date: '%b %d, %Y' }}</td>
-                      <td><span class="dc__badge dc__badge--{{ badge_mod }}">{{ fin_stat | replace: '_', ' ' }}</span></td>
+                      <td><span class="dc__badge dc__badge--{{ badge_mod }}">{{ order.financial_status_label }}{% if order.fulfillment_status_label != blank %} · {{ order.fulfillment_status_label }}{% endif %}</span></td>
                       <td>{{ order.total_price | money }}</td>
                       <td>
                         <div class="dc__btn-group">
@@ -602,7 +598,7 @@
                             {{ section.settings.btn_invoice | default: 'Invoice' }}
                           </a>
                           {%- if order.line_items.size > 0 -%}
-                            <a class="dc__btn dc__btn--dark" href="/cart/add?{{ reorder_params }}">
+                            <a class="dc__btn dc__btn--dark" href="/pages/quick-reorder">
                               <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.95"/></svg>
                               {{ section.settings.btn_reorder | default: 'Reorder' }}
                             </a>
@@ -625,8 +621,9 @@
       <div class="dc__panel" id="dc-panel-invoices" role="tabpanel">
         <div class="dc__coming-soon">
           <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-          <h3>{{ section.settings.invoices_coming_title | default: 'Invoices coming soon' }}</h3>
-          <p>{{ section.settings.invoices_coming_text | default: 'Download invoices and statements will be available here shortly.' }}</p>
+          <h3>{{ section.settings.invoices_coming_title | default: 'Invoices & payments' }}</h3>
+          <p>{{ section.settings.invoices_coming_text | default: 'Payment status, due dates for your payment terms and the Pay button are in your account.' }}</p>
+          <p><a class="dc__btn dc__btn--dark" href="{{ routes.account_url }}">Open my account</a> <a class="dc__btn dc__btn--outline" href="/pages/invoices">Invoice list</a></p>
         </div>
       </div>
 
@@ -635,7 +632,8 @@
         <div class="dc__coming-soon">
           <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
           <h3>{{ section.settings.settings_coming_title | default: 'Account settings' }}</h3>
-          <p>{{ section.settings.settings_coming_text | default: 'Manage your account details, shipping addresses, and notification preferences here soon.' }}</p>
+          <p>{{ section.settings.settings_coming_text | default: 'Profile, addresses and company locations are managed in your Shopify account.' }}</p>
+          <p><a class="dc__btn dc__btn--dark" href="{{ routes.account_url }}">Open account settings</a></p>
         </div>
       </div>
 
@@ -676,7 +674,10 @@
   "tag": "section",
   "class": "section",
   "disabled_on": {
-    "groups": ["header", "footer"]
+    "groups": [
+      "header",
+      "footer"
+    ]
   },
   "settings": [
     {
@@ -735,15 +736,15 @@
     },
     {
       "type": "text",
-      "id": "label_tier",
-      "label": "Tier card label",
-      "default": "Discount Tier"
+      "id": "label_company",
+      "label": "Company card label",
+      "default": "Company"
     },
     {
       "type": "text",
-      "id": "sub_tier",
-      "label": "Tier card subtext",
-      "default": "Your active wholesale rate"
+      "id": "sub_company",
+      "label": "Company card text (when no location)",
+      "default": "Wholesale partner account"
     },
     {
       "type": "text",
@@ -755,7 +756,7 @@
       "type": "text",
       "id": "sub_spent",
       "label": "Spent card subtext",
-      "default": "Lifetime wholesale spend"
+      "default": "Orders you placed (lifetime)"
     },
     {
       "type": "text",
@@ -869,13 +870,13 @@
       "type": "text",
       "id": "invoices_coming_title",
       "label": "Invoices panel title",
-      "default": "Invoices coming soon"
+      "default": "Invoices & payments"
     },
     {
       "type": "textarea",
       "id": "invoices_coming_text",
       "label": "Invoices panel text",
-      "default": "Download invoices and statements will be available here shortly."
+      "default": "Payment status, due dates for your payment terms and the Pay button are in your account."
     },
     {
       "type": "text",
@@ -887,7 +888,7 @@
       "type": "textarea",
       "id": "settings_coming_text",
       "label": "Settings panel text",
-      "default": "Manage your account details, shipping addresses, and notification preferences here soon."
+      "default": "Profile, addresses and company locations are managed in your Shopify account."
     }
   ],
   "presets": [

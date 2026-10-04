@@ -25,6 +25,13 @@
     }
   }
 
+  /* Contain the sidebar + grid floats so <main> keeps the height of the
+     taller column. Without this, main collapses to the header height and
+     the footer (and any later section) wraps beside the sidebar whenever a
+     filter leaves only a few cards (e.g. "Belt"). */
+  #MainContent:has(.pgbl) { display: flow-root; }
+  .shopify-section:has(.pgbl) ~ .shopify-section { clear: both; }
+
   .pgbl {
     padding: 2rem 1.5rem;
   }

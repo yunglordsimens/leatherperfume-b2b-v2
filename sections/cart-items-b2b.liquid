@@ -496,8 +496,9 @@
           <div class="cib__product">
             <div class="cib__thumb">
               {%- if item.image -%}
+                {%- assign item_img_alt = item.product.title | escape -%}
                 {{ item.image | image_url: width: 160 | image_tag:
-                  alt: item.product.title | escape,
+                  alt: item_img_alt,
                   loading: 'lazy',
                   width: 80,
                   height: 80

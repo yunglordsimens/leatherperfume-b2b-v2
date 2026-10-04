@@ -126,8 +126,10 @@
       <h1 class="cat-hdr__heading">{{ heading }}</h1>
       {%- if subheading != blank -%}
         <p class="cat-hdr__sub">
-          {%- if is_wholesale or customer -%}
+          {%- if is_wholesale -%}
             {{ subheading }}
+          {%- elsif customer -%}
+            <a href="/pages/wholesale-application" class="cat-hdr__login">Apply for B2B pricing</a>
           {%- else -%}
             <a href="/pages/partner-login" class="cat-hdr__login">{{ subheading }}</a>
           {%- endif -%}

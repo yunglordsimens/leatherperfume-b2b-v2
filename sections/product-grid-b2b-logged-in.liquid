@@ -445,6 +445,43 @@
     cursor: not-allowed;
   }
 
+  .pgbl__atc-btn.is-error {
+    background-color: #b91c1c;
+    border-color: #b91c1c;
+    font-size: 0.8125rem;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .pgbl__title-link { color: inherit; text-decoration: none; }
+  .pgbl__title-link:hover { color: #b45309; text-decoration: underline; text-underline-offset: 3px; }
+  .pgbl__title-link:focus-visible { outline: 2px solid #b45309; outline-offset: 2px; }
+  a.pgbl__img-wrap { cursor: pointer; }
+
+  .pgbl__pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 2.5rem;
+    font-family: var(--font-body-family);
+    font-size: 0.9375rem;
+  }
+
+  .pgbl__page-link {
+    color: #1c1917;
+    font-weight: 700;
+    text-decoration: none;
+    padding: 0.625rem 1.25rem;
+    border: 1px solid #d6d3d1;
+    border-radius: 0.75rem;
+  }
+
+  .pgbl__page-link:hover { border-color: #b45309; color: #b45309; }
+  .pgbl__page-info { color: #78716c; }
+
+  html.a11y-high-contrast .pgbl__page-link { border: 2px solid #000000 !important; color: #000000 !important; }
+
   .pgbl__atc-btn.is-success {
     background-color: #15803d;
     border-color: #15803d;
@@ -560,7 +597,7 @@
 
   <!-- Meta bar -->
   <div class="pgbl__meta">
-    <p class="pgbl__count" id="PgblCount-{{ section.id }}">
+    <p class="pgbl__count" id="PgblCount-{{ section.id }}" aria-live="polite">
       Showing {{ collection.products_count }} item{% if collection.products_count != 1 %}s{% endif %}
     </p>
     <button
@@ -573,16 +610,18 @@
   </div>
 
   <!-- Grid -->
-  <div class="pgbl__grid" id="PgblGrid-{{ section.id }}" aria-live="polite">
+  {%- paginate collection.products by 250 -%}
+  <div class="pgbl__grid" id="PgblGrid-{{ section.id }}">
 
     {%- for product in collection.products -%}
       {%- liquid
-        assign sku = product.variants.first.sku | default: product.id
+        assign v   = product.selected_or_first_available_variant
+        assign sku = v.sku | default: product.id
 
         comment — determine stock state
         endcomment
-        if product.available
-          assign inv_qty = product.variants.first.inventory_quantity | default: 99
+        if v.available
+          assign inv_qty = v.inventory_quantity | default: 99
           if inv_qty > 0 and inv_qty < 5
             assign stock_label = 'Low Stock'
             assign stock_mod   = 'amber'
@@ -600,13 +639,13 @@
           RRP comes from the custom.rrp metafield (compare_at_price is
           null for B2B buyers); guests fall back to the regular price.
         endcomment
-        assign wsp_cents = product.variants.first.price
+        assign wsp_cents = v.price
         capture rrp_cents
           render 'money-meta-cents', value: product.metafields.custom.rrp.value
         endcapture
         assign rrp_cents = rrp_cents | strip | plus: 0
         if rrp_cents == 0
-          assign cap_cents = product.variants.first.compare_at_price | default: 0
+          assign cap_cents = v.compare_at_price | default: 0
           if cap_cents > wsp_cents
             assign rrp_cents = cap_cents
           elsif is_wholesale == false
@@ -623,10 +662,11 @@
 
         comment — Size/option
         endcomment
-        assign first_option = product.variants.first.option1 | default: ''
-        if product.variants.first.option2 != blank
-          assign first_option = first_option | append: ' / ' | append: product.variants.first.option2
+        assign first_option = v.option1 | default: ''
+        if v.option2 != blank
+          assign first_option = first_option | append: ' / ' | append: v.option2
         endif
+        assign img_alt = product.featured_image.alt | default: product.title | escape
 
         comment — Badge from tags or metafield
         endcomment
@@ -634,18 +674,18 @@
       -%}
 
       <div
-        class="pgbl__card{% unless product.available %} pgbl__card--oos{% endunless %}"
+        class="pgbl__card{% unless v.available %} pgbl__card--oos{% endunless %}"
         data-title="{{ product.title | downcase | escape }}"
         data-sku="{{ sku | downcase | escape }}"
         data-category="{{ product.type | escape }}"
-        data-available="{{ product.available }}"
+        data-available="{{ v.available }}"
       >
         <!-- Image -->
-        <div class="pgbl__img-wrap">
+        <a href="{{ product.url }}" class="pgbl__img-wrap" tabindex="-1" aria-hidden="true">
           {%- if product.featured_image -%}
             {{ product.featured_image | image_url: width: 600 | image_tag:
               class: 'pgbl__img',
-              alt: product.featured_image.alt | default: product.title | escape,
+              alt: img_alt,
               loading: 'lazy',
               width: product.featured_image.width,
               height: product.featured_image.height
@@ -669,7 +709,7 @@
               <span class="pgbl__badge">B2B Only</span>
             {%- endif -%}
           </div>
-        </div>
+        </a>
 
         <!-- Body -->
         <div class="pgbl__body">
@@ -678,7 +718,7 @@
             <span class="pgbl__sku">{{ sku }}</span>
           </div>
 
-          <h3 class="pgbl__title">{{ product.title }}</h3>
+          <h3 class="pgbl__title"><a href="{{ product.url }}" class="pgbl__title-link">{{ product.title }}</a></h3>
 
           {%- if first_option != blank and first_option != 'Default Title' -%}
             <p class="pgbl__size">{{ first_option }}</p>
@@ -717,13 +757,15 @@
             </div><!-- /.pgbl__prices -->
 
             <!-- Add to cart, login prompt or OOS -->
-            {%- unless is_wholesale -%}
+            {%- if is_wholesale == false -%}
               {%- if customer -%}
                 <a href="/pages/wholesale-application" class="pgbl__atc-btn pgbl__login-btn">Apply for B2B pricing</a>
               {%- else -%}
                 <a href="/pages/partner-login" class="pgbl__atc-btn pgbl__login-btn">Log in for B2B price</a>
               {%- endif -%}
-            {%- elsif product.available -%}
+            {%- elsif product.has_only_default_variant == false and product.available -%}
+              <a href="{{ product.url }}" class="pgbl__atc-btn pgbl__login-btn">{{ section.settings.options_label | default: 'Choose options' }}</a>
+            {%- elsif v.available -%}
               <div class="pgbl__atc-wrap">
                 <div class="pgbl__qty-row">
                   <button
@@ -739,10 +781,10 @@
                   <input
                     type="number"
                     class="pgbl__qty-input"
-                    value="{{ product.variants.first.quantity_rule.min | default: 1 }}"
-                    min="{{ product.variants.first.quantity_rule.min | default: 1 }}"
-                    step="{{ product.variants.first.quantity_rule.increment | default: 1 }}"
-                    {%- if product.variants.first.quantity_rule.max != null %} max="{{ product.variants.first.quantity_rule.max }}"{% endif %}
+                    value="{{ v.quantity_rule.min | default: 1 }}"
+                    min="{{ v.quantity_rule.min | default: 1 }}"
+                    step="{{ v.quantity_rule.increment | default: 1 }}"
+                    {%- if v.quantity_rule.max != null %} max="{{ v.quantity_rule.max }}"{% endif %}
                     aria-label="Quantity"
                     data-qty-input
                   >
@@ -762,14 +804,14 @@
                   type="button"
                   class="pgbl__atc-btn"
                   data-atc-btn
-                  data-variant-id="{{ product.variants.first.id }}"
-                  aria-label="{{ atc_label | escape }}: {{ product.title | escape }}"
+                  data-variant-id="{{ v.id }}"
                 >
                   <svg class="pgbl__atc-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
                     <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
                   </svg>
-                  {{ atc_label }}
+                  <span data-atc-text>{{ atc_label }}</span>
+                  <span class="visually-hidden">: {{ product.title | escape }}</span>
                 </button>
               </div>
             {%- else -%}
@@ -795,6 +837,7 @@
     {%- endfor -%}
 
     <!-- JS-driven empty state (shown when filters hide all cards) -->
+    {%- if collection.products.size > 0 -%}
     <div class="pgbl__empty" id="PgblEmpty-{{ section.id }}" aria-live="assertive">
       <div class="pgbl__empty-icon" aria-hidden="true">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -807,8 +850,18 @@
         {{ clear_label }}
       </button>
     </div>
+    {%- endif -%}
 
   </div><!-- /.pgbl__grid -->
+
+  {%- if paginate.pages > 1 -%}
+    <nav class="pgbl__pagination" aria-label="Pagination">
+      {%- if paginate.previous -%}<a href="{{ paginate.previous.url }}" class="pgbl__page-link">&larr; Previous</a>{%- endif -%}
+      <span class="pgbl__page-info">Page {{ paginate.current_page }} of {{ paginate.pages }}</span>
+      {%- if paginate.next -%}<a href="{{ paginate.next.url }}" class="pgbl__page-link">Next &rarr;</a>{%- endif -%}
+    </nav>
+  {%- endif -%}
+  {%- endpaginate -%}
 </div><!-- /.pgbl -->
 
 <script>
@@ -864,57 +917,54 @@
     var qtyInput = card.querySelector('[data-qty-input]');
     if (!atcBtn) return;
 
-    var originalHTML = atcBtn.innerHTML;
+    var label    = atcBtn.querySelector('[data-atc-text]');
+    var original = label ? label.textContent : '';
+
+    function setLabel(text) { if (label) label.textContent = text; }
+    function reset(ms) {
+      setTimeout(function () {
+        atcBtn.classList.remove('is-success', 'is-error');
+        atcBtn.disabled = false;
+        setLabel(original);
+      }, ms);
+    }
 
     atcBtn.addEventListener('click', function () {
       var variantId = parseInt(atcBtn.getAttribute('data-variant-id'));
       var qty       = qtyInput ? (parseInt(qtyInput.value) || 1) : 1;
 
       atcBtn.disabled = true;
-      atcBtn.innerHTML = 'Adding&hellip;';
+      setLabel('Adding…');
 
       fetch('/cart/add.js', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest'
-        },
+        headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
         body: JSON.stringify({ items: [{ id: variantId, quantity: qty }] })
       })
-      .then(function (res) { return res.json(); })
-      .then(function (data) {
-        if (data.status && data.status >= 400) {
-          throw new Error(data.description || 'Cart error');
-        }
-        /* Success — show tick, update cart count */
+      .then(function (res) {
+        return res.json().then(function (data) {
+          /* 422: sold out, quantity rule, max reached … — Shopify explains why */
+          if (!res.ok || (data.status && data.status >= 400)) {
+            throw new Error(data.description || data.message || 'Could not add to cart');
+          }
+          return data;
+        });
+      })
+      .then(function () {
         atcBtn.classList.add('is-success');
-        atcBtn.innerHTML = '&#10003; Added';
+        setLabel('✓ Added');
         return fetch('/cart.js').then(function (r) { return r.json(); });
       })
       .then(function (cart) {
-        if (cart && cart.item_count !== undefined) {
-          /* Update Dawn cart count bubbles and any [data-cart-count] elements */
-          document.querySelectorAll(
-            '[data-cart-count], .cart-count-bubble span, .cart-count-bubble > span'
-          ).forEach(function (el) {
-            el.textContent = cart.item_count;
-          });
-          document.querySelectorAll('.cart-count-bubble').forEach(function (el) {
-            el.style.display = cart.item_count > 0 ? '' : 'none';
-          });
-        }
-        setTimeout(function () {
-          atcBtn.classList.remove('is-success');
-          atcBtn.disabled = false;
-          atcBtn.innerHTML = originalHTML;
-        }, 2000);
+        if (window.lpUpdateCartBubble) window.lpUpdateCartBubble(cart.item_count);
+        document.querySelectorAll('[data-cart-count]').forEach(function (el) { el.textContent = cart.item_count; });
+        window.dispatchEvent(new CustomEvent('cart:updated', { detail: cart }));
+        reset(2000);
       })
       .catch(function (err) {
-        atcBtn.innerHTML = 'Error — try again';
-        setTimeout(function () {
-          atcBtn.disabled = false;
-          atcBtn.innerHTML = originalHTML;
-        }, 2500);
+        atcBtn.classList.add('is-error');
+        setLabel(err.message);
+        reset(4000);
       });
     });
   });
@@ -1004,7 +1054,10 @@
   "tag": "section",
   "class": "section",
   "disabled_on": {
-    "groups": ["header", "footer"]
+    "groups": [
+      "header",
+      "footer"
+    ]
   },
   "settings": [
     {
@@ -1034,6 +1087,12 @@
       "id": "clear_label",
       "label": "Clear filters button label",
       "default": "Clear Filters"
+    },
+    {
+      "type": "text",
+      "id": "options_label",
+      "label": "Button for products with several variants",
+      "default": "Choose options"
     }
   ],
   "presets": [

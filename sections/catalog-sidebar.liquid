@@ -5,17 +5,9 @@
   assign avail_label        = section.settings.avail_label        | default: 'Availability'
 
   comment
-    Build a sorted unique list of product types from the collection
+    All product types in the collection (not only the first page of products)
   endcomment
-  assign type_list = ''
-  for product in collection.products
-    unless type_list contains product.type
-      if product.type != blank
-        assign type_list = type_list | append: product.type | append: '|'
-      endif
-    endunless
-  endfor
-  assign type_array = type_list | split: '|'
+  assign type_array = collection.all_types | sort
 -%}
 
 <style>

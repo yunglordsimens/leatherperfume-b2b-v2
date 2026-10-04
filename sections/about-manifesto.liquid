@@ -214,6 +214,7 @@
       <div class="manifesto__image-col">
         <div class="manifesto__image-frame">
           {%- if section.settings.image != blank -%}
+            {%- assign manifesto_img_alt = section.settings.image.alt | escape -%}
             {{
               section.settings.image
               | image_url: width: 1200
@@ -221,7 +222,7 @@
                 loading: 'lazy',
                 widths: '500, 750, 1000, 1200',
                 sizes: '(min-width: 990px) 40vw, 100vw',
-                alt: section.settings.image.alt | escape
+                alt: manifesto_img_alt
             }}
           {%- else -%}
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">

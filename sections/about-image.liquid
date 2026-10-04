@@ -95,6 +95,7 @@
   <div class="about-image__frame">
 
     {%- if section.settings.image != blank -%}
+      {%- assign about_img_alt = section.settings.image.alt | default: section.settings.heading | escape -%}
       {{
         section.settings.image
         | image_url: width: 2400
@@ -103,7 +104,7 @@
           loading: 'lazy',
           widths: '750, 1100, 1440, 1920, 2400',
           sizes: '100vw',
-          alt: section.settings.image.alt | escape
+          alt: about_img_alt
       }}
       {%- unless high_contrast -%}
         <div class="about-image__overlay" aria-hidden="true"></div>

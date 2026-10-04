@@ -793,6 +793,25 @@
           </div>
         {%- endif -%}
       </a>
+      <script>
+        /* Shared by the B2B catalog / product page after AJAX add-to-cart.
+           Creates the bubble when the cart was empty and keeps the
+           screen-reader text in sync. */
+        window.lpUpdateCartBubble = function (count) {
+          var link = document.getElementById('cart-icon-bubble');
+          if (!link) return;
+          var bubble = link.querySelector('.cart-count-bubble');
+          if (!count) { if (bubble) bubble.remove(); return; }
+          if (!bubble) {
+            bubble = document.createElement('div');
+            bubble.className = 'cart-count-bubble';
+            bubble.innerHTML = '<span aria-hidden="true"></span><span class="visually-hidden"></span>';
+            link.appendChild(bubble);
+          }
+          bubble.children[0].textContent = count;
+          bubble.children[1].textContent = count + (count === 1 ? ' item' : ' items');
+        };
+      </script>
     </div>
   </header>
 </sticky-header>

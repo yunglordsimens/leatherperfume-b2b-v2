@@ -517,9 +517,10 @@
           <!-- Image -->
           <div class="pgb__img-wrap">
             {%- if product.featured_image -%}
+              {%- assign pgb_img_alt = product.title | escape -%}
               {{ product.featured_image | image_url: width: 600 | image_tag:
                 class: 'pgb__img',
-                alt: product.title | escape,
+                alt: pgb_img_alt,
                 loading: 'lazy',
                 width: 300,
                 height: 300

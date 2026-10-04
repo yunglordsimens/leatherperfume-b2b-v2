@@ -139,7 +139,7 @@
 
     {%- if section.settings.button_label != blank -%}
       <a
-        href="{{ section.settings.button_link | default: '#' }}"
+        href="{{ section.settings.button_link | default: '/pages/wholesale-application' }}"
         class="bottom-cta__btn"
       >
         {{- section.settings.button_label | escape -}}

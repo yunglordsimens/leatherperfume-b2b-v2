@@ -1,0 +1,226 @@
+import React, { useState, useEffect } from 'react';
+import { 
+  Accessibility, ArrowRight, ChevronDown, Contrast, Link as LinkIcon, 
+  Menu, X, Type, Search, ShoppingBag, User, Globe, ChevronRight, 
+  Package, Sparkles, Image as ImageIcon
+} from 'lucide-react';
+
+// --- MOCK CATALOG FOR SEARCH ---
+const mockCatalog = [
+  { id: 1, sku: 'PF-001', category: 'Perfume', title: 'Amber Royale EDP', size: '50ml', price: '1,250 CZK', image: 'bg-amber-100' },
+  { id: 2, sku: 'PF-002', category: 'Perfume', title: 'Rose Celeste EDP', size: '50ml', price: '1,050 CZK', image: 'bg-rose-100' },
+  { id: 3, sku: 'PF-003', category: 'Perfume', title: 'Noir Sauvage EDP', size: '100ml', price: '1,600 CZK', image: 'bg-stone-200' },
+  { id: 4, sku: 'LG-101', category: 'Leather Goods', title: 'Classic Grained Belt', size: 'Multiple', price: '900 CZK', image: 'bg-stone-800' },
+  { id: 5, sku: 'LG-102', category: 'Leather Goods', title: 'Slim Cardholder', size: 'Standard', price: '600 CZK', image: 'bg-amber-900' },
+];
+
+export default function App() {
+  // --- STATE MANAGEMENT ---
+  const [currentLang, setCurrentLang] = useState('EN');
+  
+  // Search State
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
+  
+  // Accessibility State
+  const [a11yOpen, setA11yOpen] = useState(false);
+  const [textSize, setTextSize] = useState('standard'); 
+  const [highContrast, setHighContrast] = useState(false);
+  const [highlightLinks, setHighlightLinks] = useState(false);
+
+  // --- DYNAMIC CLASSES ---
+  const appClasses = `min-h-screen font-sans transition-all duration-300 ease-in-out flex flex-col ${highContrast ? 'bg-white text-black' : 'bg-[#FAFAF9] text-stone-900'}`;
+  const linkClasses = highlightLinks ? 'underline decoration-2 underline-offset-4 font-bold' : '';
+  const getBodyTextSize = () => textSize === 'small' ? 'text-sm' : textSize === 'large' ? 'text-lg md:text-xl' : 'text-base';
+
+  // --- SEARCH LOGIC ---
+  // Prevent body scroll when search is open
+  useEffect(() => {
+    if (isSearchOpen) {
+      document.body.style.overflow = 'hidden';
+      // Auto-focus input when opened
+      setTimeout(() => document.getElementById('searchInput')?.focus(), 100);
+    } else {
+      document.body.style.overflow = 'unset';
+      setSearchQuery(''); // Reset query on close
+    }
+  }, [isSearchOpen]);
+
+  // Simulate loading delay for predictive search
+  useEffect(() => {
+    if (searchQuery.length > 0) {
+      setIsSearching(true);
+      const timer = setTimeout(() => setIsSearching(false), 400); // 400ms fake network delay
+      return () => clearTimeout(timer);
+    } else {
+      setIsSearching(false);
+    }
+  }, [searchQuery]);
+
+  const searchResults = mockCatalog.filter(item => 
+    item.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    item.sku.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  return (
+    <div className={appClasses}>
+      
+      {/* --- PREDICTIVE SEARCH OVERLAY (THE CORE FEATURE) --- */}
+      <div 
+        className={`fixed inset-0 z-[200] transition-all duration-500 ease-in-out flex flex-col ${
+          isSearchOpen 
+            ? 'opacity-100 visible translate-y-0' 
+            : 'opacity-0 invisible -translate-y-10'
+        } ${highContrast ? 'bg-white' : 'bg-stone-50/95 backdrop-blur-xl'}`}
+      >
+        {/* Search Header */}
+        <div className={`h-24 px-6 md:px-12 flex items-center justify-between border-b ${highContrast ? 'border-black border-b-4' : 'border-stone-200'}`}>
+          <span className="font-bold uppercase tracking-widest text-xs text-stone-500">Predictive Search</span>
+          <button 
+            onClick={() => setIsSearchOpen(false)}
+            className={`p-3 rounded-full flex items-center gap-2 font-bold transition-colors ${highContrast ? 'border-2 border-black hover:bg-black hover:text-white text-black' : 'bg-stone-200 hover:bg-stone-300 text-stone-900'}`}
+          >
+            <span className="hidden sm:inline text-xs uppercase tracking-widest">Close</span> <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Search Input Area */}
+        <div className="w-full max-w-5xl mx-auto px-6 pt-12 md:pt-24 pb-8 flex-shrink-0">
+          <div className="relative">
+            <input
+              id="searchInput"
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search SKU or Fragrance..."
+              className={`w-full bg-transparent border-none focus:ring-0 p-0 font-serif font-bold text-4xl sm:text-6xl md:text-7xl lg:text-8xl placeholder-stone-300 transition-colors ${highContrast ? 'text-black placeholder-stone-400' : 'text-stone-900'}`}
+              autoComplete="off"
+            />
+            {/* Animated underline focus effect */}
+            <div className={`h-1 w-full mt-4 transition-all duration-500 ${searchQuery.length > 0 ? (highContrast ? 'bg-black' : 'bg-amber-700') : 'bg-stone-200'}`}></div>
+          </div>
+        </div>
+
+        {/* Search Results Area */}
+        <div className="w-full max-w-5xl mx-auto px-6 flex-grow overflow-y-auto pb-24">
+          
+          {searchQuery.length === 0 ? (
+            /* Empty State: Popular Searches */
+            <div className="mt-8 animate-fadeIn">
+              <h3 className={`text-xs font-bold uppercase tracking-widest mb-6 ${highContrast ? 'text-black' : 'text-stone-400'}`}>
+                Popular B2B Searches
+              </h3>
+              <div className="flex flex-wrap gap-3">
+                {['Amber Royale', 'PF-002', 'Tester Sets', 'Belts', 'New Arrivals'].map(term => (
+                  <button 
+                    key={term}
+                    onClick={() => setSearchQuery(term)}
+                    className={`px-5 py-3 rounded-full text-sm font-bold transition-colors ${highContrast ? 'border-2 border-black hover:bg-black hover:text-white' : 'bg-white border border-stone-200 hover:border-amber-600 hover:text-amber-700 shadow-sm'}`}
+                  >
+                    {term}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : isSearching ? (
+            /* Loading State */
+            <div className="mt-12 flex flex-col items-center justify-center opacity-50">
+              <div className="w-8 h-8 border-4 border-stone-200 border-t-amber-700 rounded-full animate-spin mb-4"></div>
+              <p className="text-sm font-bold uppercase tracking-widest text-stone-500">Searching catalog...</p>
+            </div>
+          ) : searchResults.length > 0 ? (
+            /* Results State */
+            <div className="mt-8 animate-fadeIn">
+              <div className="flex justify-between items-end mb-6">
+                <h3 className={`text-xs font-bold uppercase tracking-widest ${highContrast ? 'text-black' : 'text-stone-400'}`}>
+                  Products ({searchResults.length})
+                </h3>
+                <a href="#" className={`text-sm font-bold hover:text-amber-700 transition-colors ${linkClasses}`}>
+                  View all results <ArrowRight className="w-4 h-4 inline" />
+                </a>
+              </div>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
+                {searchResults.map(product => (
+                  <a key={product.id} href="#" className={`group flex items-center gap-4 p-4 rounded-2xl transition-all ${highContrast ? 'border-4 border-black hover:bg-black hover:text-white' : 'bg-white border border-stone-200 hover:shadow-lg hover:border-amber-200'}`}>
+                    <div className={`w-20 h-20 shrink-0 rounded-xl flex items-center justify-center overflow-hidden ${highContrast ? 'border-2 border-black bg-white group-hover:border-white text-black group-hover:text-white' : `${product.image} text-black/20`}`}>
+                      <ImageIcon className="w-8 h-8" />
+                    </div>
+                    <div className="flex-grow">
+                      <p className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded inline-block mb-1 ${highContrast ? 'bg-black text-white group-hover:bg-white group-hover:text-black' : 'bg-stone-100 text-stone-500'}`}>
+                        {product.sku}
+                      </p>
+                      <h4 className={`font-serif text-lg font-bold mb-0.5 ${highContrast ? '' : 'text-stone-900 group-hover:text-amber-800'}`}>
+                        {product.title}
+                      </h4>
+                      <p className={`text-sm font-medium ${highContrast ? '' : 'text-stone-500'}`}>
+                        {product.size} • WSP: {product.price}
+                      </p>
+                    </div>
+                    <div className={`shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-colors ${highContrast ? 'border-2 border-current' : 'bg-stone-100 text-stone-400 group-hover:bg-amber-100 group-hover:text-amber-700'}`}>
+                      <ChevronRight className="w-5 h-5" />
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </div>
+          ) : (
+            /* No Results State */
+            <div className="mt-16 text-center">
+              <Search className={`w-16 h-16 mx-auto mb-6 ${highContrast ? 'text-black' : 'text-stone-300'}`} />
+              <h3 className="font-serif text-3xl font-bold mb-3">No products found</h3>
+              <p className={`text-lg ${highContrast ? 'font-medium' : 'text-stone-500'}`}>
+                We couldn't find anything matching "{searchQuery}". Try checking the spelling or search by SKU.
+              </p>
+            </div>
+          )}
+
+        </div>
+      </div>
+
+      {/* --- STANDARD PAGE HEADER (BACKGROUND) --- */}
+      <header className={`sticky top-0 z-40 transition-colors ${highContrast ? 'bg-white border-black border-b-4' : 'bg-white border-b border-stone-200 shadow-sm'}`}>
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 h-20 sm:h-24 flex items-center justify-between">
+          <div className="flex items-center gap-4 lg:gap-12">
+            <h1 className="font-serif text-2xl sm:text-3xl font-bold cursor-pointer">Leather Parfum</h1>
+            
+            <nav className="hidden lg:flex items-center gap-8 font-bold h-24 text-sm uppercase tracking-wider">
+              <a href="#" className={`hover:text-amber-700 transition-colors ${linkClasses}`}>Home</a>
+              <a href="#" className={`hover:text-amber-700 transition-colors ${linkClasses}`}>Catalog</a>
+            </nav>
+          </div>
+
+          <div className="flex items-center gap-4 sm:gap-6">
+            {/* Search Trigger Button */}
+            <button 
+              onClick={() => setIsSearchOpen(true)} 
+              className={`p-2 sm:px-4 sm:py-2 rounded-xl flex items-center gap-2 font-bold transition-colors ${highContrast ? 'border-2 border-black hover:bg-black hover:text-white' : 'bg-stone-100 hover:bg-stone-200 text-stone-900'}`}
+            >
+              <Search className="w-5 h-5" />
+              <span className="hidden xl:inline text-sm uppercase tracking-wider">Search SKU</span>
+            </button>
+
+            <button onClick={() => setA11yOpen(true)} className={`p-2 rounded-xl font-bold ${highContrast ? 'border-2 border-black hover:bg-gray-100' : 'bg-stone-100 hover:bg-stone-200'}`}>
+              <Accessibility className="w-5 h-5" />
+            </button>
+            <div className={`w-px h-8 hidden md:block ${highContrast ? 'bg-black' : 'bg-stone-300'}`}></div>
+            <button className={`p-2 font-bold hover:text-amber-700 transition-colors ${linkClasses}`}>
+              <User className="w-5 h-5" />
+            </button>
+            <button className={`p-2 font-bold hover:text-amber-700 transition-colors ${linkClasses}`}>
+              <ShoppingBag className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Dummy content to show the background blur working */}
+      <main className="flex-grow max-w-[1440px] mx-auto px-6 py-20 text-center">
+        <h2 className="font-serif text-4xl font-bold mb-4">Background Content</h2>
+        <p className="text-stone-500 max-w-xl mx-auto">Click the search button in the top right to see the full-screen predictive search overlay in action. It locks the scroll and blurs this background.</p>
+      </main>
+
+    </div>
+  );
+}

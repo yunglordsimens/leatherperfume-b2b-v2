@@ -297,7 +297,7 @@
       }
     </script>
 
-    {%- if customer and customer.tags contains 'wholesale' -%}
+    {%- if customer and customer.b2b? or customer.tags contains 'wholesale' -%}
       <script>
         (function () {
           var p = window.location.pathname;
@@ -399,6 +399,5 @@
     {%- endif -%}
     {%- render 'scroll-to-top' -%}
     {%- render 'predictive-search-overlay' -%}
-    <script>if(window.location.pathname==='/account/login')window.location.replace('/pages/partner-login');</script>
   </body>
 </html>

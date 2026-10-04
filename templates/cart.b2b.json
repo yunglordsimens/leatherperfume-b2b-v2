@@ -9,11 +9,10 @@
       "settings": {
         "moq_amount": 5000
       }
-    },
-    "cart-success-b2b": {
-      "type": "cart-success-b2b",
-      "settings": {}
     }
   },
-  "order": ["cart-items-b2b", "cart-summary-b2b", "cart-success-b2b"]
+  "order": [
+    "cart-items-b2b",
+    "cart-summary-b2b"
+  ]
 }

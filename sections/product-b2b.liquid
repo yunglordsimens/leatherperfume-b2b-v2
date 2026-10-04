@@ -13,14 +13,33 @@
   endif
 
   assign is_wholesale = false
-  if customer and customer.tags contains 'wholesale'
+  if customer and customer.b2b? or customer.tags contains 'wholesale'
     assign is_wholesale = true
   endif
 
-  assign rrp = current_variant.compare_at_price
+  comment
+    WSP = what Shopify charges this customer (B2B buyers get their catalog
+    price in variant.price). RRP comes from the custom.rrp metafield because
+    compare_at_price is null for B2B buyers.
+  endcomment
   assign wsp = current_variant.price
-  if product.metafields.custom.wholesale_price != blank
-    assign wsp = product.metafields.custom.wholesale_price.value
+  capture rrp
+    render 'money-meta-cents', value: product.metafields.custom.rrp.value
+  endcapture
+  assign rrp = rrp | strip | plus: 0
+  if rrp == 0
+    assign rrp = current_variant.compare_at_price | default: 0
+  endif
+
+  comment
+    Quantity rules (B2B catalogs). Without rules keep the old default of 5.
+  endcomment
+  assign q_rule = current_variant.quantity_rule
+  assign q_min  = q_rule.min | default: 1
+  assign q_step = q_rule.increment | default: 1
+  assign q_start = q_min
+  if q_min == 1 and q_step == 1
+    assign q_start = 5
   endif
 
   assign margin_percent = 0
@@ -896,8 +915,10 @@
                 <input
                   class="pdp-qty__input"
                   type="number"
-                  value="5"
-                  min="1"
+                  value="{{ q_start }}"
+                  min="{{ q_min }}"
+                  step="{{ q_step }}"
+                  {%- if q_rule.max != null %} max="{{ q_rule.max }}"{% endif %}
                   id="PdpQtyInput-{{ section.id }}"
                   name="quantity"
                   aria-label="Quantity"
@@ -928,8 +949,8 @@
             </div>
 
             <p class="pdp-subtotal" aria-live="polite">
-              Subtotal for <span id="PdpSubQty-{{ section.id }}">5</span> units:
-              <strong id="PdpSubPrice-{{ section.id }}">{{ wsp | times: 5 | money_without_trailing_zeros }}</strong>
+              Subtotal for <span id="PdpSubQty-{{ section.id }}">{{ q_start }}</span> units:
+              <strong id="PdpSubPrice-{{ section.id }}">{{ wsp | times: q_start | money_without_trailing_zeros }}</strong>
             </p>
           </div>
         {%- endif -%}
@@ -1039,21 +1060,32 @@
   }
 
   if (qtyDec && qtyInc && qtyInput) {
+    /* Quantity rules (B2B): min / increment / max come from the input attrs */
+    var qMin  = parseInt(qtyInput.min, 10)  || 1;
+    var qStep = parseInt(qtyInput.step, 10) || 1;
+    var qMax  = parseInt(qtyInput.max, 10)  || Infinity;
+
+    function clampQty(v) {
+      v = parseInt(v, 10) || qMin;
+      if (v < qMin) v = qMin;
+      v = qMin + Math.round((v - qMin) / qStep) * qStep;
+      if (v > qMax) v = qMin + Math.floor((qMax - qMin) / qStep) * qStep;
+      return v;
+    }
+
     qtyDec.addEventListener('click', function () {
-      var v = parseInt(qtyInput.value, 10) || 1;
-      qtyInput.value = Math.max(1, v - 1);
+      qtyInput.value = clampQty((parseInt(qtyInput.value, 10) || qMin) - qStep);
       updateSubtotal();
     });
     qtyInc.addEventListener('click', function () {
-      var v = parseInt(qtyInput.value, 10) || 1;
-      qtyInput.value = v + 1;
+      qtyInput.value = clampQty((parseInt(qtyInput.value, 10) || qMin) + qStep);
       updateSubtotal();
     });
-    qtyInput.addEventListener('input', function () {
-      var v = parseInt(this.value, 10);
-      if (isNaN(v) || v < 1) this.value = 1;
+    qtyInput.addEventListener('change', function () {
+      this.value = clampQty(this.value);
       updateSubtotal();
     });
+    qtyInput.addEventListener('input', updateSubtotal);
   }
 
   /* Toast */

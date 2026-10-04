@@ -472,33 +472,38 @@
     });
   })();
 
-  /* ── Submit → show success ────────────────────────── */
-  function redirectToThankYou() {
-    window.location.href = '/pages/thank-you';
+  /* ── Submit → Shopify checkout ─────────────────────────
+     The order is created by Shopify checkout (B2B: submitted for review /
+     payment terms). PO number and notes are saved to the cart first so they
+     land on the order as attributes; B2B checkout also has its own PO field. */
+  function goToCheckout() {
+    window.location.href = '/checkout';
   }
 
-  function handleSubmit() {
-    var poInput = document.querySelector('[data-cib-po]');
-    var poValue = poInput ? poInput.value.trim() : '';
-    if (poValue) {
-      fetch('/cart/update.js', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest'},
-        body: JSON.stringify({attributes: {po_number: poValue}})
-      })
-      .then(function () { redirectToThankYou(); })
-      .catch(function () { redirectToThankYou(); });
-    } else {
-      redirectToThankYou();
-    }
+  function handleSubmit(btn) {
+    var poInput    = document.querySelector('[data-cib-po]');
+    var notesInput = document.querySelector('[data-cib-notes]');
+    var attrs = {};
+    if (poInput)    attrs.po_number   = poInput.value.trim();
+    if (notesInput) attrs.order_notes = notesInput.value.trim();
+
+    btn.classList.add('is-disabled');
+    btn.setAttribute('aria-disabled', 'true');
+
+    fetch('/cart/update.js', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest'},
+      body: JSON.stringify({attributes: attrs})
+    })
+    .then(goToCheckout, goToCheckout);
   }
 
   document.addEventListener('click', function (e) {
     var btn = e.target.closest('#CsbSubmitBtn');
     if (!btn) return;
-    if (btn.disabled || btn.classList.contains('is-disabled')) return;
     e.preventDefault();
-    handleSubmit();
+    if (btn.disabled || btn.classList.contains('is-disabled')) return;
+    handleSubmit(btn);
   });
 
   /* ── React to cart changes ─────────────────────────── */

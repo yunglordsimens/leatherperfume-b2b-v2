@@ -480,12 +480,14 @@
       {%- for product in collection.products -%}
         {%- liquid
           assign variant   = product.variants.first
-          assign wsp_meta  = product.metafields.custom.wholesale_price.value
-          assign wsp_cents = wsp_meta | times: 100 | round
-          if wsp_meta == blank or wsp_cents == 0
-            assign wsp_cents = variant.price
+          assign wsp_cents = variant.price
+          capture rrp_cents
+            render 'money-meta-cents', value: product.metafields.custom.rrp.value
+          endcapture
+          assign rrp_cents = rrp_cents | strip | plus: 0
+          if rrp_cents == 0
+            assign rrp_cents = variant.compare_at_price | default: variant.price
           endif
-          assign rrp_cents  = variant.compare_at_price | default: variant.price
           assign margin_pct = 0
           if wsp_cents > 0
             assign margin_pct = rrp_cents | minus: wsp_cents | times: 100 | divided_by: wsp_cents
@@ -493,7 +495,7 @@
           assign badge        = product.metafields.custom.badge.value
           assign in_stock     = variant.available
           assign is_wholesale = false
-          if customer and customer.tags contains 'wholesale'
+          if customer and customer.b2b? or customer.tags contains 'wholesale'
             assign is_wholesale = true
           endif
         -%}

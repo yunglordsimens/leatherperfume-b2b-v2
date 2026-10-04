@@ -1,6 +1,6 @@
 {{ 'customer.css' | asset_url | stylesheet_tag }}
 
-{%- if customer and customer.tags contains 'wholesale' -%}
+{%- if customer and customer.b2b? or customer.tags contains 'wholesale' -%}
   <script>window.location.replace('/pages/partner-dashboard');</script>
   <noscript><meta http-equiv="refresh" content="0;url=/pages/partner-dashboard"></noscript>
 {%- endif -%}

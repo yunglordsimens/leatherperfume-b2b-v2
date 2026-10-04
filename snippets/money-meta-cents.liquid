@@ -1,0 +1,18 @@
+{%- comment -%}
+  Outputs a metafield price as integer cents (or nothing when blank).
+  Accepts a money metafield value (money object) or a plain number
+  in major units (e.g. 2490 = 2 490 Kč).
+
+  Usage:
+    {%- capture rrp_cents -%}{%- render 'money-meta-cents', value: product.metafields.custom.rrp.value -%}{%- endcapture -%}
+    {%- assign rrp_cents = rrp_cents | strip | plus: 0 -%}
+{%- endcomment -%}
+{%- liquid
+  if value == blank
+    echo ''
+  elsif value.amount
+    echo value.amount | times: 100 | round
+  else
+    echo value | times: 100 | round
+  endif
+-%}

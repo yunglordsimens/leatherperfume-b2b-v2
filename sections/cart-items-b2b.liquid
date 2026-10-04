@@ -531,7 +531,9 @@
                 type="number"
                 class="cib__qty-input"
                 value="{{ item.quantity }}"
-                min="1"
+                min="{{ item.variant.quantity_rule.min | default: 1 }}"
+                step="{{ item.variant.quantity_rule.increment | default: 1 }}"
+                {%- if item.variant.quantity_rule.max != null %} max="{{ item.variant.quantity_rule.max }}"{% endif %}
                 aria-label="Quantity for {{ item.product.title | escape }}"
                 data-cib-qty
               >
@@ -657,8 +659,21 @@
     var rmBtn    = row.querySelector('[data-cib-remove]');
     var totalEl  = row.querySelector('[data-cib-line-total]');
 
+    /* Quantity rules (B2B): min / increment / max come from the input attrs */
+    var qMin  = parseInt(qtyInput.min)  || 1;
+    var qStep = parseInt(qtyInput.step) || 1;
+    var qMax  = parseInt(qtyInput.max)  || Infinity;
+
+    function clampQty(v) {
+      v = parseInt(v) || qMin;
+      if (v < qMin) v = qMin;
+      v = qMin + Math.round((v - qMin) / qStep) * qStep;
+      if (v > qMax) v = qMin + Math.floor((qMax - qMin) / qStep) * qStep;
+      return v;
+    }
+
     function setQty(newQty) {
-      if (newQty < 1) newQty = 1;
+      newQty = clampQty(newQty);
       qtyInput.value = newQty;
       if (totalEl) totalEl.textContent = fmtMoney(unitP * newQty);
       [decBtn, incBtn, rmBtn].forEach(function (b) { if (b) b.disabled = true; });
@@ -695,10 +710,10 @@
       .catch(function () { if (rmBtn) rmBtn.disabled = false; });
     }
 
-    if (decBtn)   decBtn.addEventListener('click',  function () { setQty((parseInt(qtyInput.value) || 1) - 1); });
-    if (incBtn)   incBtn.addEventListener('click',  function () { setQty((parseInt(qtyInput.value) || 1) + 1); });
+    if (decBtn)   decBtn.addEventListener('click',  function () { setQty((parseInt(qtyInput.value) || qMin) - qStep); });
+    if (incBtn)   incBtn.addEventListener('click',  function () { setQty((parseInt(qtyInput.value) || qMin) + qStep); });
     if (rmBtn)    rmBtn.addEventListener('click',   removeItem);
-    if (qtyInput) qtyInput.addEventListener('change', function () { setQty(parseInt(qtyInput.value) || 1); });
+    if (qtyInput) qtyInput.addEventListener('change', function () { setQty(qtyInput.value); });
   }
 
   document.querySelectorAll('#CartItemsB2B-{{ section.id }} .cib__row').forEach(initRow);

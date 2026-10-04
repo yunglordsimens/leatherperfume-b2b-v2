@@ -59,17 +59,7 @@
     "cart_items_b2b": {
       "type": "cart-items-b2b",
       "name": "Cart Items B2B",
-      "settings": {
-        "details_heading": "Order Details",
-        "po_label": "PO Number (Optional)",
-        "po_placeholder": "Enter your internal Purchase Order number",
-        "po_hint": "This reference will appear on your invoice.",
-        "notes_label": "Order Notes / Special Instructions",
-        "notes_placeholder": "Delivery instructions, requests, etc.",
-        "empty_heading": "Your cart is empty",
-        "empty_text": "Add products from the catalog to build your wholesale order.",
-        "catalog_btn": "Go to Catalog"
-      }
+      "settings": {}
     },
     "cart_summary_b2b_xrpaN7": {
       "type": "cart-summary-b2b",

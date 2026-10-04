@@ -5,7 +5,7 @@
   assign clear_label     = section.settings.clear_label     | default: 'Clear Filters'
 
   assign is_wholesale = false
-  if customer and customer.tags contains 'wholesale'
+  if customer and customer.b2b? or customer.tags contains 'wholesale'
     assign is_wholesale = true
   endif
 -%}
@@ -310,6 +310,17 @@
     text-decoration: line-through;
   }
 
+  /* Guests: RRP is the price they pay — show it plainly */
+  .pgbl__rrp-val--retail {
+    font-family: var(--font-heading-family);
+    font-size: 1.25rem;
+    font-weight: 400;
+    color: #1c1917;
+    text-decoration: none;
+  }
+
+  html.a11y-high-contrast .pgbl__rrp-val--retail { color: #000000 !important; }
+
   .pgbl__wsp-val {
     font-family: var(--font-heading-family);
     font-weight: var(--font-heading-weight);
@@ -584,26 +595,31 @@
           assign stock_mod   = 'red'
         endif
 
-        comment — WSP: metafield (in cents) or half RRP
+        comment — Prices. WSP is the price Shopify charges this customer:
+          for B2B buyers variant.price already comes from their catalog.
+          RRP comes from the custom.rrp metafield (compare_at_price is
+          null for B2B buyers); guests fall back to the regular price.
         endcomment
-        assign wsp_meta = product.metafields.custom.wholesale_price
-        if wsp_meta != blank
-          assign wsp_cents = wsp_meta | times: 1
-        else
-          assign wsp_cents = product.price | divided_by: 2
-        endif
-
-        comment — RRP
-        endcomment
-        if product.compare_at_price != blank and product.compare_at_price > 0
-          assign rrp_cents = product.compare_at_price
-        else
-          assign rrp_cents = product.price
+        assign wsp_cents = product.variants.first.price
+        capture rrp_cents
+          render 'money-meta-cents', value: product.metafields.custom.rrp.value
+        endcapture
+        assign rrp_cents = rrp_cents | strip | plus: 0
+        if rrp_cents == 0
+          assign cap_cents = product.variants.first.compare_at_price | default: 0
+          if cap_cents > wsp_cents
+            assign rrp_cents = cap_cents
+          elsif is_wholesale == false
+            assign rrp_cents = wsp_cents
+          endif
         endif
 
         comment — Margin %
         endcomment
-        assign margin = rrp_cents | minus: wsp_cents | times: 100.0 | divided_by: wsp_cents | round
+        assign margin = 0
+        if rrp_cents > wsp_cents and wsp_cents > 0
+          assign margin = rrp_cents | minus: wsp_cents | times: 100.0 | divided_by: wsp_cents | round
+        endif
 
         comment — Size/option
         endcomment
@@ -681,10 +697,12 @@
 
             <!-- Prices -->
             <div class="pgbl__prices">
-              <div class="pgbl__price-row">
-                <p class="pgbl__price-label">RRP</p>
-                <p class="pgbl__rrp-val">{{ rrp_cents | money }}</p>
-              </div>
+              {%- if rrp_cents > 0 -%}
+                <div class="pgbl__price-row">
+                  <p class="pgbl__price-label">RRP</p>
+                  <p class="pgbl__rrp-val{% unless is_wholesale %} pgbl__rrp-val--retail{% endunless %}">{{ rrp_cents | money }}</p>
+                </div>
+              {%- endif -%}
               {%- if is_wholesale -%}
                 <div class="pgbl__price-row">
                   <p class="pgbl__price-label pgbl__price-label--wsp">Your Price (WSP)</p>
@@ -721,8 +739,10 @@
                   <input
                     type="number"
                     class="pgbl__qty-input"
-                    value="1"
-                    min="1"
+                    value="{{ product.variants.first.quantity_rule.min | default: 1 }}"
+                    min="{{ product.variants.first.quantity_rule.min | default: 1 }}"
+                    step="{{ product.variants.first.quantity_rule.increment | default: 1 }}"
+                    {%- if product.variants.first.quantity_rule.max != null %} max="{{ product.variants.first.quantity_rule.max }}"{% endif %}
                     aria-label="Quantity"
                     data-qty-input
                   >
@@ -812,19 +832,29 @@
 
     if (!decBtn || !incBtn || !qtyInput) return;
 
+    /* Quantity rules (B2B): min / increment / max come from the input attrs */
+    var qMin  = parseInt(qtyInput.min)  || 1;
+    var qStep = parseInt(qtyInput.step) || 1;
+    var qMax  = parseInt(qtyInput.max)  || Infinity;
+
+    function clampQty(v) {
+      v = parseInt(v) || qMin;
+      if (v < qMin) v = qMin;
+      v = qMin + Math.round((v - qMin) / qStep) * qStep;
+      if (v > qMax) v = qMin + Math.floor((qMax - qMin) / qStep) * qStep;
+      return v;
+    }
+
     decBtn.addEventListener('click', function () {
-      var val = parseInt(qtyInput.value) || 1;
-      if (val > 1) qtyInput.value = val - 1;
+      qtyInput.value = clampQty((parseInt(qtyInput.value) || qMin) - qStep);
     });
 
     incBtn.addEventListener('click', function () {
-      var val = parseInt(qtyInput.value) || 1;
-      qtyInput.value = val + 1;
+      qtyInput.value = clampQty((parseInt(qtyInput.value) || qMin) + qStep);
     });
 
     qtyInput.addEventListener('change', function () {
-      var val = parseInt(qtyInput.value);
-      if (!val || val < 1) qtyInput.value = 1;
+      qtyInput.value = clampQty(qtyInput.value);
     });
   });
 
@@ -979,7 +1009,7 @@
   "settings": [
     {
       "type": "paragraph",
-      "content": "Renders products from the current collection with wholesale pricing. Uses product metafield custom.wholesale_price (money, in cents) for WSP. Falls back to half of product price if unset."
+      "content": "Renders products from the current collection with wholesale pricing. WSP is the price Shopify charges the customer (for B2B buyers: their catalog price). RRP comes from the product metafield custom.rrp (money); without it guests see the regular price and B2B buyers see no RRP/margin."
     },
     {
       "type": "text",

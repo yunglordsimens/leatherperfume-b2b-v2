@@ -1,6 +1,6 @@
 {%- liquid
   assign is_wholesale = false
-  if customer and customer.tags contains 'wholesale'
+  if customer and customer.b2b? or customer.tags contains 'wholesale'
     assign is_wholesale = true
   endif
 

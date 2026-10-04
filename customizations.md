@@ -125,12 +125,24 @@ Complete list of every file created or modified for the B2B wholesale theme on b
 
 ---
 
-## Key Behaviour Notes
+## Key Behaviour Notes (native Shopify B2B)
 
-- **Cart flow**: `cart.b2b.json` → items (cart-items-b2b) → summary with MOQ tracker (cart-summary-b2b) → on submit redirect to `/pages/thank-you` (cart-success-b2b)
-- **Auth gates**: Quick-reorder, invoices, dashboard-content all redirect unauthenticated users to `/pages/partner-login`
-- **Wholesale detection**: `customer.tags contains 'wholesale'` throughout
-- **Customer metafields** (set in Admin → Customers): `custom.company_name`, `custom.discount_tier`, `custom.discount_percentage`
-- **MOQ**: 5000 CZK display units (500 000 cents). JS reads `data-moq` attribute, animates bar on load
+- **Partner detection**: `customer.b2b?` (customer belongs to a Shopify B2B company); the `wholesale` customer tag still works as a fallback.
+- **Prices**: WSP = `variant.price`, which Shopify fills from the partner's B2B catalog — the storefront always shows what checkout will charge. RRP comes from the product metafield `custom.rrp` (money) because `compare_at_price` is empty for B2B buyers; without it guests see the regular price and partners see no RRP/margin. Helper: `snippets/money-meta-cents.liquid`.
+- **Company name**: `customer.current_company.name` (metafield `custom.company_name` only as fallback). `custom.discount_tier` / `custom.discount_percentage` metafields are optional extras for the top bar.
+- **Cart flow**: cart (`cart.json`: cart-items-b2b + cart-summary-b2b) → "Submit for Invoicing" saves PO number + notes as cart attributes → **Shopify checkout** (B2B: PO field, payment terms, submit for review). The old fake `/pages/thank-you` redirect is gone; `cart-success-b2b` / `page.thank-you` are no longer part of the flow.
+- **Login**: `/pages/partner-login` (wholesale-login section) is a branded landing page whose button goes to `routes.account_login_url` — new customer accounts, one-time email code. No password form.
+- **Quantity rules**: qty steppers in the catalog grid, product page and cart read `variant.quantity_rule` (min / increment / max).
+- **MOQ**: 5000 CZK order-value bar in the cart summary (theme-side hint; per-product minimums belong in B2B quantity rules).
+- **Auth gates**: Quick-reorder, invoices, dashboard-content send guests to `/pages/partner-login`.
+- **Catalog layout**: catalog-sidebar (float left) + product-grid-b2b-logged-in (float right); `#MainContent` is `display: flow-root` on catalog pages so the footer never wraps beside the sidebar.
 - **Font**: Yeseva One loaded via `@font-face` from assets, applied to all heading elements
 - **High-contrast**: `html.a11y-high-contrast` CSS class overrides throughout all B2B sections
+
+## Admin setup this theme expects
+
+1. B2B market + catalog with wholesale prices; companies with locations; customers assigned to companies.
+2. New customer accounts (required for B2B).
+3. Payment terms (e.g. Net 30) and, if wanted, ordering approval ("submit for review").
+4. Product metafield `custom.rrp` (type: money) filled with the retail price, so partners see RRP and margin.
+5. Optional: quantity rules / volume pricing in the catalog.

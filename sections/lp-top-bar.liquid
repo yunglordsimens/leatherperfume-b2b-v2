@@ -9,14 +9,20 @@
   assign is_pending   = false
 
   if customer
-    if customer.tags contains 'wholesale'
+    if customer.b2b? or customer.tags contains 'wholesale'
       assign is_wholesale = true
     else
       assign is_pending = true
     endif
   endif
 
-  assign company_name          = customer.metafields.custom.company_name.value
+  assign company_name = blank
+  if customer.current_company
+    assign company_name = customer.current_company.name
+  endif
+  if company_name == blank
+    assign company_name = customer.metafields.custom.company_name.value
+  endif
   assign discount_tier         = customer.metafields.custom.discount_tier.value
   assign discount_percentage   = customer.metafields.custom.discount_percentage.value
   if company_name == blank and customer

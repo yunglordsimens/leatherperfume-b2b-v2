@@ -138,7 +138,7 @@
           <div class="menu-drawer__utility-links">
             {%- if shop.customer_accounts_enabled -%}
               <a
-                href="{%- if customer -%}{%- if customer.tags contains 'wholesale' -%}/pages/partner-dashboard{%- else -%}{{ routes.account_url }}{%- endif -%}{%- else -%}/pages/partner-login{%- endif -%}"
+                href="{%- if customer -%}{%- if customer.b2b? or customer.tags contains 'wholesale' -%}/pages/partner-dashboard{%- else -%}{{ routes.account_url }}{%- endif -%}{%- else -%}/pages/partner-login{%- endif -%}"
                 class="menu-drawer__account link focus-inset h5 medium-hide large-up-hide"
                 rel="nofollow"
               >

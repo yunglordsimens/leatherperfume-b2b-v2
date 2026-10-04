@@ -1,12 +1,23 @@
 {
   "sections": {
-    "catalog-header-b2b": {
-      "type": "catalog-header-b2b",
-      "settings": {}
+    "catalog-header": {
+      "type": "catalog-header",
+      "settings": {
+        "heading": "Wholesale Catalog",
+        "subheading": "Log in for B2B pricing",
+        "b2b_heading": "Create Order",
+        "b2b_subheading": "Add products to your wholesale cart",
+        "filter_button_text": "Filters"
+      }
     },
     "catalog-sidebar": {
       "type": "catalog-sidebar",
-      "settings": {}
+      "settings": {
+        "search_label": "Search",
+        "search_placeholder": "SKU or product name",
+        "category_label": "Categories",
+        "avail_label": "Availability"
+      }
     },
     "product-grid-b2b-logged-in": {
       "type": "product-grid-b2b-logged-in",
@@ -14,7 +25,7 @@
     }
   },
   "order": [
-    "catalog-header-b2b",
+    "catalog-header",
     "catalog-sidebar",
     "product-grid-b2b-logged-in"
   ]

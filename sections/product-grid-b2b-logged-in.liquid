@@ -3,6 +3,11 @@
   assign oos_label       = section.settings.oos_label       | default: 'Out of Stock'
   assign empty_heading   = section.settings.empty_heading   | default: 'No products found'
   assign clear_label     = section.settings.clear_label     | default: 'Clear Filters'
+
+  assign is_wholesale = false
+  if customer and customer.tags contains 'wholesale'
+    assign is_wholesale = true
+  endif
 -%}
 
 <style>
@@ -432,6 +437,21 @@
     border-color: #000000 !important;
   }
 
+  /* Guest / non-wholesale prompt */
+  .pgbl__login-btn {
+    box-sizing: border-box;
+    text-decoration: none;
+    color: #1c1917;
+    background-color: transparent;
+  }
+
+  .pgbl__login-btn:hover { color: #ffffff; }
+
+  html.a11y-high-contrast .pgbl__login-btn {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+  }
+
   .pgbl__atc-icon {
     width: 1.125rem;
     height: 1.125rem;
@@ -658,19 +678,27 @@
                 <p class="pgbl__price-label">RRP</p>
                 <p class="pgbl__rrp-val">{{ rrp_cents | money }}</p>
               </div>
-              <div class="pgbl__price-row">
-                <p class="pgbl__price-label pgbl__price-label--wsp">Your Price (WSP)</p>
-                <p class="pgbl__wsp-val">{{ wsp_cents | money }}</p>
-              </div>
-              {%- if margin > 0 -%}
-                <div class="pgbl__margin">
-                  <span class="pgbl__margin-badge">+{{ margin }}% Margin</span>
+              {%- if is_wholesale -%}
+                <div class="pgbl__price-row">
+                  <p class="pgbl__price-label pgbl__price-label--wsp">Your Price (WSP)</p>
+                  <p class="pgbl__wsp-val">{{ wsp_cents | money }}</p>
                 </div>
+                {%- if margin > 0 -%}
+                  <div class="pgbl__margin">
+                    <span class="pgbl__margin-badge">+{{ margin }}% Margin</span>
+                  </div>
+                {%- endif -%}
               {%- endif -%}
             </div><!-- /.pgbl__prices -->
 
-            <!-- Add to cart or OOS -->
-            {%- if product.available -%}
+            <!-- Add to cart, login prompt or OOS -->
+            {%- unless is_wholesale -%}
+              {%- if customer -%}
+                <a href="/pages/wholesale-application" class="pgbl__atc-btn pgbl__login-btn">Apply for B2B pricing</a>
+              {%- else -%}
+                <a href="/pages/partner-login" class="pgbl__atc-btn pgbl__login-btn">Log in for B2B price</a>
+              {%- endif -%}
+            {%- elsif product.available -%}
               <div class="pgbl__atc-wrap">
                 <div class="pgbl__qty-row">
                   <button

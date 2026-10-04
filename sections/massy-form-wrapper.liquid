@@ -466,6 +466,80 @@
     border-color: #000000 !important;
   }
 
+  /* ── Fonts ── */
+  .massy-form-container input,
+  .massy-form-container select,
+  .massy-form-container textarea,
+  .massy-form-container label,
+  .massy-form-container button,
+  .shopify-app-block input,
+  .shopify-app-block select,
+  .shopify-app-block textarea,
+  .shopify-app-block label,
+  .shopify-app-block button {
+    font-family: var(--font-body-family) !important;
+  }
+
+  .massy-form-container h1,
+  .massy-form-container h2,
+  .massy-form-container h3,
+  .shopify-app-block h1,
+  .shopify-app-block h2,
+  .shopify-app-block h3 {
+    font-family: 'Yeseva One', serif !important;
+  }
+
+  /* ── Phone field: country/flag prefix or icon overlapping the text ──
+     Covers intl-tel-input (.iti) and plain icon-in-wrapper markup. */
+  .massy-form-container .iti,
+  .shopify-app-block .iti {
+    position: relative !important;
+    display: block !important;
+    width: 100% !important;
+  }
+
+  .massy-form-container .iti__flag-container,
+  .massy-form-container .iti__country-container,
+  .shopify-app-block .iti__flag-container,
+  .shopify-app-block .iti__country-container {
+    position: absolute !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    padding: 0 0 0 0.75rem !important;
+    z-index: 2 !important;
+  }
+
+  .massy-form-container .iti input[type="tel"],
+  .massy-form-container .iti input,
+  .shopify-app-block .iti input[type="tel"],
+  .shopify-app-block .iti input {
+    padding-left: 5.25rem !important;
+  }
+
+  .massy-form-container :has(> input[type="tel"]),
+  .shopify-app-block :has(> input[type="tel"]) {
+    position: relative !important;
+  }
+
+  .massy-form-container :has(> input[type="tel"]) > svg,
+  .massy-form-container :has(> input[type="tel"]) > [class*="icon"],
+  .shopify-app-block :has(> input[type="tel"]) > svg,
+  .shopify-app-block :has(> input[type="tel"]) > [class*="icon"] {
+    position: absolute !important;
+    left: 12px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    pointer-events: none !important;
+  }
+
+  .massy-form-container :has(> svg, > [class*="icon"]) > input[type="tel"],
+  .shopify-app-block :has(> svg, > [class*="icon"]) > input[type="tel"] {
+    padding-left: 40px !important;
+  }
+
 </style>
 
 <div

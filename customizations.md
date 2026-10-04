@@ -8,7 +8,7 @@ Complete list of every file created or modified for the B2B wholesale theme on b
 
 | File | What changed |
 |------|-------------|
-| `assets/base.css` | Added Yeseva One heading override (`h1–h6`); breakpoints left at Dawn default 990px |
+| `assets/base.css` | Added Yeseva One heading override (`h1–h6`); header icons (cart/search/account) fixed at 22×22 (Dawn forced the cart icon to 44px); breakpoints left at Dawn default 990px |
 | `assets/YesevaOne-Regular.woff2` | Custom font file added |
 
 ---
@@ -37,9 +37,9 @@ Complete list of every file created or modified for the B2B wholesale theme on b
 |------|------|-------------|
 | `templates/cart.b2b.json` | Modified | B2B cart layout: cart-items-b2b + cart-summary-b2b + cart-success-b2b; `moq_amount: 5000` |
 | `templates/cart.json` | Modified | Added cart-items-b2b reference |
-| `templates/collection.json` | Modified | Standard collection template |
-| `templates/collection.wholesale.json` | Created | Wholesale collection: catalog-header-b2b + catalog-sidebar + product-grid-b2b-logged-in |
-| `templates/collection.partner-collection.json` | Created | Partner-specific collection template |
+| `templates/collection.json` | Modified | Default for every collection: catalog-header + catalog-sidebar + product-grid-b2b-logged-in |
+| `templates/collection.wholesale.json` | Created | Same layout as collection.json |
+| `templates/collection.partner-collection.json` | Created | Same layout as collection.json |
 | `templates/index.json` | Modified | Homepage template |
 | `templates/product.json` | Modified | Standard product template |
 | `templates/product.b2b.json` | Created | B2B product template using `product-b2b` section |
@@ -65,7 +65,7 @@ Complete list of every file created or modified for the B2B wholesale theme on b
 | `sections/cart-items-b2b.liquid` | B2B cart items: `{% for item in cart.items %}`, image, SKU, name, variant/size, ±qty stepper with AJAX `/cart/change.js`, remove button, line total, empty state. Schema empty. |
 | `sections/cart-summary-b2b.liquid` | B2B cart summary: MOQ progress bar (target 5000 CZK), PO number input, submit button. On submit: saves cart attributes via `/cart/update.js`, redirects to `/pages/thank-you`. |
 | `sections/cart-success-b2b.liquid` | Order success screen: CheckCircle icon, Yeseva One heading "Order Submitted!", PO reference, "Return to Catalog" button. Hidden by default (`display:none`). Schema empty. |
-| `sections/catalog-header-b2b.liquid` | B2B collection header with title, description, item count. |
+| `sections/catalog-header.liquid` | Single catalog header: wholesale → "Create Order" / "Add products to your wholesale cart"; others → "Wholesale Catalog" / "Log in for B2B pricing" (links to partner login). Mobile filter toggle. (`catalog-header-b2b` merged in and deleted.) |
 | `sections/catalog-cards.liquid` | Featured category cards for the B2B catalog. |
 | `sections/catalog-sidebar.liquid` | Sidebar filters for B2B collection pages. |
 | `sections/contact-b2b.liquid` | Contact page: email/phone/WhatsApp info cards (inline SVG, no React deps), contact form, office details. |
@@ -75,18 +75,18 @@ Complete list of every file created or modified for the B2B wholesale theme on b
 | `sections/dashboard-header.liquid` | Dashboard hero with company name and welcome message. |
 | `sections/editorial-heritage.liquid` | Brand story / heritage editorial section. |
 | `sections/hero-b2b.liquid` | Full-width B2B landing hero with headline, subheading, dual CTA buttons. |
-| `sections/how-it-works.liquid` | 3-step "How it works" explainer section. |
+| `sections/how-it-works.liquid` | 4-step "How to order" section; step numbers are links (set per step in the editor) with amber hover. |
 | `sections/invoices-list.liquid` | Partner invoice list with status badges. Auth gate redirects to `/pages/partner-login`. |
 | `sections/lp-top-bar.liquid` | 3-state announcement bar: guest (Apply CTA), pending (clock icon), wholesale (star + company name + discount tier + discount %). |
 | `sections/main-404-b2b.liquid` | Custom 404 page styled for B2B. |
 | `sections/main-password-b2b.liquid` | B2B-styled coming-soon / password page. |
-| `sections/massy-form-wrapper.liquid` | Wrapper that applies B2B form styles to embedded Massy/HubSpot forms. Direct tag selectors, amber focus ring, 12px radii. |
+| `sections/massy-form-wrapper.liquid` | Wrapper that applies B2B form styles to embedded Massy forms. Direct tag selectors, amber focus ring, 12px radii, body font on fields / Yeseva One on headings, phone-field prefix/icon padding fix. |
 | `sections/packages-grid.liquid` | Wholesale packages grid display. |
 | `sections/packages-wholesale.liquid` | Full wholesale packages section with pricing. |
 | `sections/page-header-b2b.liquid` | Reusable B2B page header (title + breadcrumb). |
 | `sections/product-b2b.liquid` | B2B product page: breadcrumbs, media gallery, RRP/WSP pricing (WSP hidden for guests), qty counter, "Add to Order" AJAX button. |
-| `sections/product-grid-b2b.liquid` | B2B product grid (general): qty stepper, AJAX add-to-cart, "Added!" toast, OOS chip, empty state. |
-| `sections/product-grid-b2b-logged-in.liquid` | B2B product grid for wholesale collection (active in `collection.wholesale.json`): wholesale-specific auth checks and pricing logic. |
+| `sections/product-grid-b2b.liquid` | Alternative standalone grid (not used by any template; can be added in the editor): qty stepper, AJAX add-to-cart, "Added!" toast, OOS chip, empty state. |
+| `sections/product-grid-b2b-logged-in.liquid` | **Active catalog grid** (all collection templates). Floats beside catalog-sidebar and reacts to its filters. Wholesale: RRP + WSP + margin + qty + AJAX "Add to Order". Guests: RRP + "Log in for B2B price"; logged-in non-wholesale: "Apply for B2B pricing". |
 | `sections/quick-reorder.liquid` | Past orders quick-reorder interface. Auth gate redirects to `/pages/partner-login`. |
 | `sections/trust-bar.liquid` | Icon + text trust signals bar (shipping, support, etc.). |
 | `sections/wholesale-login.liquid` | Split-panel login: left brand/benefits, right Shopify customer login form. Used by `page.wholesale-login.json` (handle: `partner-login`). |
@@ -120,7 +120,8 @@ Complete list of every file created or modified for the B2B wholesale theme on b
 
 | File | What changed |
 |------|-------------|
-| `snippets/predictive-search-overlay.liquid` | Replaced `{{ '...' | t }}` with hardcoded English strings to prevent "translation missing" errors; placeholder → "Search SKU or Fragrance…" |
+| `snippets/predictive-search-overlay.liquid` | Replaced `{{ '...' | t }}` with hardcoded English strings to prevent "translation missing" errors; placeholder → "Search SKU or Fragrance…"; no focus ring on the search input |
+| `snippets/header-drawer.liquid` | Mobile menu account link uses the same routing as the desktop header (dashboard / account / partner login) |
 
 ---
 

@@ -144,12 +144,36 @@
     flex-shrink: 0;
     background-color: #1c1917;
     color: #ffffff;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
   }
 
   .how-it-works__step:last-child .how-it-works__number {
     background-color: #b45309;
     color: #ffffff;
     box-shadow: 0 0 0 4px #fef3c7;
+  }
+
+  .how-it-works__number:hover,
+  .how-it-works__number:focus-visible {
+    background-color: #b45309;
+    color: #ffffff;
+    transform: scale(1.06);
+    box-shadow: 0 0 0 4px #fef3c7;
+    outline: none;
+  }
+
+  .how-it-works__step:last-child .how-it-works__number:hover,
+  .how-it-works__step:last-child .how-it-works__number:focus-visible {
+    background-color: #ea580c;
+  }
+
+  html.a11y-high-contrast .how-it-works__number:hover,
+  html.a11y-high-contrast .how-it-works__number:focus-visible {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    transform: none;
   }
 
   .how-it-works--high-contrast .how-it-works__number,
@@ -211,32 +235,24 @@
       {%- endif -%}
     </div>
 
+    {%- liquid
+      assign step_titles = 'Browse &amp; Choose|Apply / Log In|Confirm Order|Shipment' | split: '|'
+      assign step_descs  = 'Explore our catalog or select one of the ready-made packages above.|Log in to your account or apply for a new wholesale partnership to see prices.|Add products to cart. We will confirm availability and prepare your proforma invoice.|Once paid, your order is packed and shipped from Prague within 1–3 business days.' | split: '|'
+      assign step_links  = '/collections/all|/pages/wholesale-application|/cart|/pages/contact-b2b' | split: '|'
+    -%}
     <div class="how-it-works__steps">
-
-      <div class="how-it-works__step">
-        <div class="how-it-works__number" aria-hidden="true">1</div>
-        <h4 class="how-it-works__step-heading">Browse &amp; Choose</h4>
-        <p class="how-it-works__step-desc">Explore our catalog or select one of the ready-made packages above.</p>
-      </div>
-
-      <div class="how-it-works__step">
-        <div class="how-it-works__number" aria-hidden="true">2</div>
-        <h4 class="how-it-works__step-heading">Apply / Log In</h4>
-        <p class="how-it-works__step-desc">Log in to your account or apply for a new wholesale partnership to see prices.</p>
-      </div>
-
-      <div class="how-it-works__step">
-        <div class="how-it-works__number" aria-hidden="true">3</div>
-        <h4 class="how-it-works__step-heading">Confirm Order</h4>
-        <p class="how-it-works__step-desc">Add products to cart. We will confirm availability and prepare your proforma invoice.</p>
-      </div>
-
-      <div class="how-it-works__step">
-        <div class="how-it-works__number" aria-hidden="true">4</div>
-        <h4 class="how-it-works__step-heading">Shipment</h4>
-        <p class="how-it-works__step-desc">Once paid, your order is packed and shipped from Prague within 1–3 business days.</p>
-      </div>
-
+      {%- for title in step_titles -%}
+        {%- liquid
+          assign i = forloop.index0
+          assign link_key = 'step_' | append: forloop.index | append: '_link'
+          assign link = section.settings[link_key] | default: step_links[i]
+        -%}
+        <div class="how-it-works__step">
+          <a href="{{ link }}" class="how-it-works__number" aria-label="Step {{ forloop.index }}: {{ title | strip_html }}">{{ forloop.index }}</a>
+          <h4 class="how-it-works__step-heading">{{ title }}</h4>
+          <p class="how-it-works__step-desc">{{ step_descs[i] }}</p>
+        </div>
+      {%- endfor -%}
     </div>
 
   </div>
@@ -277,7 +293,15 @@
       "id": "subheading",
       "label": "Subheading",
       "default": "A simple, transparent process from selecting your package to getting the products on your shelves."
-    }
+    },
+    {
+      "type": "header",
+      "content": "Step links"
+    },
+    { "type": "url", "id": "step_1_link", "label": "Step 1 link", "info": "Default: /collections/all" },
+    { "type": "url", "id": "step_2_link", "label": "Step 2 link", "info": "Default: /pages/wholesale-application" },
+    { "type": "url", "id": "step_3_link", "label": "Step 3 link", "info": "Default: /cart" },
+    { "type": "url", "id": "step_4_link", "label": "Step 4 link", "info": "Default: /pages/contact-b2b" }
   ],
   "presets": [
     {

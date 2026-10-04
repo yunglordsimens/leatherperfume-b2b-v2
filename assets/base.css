@@ -2561,11 +2561,18 @@ input[type='checkbox'] {
   vertical-align: middle;
 }
 
-.header__icon,
-.header__icon--cart .icon {
+.header__icon {
   height: 4.4rem;
   width: 4.4rem;
   padding: 0;
+}
+
+.header__icon--cart .icon,
+.header__icon .icon-search,
+.header__icon .icon-account {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
 }
 
 .header__icon--cart {

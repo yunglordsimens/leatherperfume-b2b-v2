@@ -73,7 +73,7 @@
         "moq_msg_suffix": "more to proceed with this order.",
         "subtotal_label": "Subtotal (WSP)",
         "vat_rate": 21,
-        "vat_label": "Estimated VAT",
+        "vat_label": "VAT",
         "shipping_label": "Shipping",
         "shipping_value": "Calculated Later",
         "total_label": "Total",

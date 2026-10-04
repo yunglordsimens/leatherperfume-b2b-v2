@@ -275,6 +275,17 @@
 
   .cib__remove-btn svg { width: 1.125rem; height: 1.125rem; display: block; }
 
+  .cib__row-error {
+    grid-column: 1 / -1;
+    margin: 0;
+    font-family: var(--font-body-family);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #b91c1c;
+  }
+
+  html.a11y-high-contrast .cib__row-error { color: #000000 !important; text-decoration: underline; }
+
   /* ── Order details ────────────────────────────────── */
   .cib__details {
     background-color: #fafaf9;
@@ -562,6 +573,7 @@
               </svg>
             </button>
           </div>
+          <p class="cib__row-error" data-cib-error role="alert" hidden></p>
         </div>
       {%- endfor -%}
     </div><!-- /.cib__card -->
@@ -651,8 +663,6 @@
 
   /* ── Qty + remove wiring ──────────────────────────── */
   function initRow(row) {
-    var line     = parseInt(row.getAttribute('data-line'));
-    var unitP    = parseInt(row.getAttribute('data-unit-price'));
     var key      = row.getAttribute('data-key');
     var qtyInput = row.querySelector('[data-cib-qty]');
     var decBtn   = row.querySelector('[data-cib-dec]');
@@ -673,23 +683,52 @@
       return v;
     }
 
+    var lastQty = parseInt(qtyInput.value) || qMin;
+    var errEl   = row.querySelector('[data-cib-error]');
+
+    function showError(msg) {
+      if (!errEl) return;
+      errEl.textContent = msg || '';
+      errEl.hidden = !msg;
+    }
+
+    /* Change by line item key (not row number): stays correct after other
+       rows are removed. Totals come from Shopify's response, so B2B volume
+       pricing is reflected. */
     function setQty(newQty) {
       newQty = clampQty(newQty);
       qtyInput.value = newQty;
-      if (totalEl) totalEl.textContent = fmtMoney(unitP * newQty);
+      showError('');
       [decBtn, incBtn, rmBtn].forEach(function (b) { if (b) b.disabled = true; });
 
       fetch('/cart/change.js', {
         method: 'POST',
         headers: {'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest'},
-        body: JSON.stringify({line: line, quantity: newQty})
+        body: JSON.stringify({id: key, quantity: newQty})
       })
-      .then(function (r) { return r.json(); })
+      .then(function (r) {
+        return r.json().then(function (data) {
+          if (!r.ok || (data.status && data.status >= 400)) {
+            throw new Error(data.description || data.message || 'Could not update quantity');
+          }
+          return data;
+        });
+      })
       .then(function (cart) {
+        var item = (cart.items || []).filter(function (i) { return i.key === key; })[0];
+        if (item) {
+          qtyInput.value = item.quantity;
+          lastQty = item.quantity;
+          if (totalEl) totalEl.textContent = fmtMoney(item.final_line_price);
+        }
+        if (window.lpUpdateCartBubble) window.lpUpdateCartBubble(cart.item_count);
         window.dispatchEvent(new CustomEvent('cart:updated', {detail: cart}));
-        [decBtn, incBtn, rmBtn].forEach(function (b) { if (b) b.disabled = false; });
       })
-      .catch(function () {
+      .catch(function (err) {
+        qtyInput.value = lastQty;
+        showError(err.message);
+      })
+      .then(function () {
         [decBtn, incBtn, rmBtn].forEach(function (b) { if (b) b.disabled = false; });
       });
     }
@@ -699,16 +738,22 @@
       fetch('/cart/change.js', {
         method: 'POST',
         headers: {'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest'},
-        body: JSON.stringify({line: line, quantity: 0})
+        body: JSON.stringify({id: key, quantity: 0})
       })
-      .then(function (r) { return r.json(); })
+      .then(function (r) {
+        return r.json().then(function (data) {
+          if (!r.ok || (data.status && data.status >= 400)) throw new Error(data.description || 'Could not remove item');
+          return data;
+        });
+      })
       .then(function (cart) {
+        if (window.lpUpdateCartBubble) window.lpUpdateCartBubble(cart.item_count);
         row.remove();
         window.dispatchEvent(new CustomEvent('cart:updated', {detail: cart}));
         /* If list is now empty, reload to show empty state */
         if (cart.item_count === 0) { location.reload(); }
       })
-      .catch(function () { if (rmBtn) rmBtn.disabled = false; });
+      .catch(function (err) { if (rmBtn) rmBtn.disabled = false; showError(err.message); });
     }
 
     if (decBtn)   decBtn.addEventListener('click',  function () { setQty((parseInt(qtyInput.value) || qMin) - qStep); });

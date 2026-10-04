@@ -303,6 +303,7 @@
   html.a11y-high-contrast .csb__submit-note { color: #000000 !important; }
 </style>
 
+{%- if cart.item_count > 0 -%}
 <div
   class="csb"
   id="CartSummaryB2B-{{ section.id }}"
@@ -333,7 +334,7 @@
         ></div>
       </div>
       <p class="csb__moq-msg moq-text" id="CsbMoqMsg"{% if moq_reached %} style="display:none;"{% endif %}>
-        You are <span class="moq-remaining" id="CsbMoqRemaining">{{ remaining_cents | money }}</span> away from minimum order.
+        {{ section.settings.moq_msg_prefix | default: 'Add' }} <span class="moq-remaining" id="CsbMoqRemaining">{{ remaining_cents | money }}</span> {{ section.settings.moq_msg_suffix | default: 'more to proceed with this order.' }}
       </p>
     </div>
 
@@ -344,8 +345,8 @@
         <span class="csb__line-value" id="CsbSubtotal">{{ cart.items_subtotal_price | money }}</span>
       </div>
       <div class="csb__line">
-        <span class="csb__line-label">{{ section.settings.vat_label | default: 'Estimated VAT' }} ({{ vat_rate }}%)</span>
-        <span class="csb__line-value" id="CsbVat">{{ vat_cents | money }}</span>
+        <span class="csb__line-label">{{ section.settings.vat_label | default: 'VAT' }}</span>
+        <span class="csb__line-value csb__line-value--muted">{{ section.settings.vat_value | default: 'Calculated at checkout' }}</span>
       </div>
       <div class="csb__line">
         <span class="csb__line-label">{{ section.settings.shipping_label | default: 'Shipping' }}</span>
@@ -380,12 +381,15 @@
   </div>
 </div>
 
+{%- endif -%}
+
 <script>
 (function () {
   if (window.lpCartSummaryReady) return;
   window.lpCartSummaryReady = true;
 
   var wrap      = document.getElementById('CartSummaryB2B-{{ section.id }}');
+  if (!wrap) return; /* empty cart: summary not rendered */
   var moqTarget = parseInt(wrap.getAttribute('data-moq')) || 5000; /* display units */
   var vatRate   = parseInt(wrap.getAttribute('data-vat')) || 21;
   var moneyFmt  = wrap.getAttribute('data-money-format') || '{{ shop.money_format | escape }}';
@@ -422,8 +426,8 @@
     if (moqTitle) {
       moqTitle.classList.toggle('csb__moq-title--reached', reached);
       moqTitle.textContent = reached
-        ? '{{ section.settings.moq_reached_label | default: "MOQ Reached" }}'
-        : '{{ section.settings.moq_label | default: "MOQ Target" }}';
+        ? {{ section.settings.moq_reached_label | default: "MOQ Reached" | json }}
+        : {{ section.settings.moq_label | default: "MOQ Target" | json }};
     }
 
     if (moqMsg)       moqMsg.style.display = reached ? 'none' : '';
@@ -511,10 +515,8 @@
     if (!cart) return;
     var subtotal    = cart.items_subtotal_price || 0;
     var totalCents  = cart.total_price          || 0;
-    var vat         = Math.round(subtotal * vatRate / 100);
 
     if (subtotEl) subtotEl.textContent = fmtMoney(subtotal);
-    if (vatEl)    vatEl.textContent    = fmtMoney(vat);
     if (totalEl)  totalEl.textContent  = fmtMoney(totalCents);
 
     updateMoq(totalCents / 100);
@@ -546,7 +548,8 @@
     { "type": "header", "content": "Breakdown" },
     { "type": "text",   "id": "subtotal_label",      "label": "Subtotal label",           "default": "Subtotal (WSP)" },
     { "type": "number", "id": "vat_rate",            "label": "VAT rate (%)",             "default": 21 },
-    { "type": "text",   "id": "vat_label",           "label": "VAT label",                "default": "Estimated VAT" },
+    { "type": "text",   "id": "vat_label",           "label": "VAT label",                "default": "VAT" },
+    { "type": "text",   "id": "vat_value",           "label": "VAT text",                 "default": "Calculated at checkout", "info": "Tax depends on the partner's company location (e.g. EU reverse charge); Shopify checkout calculates it." },
     { "type": "text",   "id": "shipping_label",      "label": "Shipping label",           "default": "Shipping" },
     { "type": "text",   "id": "shipping_value",      "label": "Shipping value text",      "default": "Calculated Later" },
     { "type": "text",   "id": "total_label",         "label": "Total label",              "default": "Total" },

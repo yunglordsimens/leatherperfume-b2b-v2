@@ -21,6 +21,13 @@
         <div class="menu-drawer__navigation-container">
           <nav class="menu-drawer__navigation">
             <ul class="menu-drawer__menu has-submenu list-menu" role="list">
+              {%- if customer and customer.b2b? or customer.tags contains 'wholesale' -%}
+                {%- comment -%} Same partner links as the desktop nav {%- endcomment -%}
+                <li><a href="/pages/partner-dashboard" class="menu-drawer__menu-item list-menu__item link link--text focus-inset">Dashboard</a></li>
+                <li><a href="/collections/all" class="menu-drawer__menu-item list-menu__item link link--text focus-inset">Order Portal</a></li>
+                <li><a href="/pages/quick-reorder" class="menu-drawer__menu-item list-menu__item link link--text focus-inset">Quick Reorder</a></li>
+                <li><a href="/pages/invoices" class="menu-drawer__menu-item list-menu__item link link--text focus-inset">Invoices</a></li>
+              {%- endif -%}
               {%- for link in section.settings.menu.links -%}
                 <li>
                   {%- if link.links != blank -%}

@@ -580,6 +580,8 @@
   if (!overlay) return;
 
   var searchUrl   = overlay.dataset.searchUrl || '/search/suggest';
+  var PSO_MONEY   = {{ shop.money_format | json }};
+  var PSO_IS_B2B  = {% if customer and customer.b2b? or customer.tags contains 'wholesale' %}true{% else %}false{% endif %};
   var debounceTimer = null;
   var abortCtrl   = null;
 
@@ -670,8 +672,10 @@
   function fetchResults(q) {
     try { abortCtrl = new AbortController(); } catch (e) { abortCtrl = null; }
 
-    var url = searchUrl + '?q=' + encodeURIComponent(q) +
-              '&resources[type]=product&resources[limit]=6&resources[options][unavailable_products]=last';
+    /* .json endpoint (the bare URL returns HTML); search SKUs too */
+    var url = searchUrl.replace(/\.json$/, '') + '.json?q=' + encodeURIComponent(q) +
+              '&resources[type]=product&resources[limit]=6&resources[options][unavailable_products]=last' +
+              '&resources[options][fields]=title,product_type,variants.sku,vendor,tag';
 
     fetch(url, {
       headers: { 'Accept': 'application/json' },
@@ -751,11 +755,15 @@
     var sku = (p.variants && p.variants[0] && p.variants[0].sku) ? p.variants[0].sku : '';
     var type = p.product_type || p.type || '';
 
-    /* Format price — API returns cents as integer */
+    /* suggest.json returns the price as a decimal string ("1250.00");
+       label it WSP only for B2B partners */
     var priceStr = '';
     if (p.price) {
-      /* price is already formatted string from API */
-      priceStr = 'WSP: ' + p.price;
+      var cents = Math.round(parseFloat(p.price) * 100);
+      var whole = String(Math.floor(cents / 100)).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+      var dec   = ('0' + cents % 100).slice(-2);
+      var amount = PSO_MONEY.replace(/\{\{\s*\w+\s*\}\}/, whole + ',' + dec);
+      priceStr = (PSO_IS_B2B ? 'WSP: ' : '') + amount;
     }
 
     var metaParts = [];

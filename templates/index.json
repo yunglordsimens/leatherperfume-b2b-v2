@@ -146,9 +146,9 @@
         "p2_desc": "Full inventory for a new store. Includes the entire fragrance line, leather accessories, gift sets, and extensive marketing support with a dedicated manager.",
         "p2_price": "from 50,000 CZK",
         "p2_btn_label": "Apply Now",
-        "p2_btn_link": "",
+        "p2_btn_link": "shopify://pages/wholesale-application",
         "more_label": "View more wholesale packages",
-        "more_link": "shopify://pages/packages"
+        "more_link": "shopify://pages/wholesale-packages"
       }
     },
     "bottom_cta_rthwmW": {
@@ -159,7 +159,7 @@
         "heading": "Ready to elevate your retail space?",
         "subheading": "<p>Join our network of premium retail partners and get access to exclusive wholesale pricing, priority shipping, and dedicated support.</p>",
         "button_label": "Apply for Partnership",
-        "button_link": ""
+        "button_link": "shopify://pages/wholesale-application"
       }
     }
   },

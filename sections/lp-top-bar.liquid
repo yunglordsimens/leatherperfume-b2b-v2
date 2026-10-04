@@ -11,7 +11,11 @@
   if customer
     if customer.b2b? or customer.tags contains 'wholesale'
       assign is_wholesale = true
-    else
+    elsif customer.tags contains 'b2b-applicant' or customer.tags contains 'pending'
+      comment
+        Only customers who actually applied (tag set by the application flow
+        or by hand) see "under review"; retail customers see the apply bar.
+      endcomment
       assign is_pending = true
     endif
   endif
@@ -23,8 +27,15 @@
   if company_name == blank
     assign company_name = customer.metafields.custom.company_name.value
   endif
-  assign discount_tier         = customer.metafields.custom.discount_tier.value
-  assign discount_percentage   = customer.metafields.custom.discount_percentage.value
+  comment
+    Prices come from the company's B2B catalog, so no manual tier / % here
+    (it would drift from what checkout charges). Show the location instead
+    when the company has several.
+  endcomment
+  assign location_name = blank
+  if customer.current_company and customer.company_available_locations.size > 1
+    assign location_name = customer.current_location.name
+  endif
   if company_name == blank and customer
     assign company_name = customer.first_name | append: ' ' | append: customer.last_name | strip
   endif
@@ -197,11 +208,8 @@
           <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
         </svg>
         <span>{{ partner_pre }}&nbsp;<span class="lp-top-bar__company">{{ company_name | escape }}</span></span>
-        {%- if discount_tier != blank -%}
-          <span class="lp-top-bar__tier">{{ discount_tier | upcase | escape }}</span>
-        {%- endif -%}
-        {%- if discount_percentage != blank -%}
-          <span class="lp-top-bar__discount">({{ discount_percentage | escape }}%)</span>
+        {%- if location_name != blank -%}
+          <span class="lp-top-bar__tier">{{ location_name | escape }}</span>
         {%- endif -%}
       </div>
 

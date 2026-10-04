@@ -297,21 +297,6 @@
       }
     </script>
 
-    {%- if customer and customer.b2b? or customer.tags contains 'wholesale' -%}
-      <script>
-        (function () {
-          var p = window.location.pathname;
-          /* redirect wholesale customers away from the default /account pages
-             straight to the custom Partner Dashboard — except for logout
-             and addresses (Shopify-only flows that we can't recreate) */
-          if (p.indexOf('/account') === 0
-              && p.indexOf('/account/logout')   !== 0
-              && p.indexOf('/account/addresses') !== 0) {
-            window.location.replace('/pages/partner-dashboard');
-          }
-        })();
-      </script>
-    {%- endif -%}
     <style>
       @font-face {
         font-family: 'Yeseva One';

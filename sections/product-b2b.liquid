@@ -669,6 +669,55 @@
     max-width: calc(100% - 2rem);
   }
 
+  .pdp-toast.is-error { background-color: #b91c1c; }
+  .pdp-toast.is-error svg { display: none; }
+
+  /* Variant picker */
+  .pdp-variant { margin: 0 0 1.5rem; }
+  .pdp-variant__label {
+    display: block;
+    font-family: var(--font-body-family);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #78716c;
+    margin-bottom: 0.5rem;
+  }
+  .pdp-variant__select {
+    width: 100%;
+    max-width: 22rem;
+    padding: 0.75rem 1rem;
+    font-family: var(--font-body-family);
+    font-size: 1rem;
+    color: #1c1917;
+    background-color: #ffffff;
+    border: 1.5px solid #d6d3d1;
+    border-radius: 0.75rem;
+  }
+  .pdp-variant__select:focus { outline: none; border-color: #b45309; box-shadow: 0 0 0 3px rgba(180, 83, 9, 0.15); }
+  html.a11y-high-contrast .pdp-variant__label { color: #000000 !important; }
+  html.a11y-high-contrast .pdp-variant__select { border: 2px solid #000000 !important; color: #000000 !important; }
+
+  .pdp-add-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+  /* Guest: retail price above the login prompt */
+  .pdp-pricing__guest-rrp {
+    font-family: var(--font-body-family);
+    font-size: 1rem;
+    color: #44403c;
+    margin: 0 0 1rem;
+  }
+  .pdp-pricing__guest-rrp strong {
+    font-family: var(--font-heading-family);
+    font-weight: 400;
+    font-size: 1.5rem;
+    color: #1c1917;
+    margin-left: 0.25rem;
+  }
+  html.a11y-high-contrast .pdp-pricing__guest-rrp,
+  html.a11y-high-contrast .pdp-pricing__guest-rrp strong { color: #000000 !important; }
+
   .pdp-toast.is-visible {
     transform: translateX(-50%) translateY(0);
     opacity: 1;
@@ -829,14 +878,14 @@
       <div class="pdp-info">
 
         <div class="pdp-meta">
-          {%- if first_collection -%}
-            <span class="pdp-category">{{ first_collection.title }}</span>
-          {%- elsif product.type != blank -%}
+          {%- if product.type != blank -%}
             <span class="pdp-category">{{ product.type }}</span>
+          {%- elsif first_collection -%}
+            <span class="pdp-category">{{ first_collection.title }}</span>
           {%- endif -%}
           <div class="pdp-stock">
-            <span class="pdp-stock__dot {% if current_variant.available %}is-in{% else %}is-out{% endif %}"></span>
-            <span class="pdp-stock__label">
+            <span class="pdp-stock__dot {% if current_variant.available %}is-in{% else %}is-out{% endif %}" id="PdpStockDot-{{ section.id }}"></span>
+            <span class="pdp-stock__label" id="PdpStockLabel-{{ section.id }}">
               {%- if current_variant.available -%}
                 In Stock
                 {%- if current_variant.inventory_management != blank and current_variant.inventory_quantity > 0 -%}
@@ -851,9 +900,40 @@
 
         <h1 class="pdp-title">{{ product.title }}</h1>
 
-        {%- if current_variant.sku != blank -%}
-          <p class="pdp-sku">SKU: {{ current_variant.sku }}</p>
-        {%- endif -%}
+        <p class="pdp-sku" id="PdpSku-{{ section.id }}"{% if current_variant.sku == blank %} hidden{% endif %}>SKU: <span>{{ current_variant.sku }}</span></p>
+
+        {%- comment -%}── Variant picker (products with several variants) ──{%- endcomment -%}
+        {%- unless product.has_only_default_variant -%}
+          <div class="pdp-variant">
+            <label class="pdp-variant__label" for="PdpVariant-{{ section.id }}">
+              {{- product.options | join: ' / ' -}}
+            </label>
+            <select class="pdp-variant__select" id="PdpVariant-{{ section.id }}">
+              {%- for variant in product.variants -%}
+                <option value="{{ variant.id }}"{% if variant.id == current_variant.id %} selected{% endif %}>
+                  {{- variant.title -}}{%- unless variant.available %} — Sold out{% endunless -%}
+                </option>
+              {%- endfor -%}
+            </select>
+          </div>
+          <script type="application/json" id="PdpVariants-{{ section.id }}">
+            [
+              {%- for variant in product.variants -%}
+                {
+                  "id": {{ variant.id }},
+                  "price": {{ variant.price }},
+                  "available": {{ variant.available }},
+                  "sku": {{ variant.sku | json }},
+                  "inventory": {% if variant.inventory_management != blank %}{{ variant.inventory_quantity | default: 0 }}{% else %}null{% endif %},
+                  "min": {{ variant.quantity_rule.min | default: 1 }},
+                  "step": {{ variant.quantity_rule.increment | default: 1 }},
+                  "max": {% if variant.quantity_rule.max != null %}{{ variant.quantity_rule.max }}{% else %}null{% endif %},
+                  "image": {% if variant.featured_image %}{{ variant.featured_image | image_url: width: 1200 | json }}{% else %}null{% endif %}
+                }{% unless forloop.last %},{% endunless %}
+              {%- endfor -%}
+            ]
+          </script>
+        {%- endunless -%}
 
         <div class="pdp-desc">{{ product.description }}</div>
 
@@ -875,13 +955,13 @@
                 <span class="pdp-pricing__lbl pdp-pricing__lbl--wsp">{{ section.settings.wsp_label | default: 'Your Price (WSP)' }}</span>
                 <span class="pdp-pricing__excl">{{ section.settings.vat_note | default: 'Excl. VAT' }}</span>
               </div>
-              <span class="pdp-pricing__wsp">{{ wsp | money_without_trailing_zeros }}</span>
+              <span class="pdp-pricing__wsp" id="PdpWsp-{{ section.id }}">{{ wsp | money_without_trailing_zeros }}</span>
             </div>
 
             {%- if margin_percent > 0 -%}
               <div class="pdp-pricing__margin">
                 <span>{{ section.settings.margin_label | default: 'Your Retail Margin' }}</span>
-                <strong>+{{ margin_percent }}%</strong>
+                <strong id="PdpMargin-{{ section.id }}">+{{ margin_percent }}%</strong>
               </div>
             {%- endif -%}
 
@@ -894,8 +974,20 @@
                   <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
                 </svg>
               </span>
-              <p class="pdp-pricing__login-text">{{ section.settings.login_cta_text | default: 'Log in to see your B2B price' }}</p>
-              <a href="/pages/partner-login" class="pdp-pricing__login-btn">{{ section.settings.login_cta_button | default: 'Log In as Partner' }}</a>
+              {%- liquid
+                assign guest_rrp = rrp
+                if guest_rrp == 0
+                  assign guest_rrp = current_variant.price
+                endif
+              -%}
+              <p class="pdp-pricing__guest-rrp">{{ section.settings.rrp_label | default: 'Retail Price (RRP)' }}: <strong>{{ guest_rrp | money_without_trailing_zeros }}</strong></p>
+              {%- if customer -%}
+                <p class="pdp-pricing__login-text">Wholesale prices are available to approved partners.</p>
+                <a href="/pages/wholesale-application" class="pdp-pricing__login-btn">Apply for B2B pricing</a>
+              {%- else -%}
+                <p class="pdp-pricing__login-text">{{ section.settings.login_cta_text | default: 'Log in to see your B2B price' }}</p>
+                <a href="/pages/partner-login" class="pdp-pricing__login-btn">{{ section.settings.login_cta_button | default: 'Log In as Partner' }}</a>
+              {%- endif -%}
             </div>
 
           {%- endif -%}
@@ -936,9 +1028,12 @@
                 type="button"
                 id="PdpAddBtn-{{ section.id }}"
                 data-variant-id="{{ current_variant.id }}"
+                {%- unless current_variant.available %} disabled{% endunless %}
               >
                 <div class="pdp-spinner" aria-hidden="true"></div>
-                <span class="pdp-add-label">{{ section.settings.add_button_label | default: 'Add to Order' }}</span>
+                <span class="pdp-add-label" data-label-add="{{ section.settings.add_button_label | default: 'Add to Order' | escape }}" data-label-soldout="Sold out">
+                  {%- if current_variant.available -%}{{ section.settings.add_button_label | default: 'Add to Order' }}{%- else -%}Sold out{%- endif -%}
+                </span>
                 <svg class="pdp-add-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <circle cx="9" cy="21" r="1"/>
                   <circle cx="20" cy="21" r="1"/>
@@ -963,6 +1058,18 @@
           {%- endfor -%}
         {%- endcapture -%}
 
+        {%- liquid
+          comment
+            The section-level default details describe a perfume; only use
+            them for perfume products (or products without a type).
+          endcomment
+          assign ptype = product.type | downcase
+          if ptype != blank
+            unless ptype contains 'perf' or ptype contains 'parf'
+              assign static_features_check = ''
+            endunless
+          endif
+        -%}
         {%- if features_meta != blank or static_features_check contains 'yes' -%}
           <div class="pdp-features">
             <h4 class="pdp-features__head">{{ section.settings.features_heading | default: 'Product Details' }}</h4>
@@ -1045,11 +1152,23 @@
   var unitCents = {{ wsp | default: 0 | json }};
   var moneyFmt  = {{ shop.money_format | json }};
 
+  /* Format cents with the shop's money format (e.g. "{{amount_with_comma_separator}} Kč") */
   function fmtMoney(cents) {
-    if (window.Shopify && window.Shopify.formatMoney) {
-      return window.Shopify.formatMoney(cents, moneyFmt);
-    }
-    return (cents / 100).toLocaleString();
+    function group(n, sep) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, sep); }
+    var whole = Math.floor(Math.abs(cents) / 100);
+    var dec   = ('0' + Math.abs(cents) % 100).slice(-2);
+    var sign  = cents < 0 ? '-' : '';
+    return (moneyFmt || '{' + '{amount}' + '}').replace(/\{\{\s*(\w+)\s*\}\}/, function (_, k) {
+      switch (k) {
+        case 'amount_no_decimals': return sign + group(whole, ',');
+        case 'amount_with_comma_separator': return sign + group(whole, '.') + ',' + dec;
+        case 'amount_no_decimals_with_comma_separator': return sign + group(whole, '.');
+        case 'amount_with_space_separator': return sign + group(whole, ' ') + ',' + dec;
+        case 'amount_no_decimals_with_space_separator': return sign + group(whole, ' ');
+        case 'amount_with_apostrophe_separator': return sign + group(whole, "'") + '.' + dec;
+        default: return sign + group(whole, ',') + '.' + dec;
+      }
+    });
   }
 
   function updateSubtotal() {
@@ -1088,14 +1207,68 @@
     qtyInput.addEventListener('input', updateSubtotal);
   }
 
+  var addBtn = document.getElementById('PdpAddBtn-' + sid);
+
+  /* Variant picker */
+  var variantSel  = document.getElementById('PdpVariant-' + sid);
+  var variantData = document.getElementById('PdpVariants-' + sid);
+  var rrpCents    = {{ rrp | default: 0 | json }};
+
+  if (variantSel && variantData) {
+    var variants = JSON.parse(variantData.textContent);
+    variantSel.addEventListener('change', function () {
+      var v = variants.filter(function (x) { return String(x.id) === variantSel.value; })[0];
+      if (!v) return;
+
+      unitCents = v.price;
+      var wspEl = document.getElementById('PdpWsp-' + sid);
+      if (wspEl) wspEl.textContent = fmtMoney(v.price);
+      var marginEl = document.getElementById('PdpMargin-' + sid);
+      if (marginEl && rrpCents > v.price && v.price > 0) {
+        marginEl.textContent = '+' + Math.round((rrpCents - v.price) * 100 / v.price) + '%';
+      }
+
+      var skuEl = document.getElementById('PdpSku-' + sid);
+      if (skuEl) { skuEl.hidden = !v.sku; skuEl.querySelector('span').textContent = v.sku || ''; }
+
+      var dot = document.getElementById('PdpStockDot-' + sid);
+      var lbl = document.getElementById('PdpStockLabel-' + sid);
+      if (dot) { dot.classList.toggle('is-in', v.available); dot.classList.toggle('is-out', !v.available); }
+      if (lbl) lbl.textContent = v.available ? ('In Stock' + (v.inventory > 0 ? '\u00a0(' + v.inventory + ' units)' : '')) : 'Out of Stock';
+
+      if (qtyInput) {
+        qtyInput.min  = v.min;
+        qtyInput.step = v.step;
+        if (v.max) qtyInput.max = v.max; else qtyInput.removeAttribute('max');
+        qMin = v.min; qStep = v.step; qMax = v.max || Infinity;
+        qtyInput.value = clampQty(qtyInput.value);
+        updateSubtotal();
+      }
+
+      if (addBtn) {
+        addBtn.dataset.variantId = v.id;
+        addBtn.disabled = !v.available;
+        var al = addBtn.querySelector('.pdp-add-label');
+        if (al) al.textContent = v.available ? al.dataset.labelAdd : al.dataset.labelSoldout;
+      }
+
+      if (v.image && mainImg) { mainImg.src = v.image; }
+
+      var url = new URL(window.location.href);
+      url.searchParams.set('variant', v.id);
+      window.history.replaceState({}, '', url.toString());
+    });
+  }
+
   /* Toast */
   var toast     = document.getElementById('PdpToast-' + sid);
   var toastMsg  = document.getElementById('PdpToastMsg-' + sid);
   var toastTimer;
 
-  function showToast(msg) {
+  function showToast(msg, isError) {
     if (!toast || !toastMsg) return;
     toastMsg.textContent = msg;
+    toast.classList.toggle('is-error', !!isError);
     toast.classList.add('is-visible');
     clearTimeout(toastTimer);
     toastTimer = setTimeout(function () {
@@ -1124,11 +1297,9 @@
   }
 
   /* Add to cart AJAX */
-  var addBtn    = document.getElementById('PdpAddBtn-' + sid);
-  var variantId = addBtn ? addBtn.dataset.variantId : null;
-
-  if (addBtn && variantId) {
+  if (addBtn) {
     addBtn.addEventListener('click', function () {
+      var variantId = addBtn.dataset.variantId;
       var qty = qtyInput ? (parseInt(qtyInput.value, 10) || 1) : 1;
       addBtn.disabled = true;
       addBtn.classList.add('is-loading');
@@ -1142,8 +1313,13 @@
         body: JSON.stringify({ id: parseInt(variantId, 10), quantity: qty })
       })
         .then(function (res) {
-          if (!res.ok) throw new Error('Add failed');
-          return res.json();
+          return res.json().then(function (data) {
+            /* 422: sold out, quantity rule, max reached … — Shopify explains why */
+            if (!res.ok || (data.status && data.status >= 400)) {
+              throw new Error(data.description || data.message || 'Could not add to your order.');
+            }
+            return data;
+          });
         })
         .then(function () {
           return fetch('/cart.js', {
@@ -1152,13 +1328,13 @@
         })
         .then(function (res) { return res.json(); })
         .then(function (cart) {
-          updateCartBubble(cart.item_count);
+          if (window.lpUpdateCartBubble) window.lpUpdateCartBubble(cart.item_count);
+          else updateCartBubble(cart.item_count);
           showToast('Added ' + qty + ' unit' + (qty !== 1 ? 's' : '') + ' to your order');
-          document.dispatchEvent(new CustomEvent('cart:refresh', { bubbles: true }));
+          window.dispatchEvent(new CustomEvent('cart:updated', { detail: cart }));
         })
         .catch(function (err) {
-          console.error('Add to cart error:', err);
-          showToast('Something went wrong. Please try again.');
+          showToast(err.message, true);
         })
         .then(function () {
           addBtn.disabled = false;
